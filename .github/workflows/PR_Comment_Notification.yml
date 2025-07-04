@@ -57,18 +57,12 @@ jobs:
           CONTENT: ${{ env.CONTENT }}
         run: |
           IFS=',' read -r -a user_github_discord_pair <<< "${{ secrets.PAIR_GITHUB_DISCORD_USER }}"
-          IFS=',' read -r -a role_github_discord_pair <<< "${{ secrets.PAIR_GITHUB_DISCORD_ROLE }}"
           content=$(echo "$CONTENT" | base64 --decode)
           
           for ((i = 0; i < ${#user_github_discord_pair[@]}; i += 2)); do
             search=${user_github_discord_pair[i]}
             replace=${user_github_discord_pair[i+1]}
             content=$(echo "$content" | sed "s|@${search}|<@${replace}>|g")
-          done
-          for ((i = 0; i < ${#role_github_discord_pair[@]}; i += 2)); do
-            search=${role_github_discord_pair[i]}
-            replace=${role_github_discord_pair[i+1]}
-            content=$(echo "$content" | sed "s|@${search}|<@\&${replace}>|g")
           done
           echo "DISCORD_CONTENT=$(echo $content | base64 -w 0)" >> $GITHUB_ENV
 
