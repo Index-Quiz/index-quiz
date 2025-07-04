@@ -11,10 +11,4 @@ class IndexquizApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
-	@Test
-	void failTest() {
-		assertThat(1).isEqualTo(2);
-	}
-
 }

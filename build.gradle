@@ -61,7 +61,7 @@ jacocoTestReport {
 		}))
 	}
 
-//	onlyIf {
-//		return System.getenv('TEST_REPORT') == 'true'
-//	}
+	onlyIf {
+		return System.getenv('TEST_REPORT') == 'true'
+	}
 }
