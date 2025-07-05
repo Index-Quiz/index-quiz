@@ -1,55 +1,98 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DB 인덱스 퀴즈</title>
-    <link rel="stylesheet" href="style.css">
+    <title>DB 인덱스 퀴즈 사이트</title>
+    <link rel="stylesheet" href="home-style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🗃️ DB 인덱스 퀴즈</h1>
-            <p>데이터베이스 인덱스에 대한 지식을 테스트해보세요!</p>
+            <h1>🗃️ DB 인덱스 학습 플랫폼</h1>
+            <p>데이터베이스 인덱스에 대한 지식을 테스트하고 향상시켜보세요!</p>
         </header>
 
-        <div class="quiz-container" id="quizContainer">
-            <div class="quiz-header">
-                <div class="progress-bar">
-                    <div class="progress" id="progress"></div>
+        <div class="main-content">
+            <div class="hero-section">
+                <div class="hero-card">
+                    <div class="icon">📚</div>
+                    <h2>인덱스 마스터가 되어보세요</h2>
+                    <p>10개의 엄선된 문제를 통해 DB 인덱스의 핵심 개념을 학습하고 실력을 테스트해보세요.</p>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <span class="feature-icon">⚡</span>
+                            <span>실시간 채점</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">💡</span>
+                            <span>상세한 해설</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">📊</span>
+                            <span>진도율 추적</span>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">🎯</span>
+                            <span>개인별 점수</span>
+                        </div>
+                    </div>
+
+                    <div class="quiz-info">
+                        <div class="info-item">
+                            <strong th:text="${totalQuestions ?: 10}">10</strong>
+                            <span>문제</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>15</strong>
+                            <span>분 소요</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>중급</strong>
+                            <span>난이도</span>
+                        </div>
+                    </div>
+
+                    <a href="quiz.html" class="start-quiz-btn">
+                        <span>인덱스 퀴즈 풀러가기</span>
+                        <span class="btn-arrow">→</span>
+                    </a>
                 </div>
-                <p class="question-number">
-                    문제 <span id="currentQuestion">1</span> / <span id="totalQuestions">10</span>
-                </p>
             </div>
 
-            <div class="question-container">
-                <h2 id="questionText">질문이 여기에 표시됩니다...</h2>
-                
-                <div class="options" id="optionsContainer">
-                    <!-- 선택지들이 동적으로 추가됩니다 -->
+            <div class="topics-section">
+                <h3>다루는 주제들</h3>
+                <div class="topics-grid">
+                    <div class="topic-card">
+                        <div class="topic-icon">🌳</div>
+                        <h4>B-Tree 인덱스</h4>
+                        <p>균형 트리 구조의 특징과 활용법</p>
+                    </div>
+                    <div class="topic-card">
+                        <div class="topic-icon">🔗</div>
+                        <h4>클러스터드 인덱스</h4>
+                        <p>물리적 데이터 순서와 인덱스</p>
+                    </div>
+                    <div class="topic-card">
+                        <div class="topic-icon">⚡</div>
+                        <h4>해시 인덱스</h4>
+                        <p>빠른 등등 비교 검색 최적화</p>
+                    </div>
+                    <div class="topic-card">
+                        <div class="topic-icon">🎯</div>
+                        <h4>성능 최적화</h4>
+                        <p>쿼리 성능 향상 전략</p>
+                    </div>
                 </div>
-                
-                <button class="submit-btn" id="submitBtn" onclick="submitAnswer()">답 제출하기</button>
-            </div>
-
-            <div class="result-container" id="resultContainer" style="display: none;">
-                <div class="result-message" id="resultMessage"></div>
-                <div class="explanation" id="explanation"></div>
-                <button class="next-btn" id="nextBtn" onclick="nextQuestion()">다음 문제</button>
             </div>
         </div>
 
-        <div class="final-result" id="finalResult" style="display: none;">
-            <h2>🎉 퀴즈 완료!</h2>
-            <div class="score">
-                <p>총 점수: <span id="finalScore">0</span> / <span id="finalTotal">10</span></p>
-                <p class="score-percentage" id="scorePercentage">0%</p>
-            </div>
-            <button class="restart-btn" onclick="restartQuiz()">다시 시작</button>
-        </div>
+        <footer>
+            <p>© 2024 DB 인덱스 학습 플랫폼. 모든 권리 보유.</p>
+        </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script src="home-script.js"></script>
 </body>
 </html>

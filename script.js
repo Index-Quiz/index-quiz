@@ -276,8 +276,8 @@ function submitAnswer() {
         '🎉 정답입니다!' : 
         '❌ 틀렸습니다. 정답은 ' + String.fromCharCode(65 + currentQuestion.correct) + '번입니다.';
     
-    // 해설 표시
-    explanation.innerHTML = '<h3>💡 해설</h3><p>' + currentQuestion.explanation + '</p>';
+    // 해설 표시 (이미지 포함)
+    displayExplanation(currentQuestion);
     
     // 다음 버튼 텍스트 설정
     if (currentQuestionIndex === quizData.length - 1) {
@@ -401,6 +401,133 @@ function typeMessage(message) {
             }, 300);
         }
     }, 80);
+}
+
+// 해설 표시 함수 (이미지 지원)
+function displayExplanation(question) {
+    const explanationContent = document.getElementById('explanationContent');
+    
+    let htmlContent = `<p>${question.explanation}</p>`;
+    
+    // 이미지가 있는 경우 추가
+    if (question.explanationImage) {
+        htmlContent += `
+            <div class="explanation-image-container">
+                <img src="${question.explanationImage}" 
+                     alt="해설 이미지" 
+                     class="explanation-image"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                     onload="this.style.opacity='1';"
+                     style="opacity: 0; transition: opacity 0.5s ease;">
+                <div class="image-placeholder" style="display: none;">
+                    📷 이미지를 불러올 수 없습니다
+                </div>
+            </div>
+        `;
+    }
+    
+    explanationContent.innerHTML = htmlContent;
+    
+    // 이미지 클릭 시 확대 기능
+    const images = explanationContent.querySelectorAll('.explanation-image');
+    images.forEach(img => {
+        img.addEventListener('click', () => {
+            openImageModal(img.src, img.alt);
+        });
+    });
+}
+
+// 이미지 모달 기능
+function openImageModal(src, alt) {
+    // 모달 생성
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        backdrop-filter: blur(10px);
+        cursor: pointer;
+    `;
+    
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = alt;
+    img.style.cssText = `
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease;
+    `;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕';
+    closeBtn.style.cssText = `
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    `;
+    
+    closeBtn.addEventListener('mouseenter', () => {
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.3)';
+        closeBtn.style.transform = 'scale(1.1)';
+    });
+    
+    closeBtn.addEventListener('mouseleave', () => {
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+        closeBtn.style.transform = 'scale(1)';
+    });
+    
+    modal.appendChild(img);
+    modal.appendChild(closeBtn);
+    document.body.appendChild(modal);
+    
+    // 모달 닫기 이벤트
+    const closeModal = () => {
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(modal);
+        }, 300);
+    };
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    
+    closeBtn.addEventListener('click', closeModal);
+    
+    // ESC 키로 닫기
+    const escHandler = (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+    
+    // 애니메이션
+    modal.style.opacity = '0';
+    setTimeout(() => {
+        modal.style.transition = 'opacity 0.3s ease';
+        modal.style.opacity = '1';
+    }, 10);
 }
 
 // 퀴즈 재시작

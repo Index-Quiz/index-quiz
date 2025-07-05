@@ -19,6 +19,48 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+}
+
+/* 홈 버튼 스타일 */
+.home-button-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 10px 15px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.home-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.home-icon {
+    font-size: 1.2rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
 }
 
 header {
@@ -249,6 +291,41 @@ header p {
     box-shadow: 0 12px 30px rgba(245, 158, 11, 0.6);
 }
 
+.final-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.home-return-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(45deg, #6b7280, #4b5563);
+    color: white;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 20px rgba(107, 114, 128, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.home-return-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(107, 114, 128, 0.6);
+    background: linear-gradient(45deg, #4b5563, #374151);
+}
+
+.home-return-btn::before {
+    content: '🏠';
+    font-size: 1.3rem;
+}
+
 .result-container {
     text-align: center;
     animation: fadeIn 0.5s ease;
@@ -285,12 +362,48 @@ header p {
     text-align: left;
     line-height: 1.6;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .explanation h3 {
     color: #a8d8ff;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.explanation-content {
+    color: #ffffff;
+    line-height: 1.7;
+}
+
+.explanation-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 15px 0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.explanation-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+.image-placeholder {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    margin: 15px 0;
+    color: #a8d8ff;
+    font-style: italic;
 }
 
 .final-result {
@@ -496,10 +609,20 @@ header p {
         font-size: 0.7rem;
     }
     
-    .submit-btn, .next-btn, .restart-btn {
+    .submit-btn, .next-btn, .restart-btn, .home-return-btn {
         font-size: 1.1rem;
         padding: 12px;
         border-radius: 12px;
+    }
+    
+    .final-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .home-btn {
+        font-size: 0.8rem;
+        padding: 8px 12px;
     }
     
     .score-percentage {
