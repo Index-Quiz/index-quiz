@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DB 인덱스 퀴즈</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗃️ DB 인덱스 퀴즈</h1>
+            <p>데이터베이스 인덱스에 대한 지식을 테스트해보세요!</p>
+        </header>
+
+        <div class="quiz-container" id="quizContainer">
+            <div class="quiz-header">
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <p class="question-number">
+                    문제 <span id="currentQuestion">1</span> / <span id="totalQuestions">10</span>
+                </p>
+            </div>
+
+            <div class="question-container">
+                <h2 id="questionText">질문이 여기에 표시됩니다...</h2>
+                
+                <div class="options" id="optionsContainer">
+                    <!-- 선택지들이 동적으로 추가됩니다 -->
+                </div>
+                
+                <button class="submit-btn" id="submitBtn" onclick="submitAnswer()">답 제출하기</button>
+            </div>
+
+            <div class="result-container" id="resultContainer" style="display: none;">
+                <div class="result-message" id="resultMessage"></div>
+                <div class="explanation" id="explanation"></div>
+                <button class="next-btn" id="nextBtn" onclick="nextQuestion()">다음 문제</button>
+            </div>
+        </div>
+
+        <div class="final-result" id="finalResult" style="display: none;">
+            <h2>🎉 퀴즈 완료!</h2>
+            <div class="score">
+                <p>총 점수: <span id="finalScore">0</span> / <span id="finalTotal">10</span></p>
+                <p class="score-percentage" id="scorePercentage">0%</p>
+            </div>
+            <button class="restart-btn" onclick="restartQuiz()">다시 시작</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

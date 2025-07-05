@@ -1,0 +1,291 @@
+// DB 인덱스 퀴즈 데이터
+const quizData = [
+    {
+        question: "데이터베이스 인덱스의 주요 목적은 무엇입니까?",
+        options: [
+            "데이터의 저장 공간을 줄이기 위해서",
+            "쿼리의 검색 속도를 향상시키기 위해서",
+            "데이터의 보안을 강화하기 위해서",
+            "데이터베이스의 백업을 용이하게 하기 위해서"
+        ],
+        correct: 1,
+        explanation: "인덱스의 주요 목적은 쿼리의 검색 속도를 향상시키는 것입니다. 인덱스는 테이블의 특정 컬럼에 대한 빠른 접근 경로를 제공하여 데이터 검색 시간을 단축시킵니다."
+    },
+    {
+        question: "B-Tree 인덱스의 특징으로 올바른 것은?",
+        options: [
+            "모든 리프 노드가 같은 레벨에 위치한다",
+            "범위 검색에 적합하지 않다",
+            "삽입과 삭제 시 트리의 균형이 유지되지 않는다"
+        ],
+        correct: 0,
+        explanation: "B-Tree 인덱스는 균형 트리 구조로, 모든 리프 노드가 같은 레벨에 위치합니다. 이는 모든 검색 경로의 길이가 동일함을 보장하여 일관된 성능을 제공합니다."
+    },
+    {
+        question: "다음 중 인덱스를 생성하면 성능 향상을 기대할 수 있는 경우는?",
+        options: [
+            "WHERE 절에서 자주 사용되는 컬럼",
+            "ORDER BY 절에서 자주 사용되는 컬럼",
+            "JOIN 조건에서 자주 사용되는 컬럼",
+            "위의 모든 경우"
+        ],
+        correct: 3,
+        explanation: "WHERE, ORDER BY, JOIN 조건에서 자주 사용되는 컬럼들은 모두 인덱스를 생성했을 때 성능 향상을 기대할 수 있습니다. 이러한 절들은 데이터 접근 패턴을 결정하기 때문입니다."
+    },
+    {
+        question: "클러스터드 인덱스(Clustered Index)의 특징은?",
+        options: [
+            "테이블당 여러 개 생성할 수 있다",
+            "실제 데이터의 물리적 순서를 결정한다",
+            "별도의 저장 공간이 필요하다"
+        ],
+        correct: 1,
+        explanation: "클러스터드 인덱스는 실제 데이터의 물리적 순서를 결정합니다. 테이블당 하나만 생성할 수 있으며, 데이터 페이지 자체가 인덱스의 리프 노드 역할을 합니다."
+    },
+    {
+        question: "다음 중 인덱스 사용을 방해하는 WHERE 조건은?",
+        options: [
+            "WHERE age = 25",
+            "WHERE name LIKE 'John%'",
+            "WHERE UPPER(name) = 'JOHN'",
+            "WHERE age BETWEEN 20 AND 30"
+        ],
+        correct: 2,
+        explanation: "WHERE UPPER(name) = 'JOHN'과 같이 컬럼에 함수를 적용하면 인덱스 사용이 방해됩니다. 옵티마이저가 함수 결과를 예측할 수 없어 인덱스 스캔 대신 풀 테이블 스캔을 수행할 가능성이 높습니다."
+    },
+    {
+        question: "복합 인덱스(Composite Index)에서 컬럼 순서가 중요한 이유는?",
+        options: [
+            "저장 공간을 절약하기 위해서",
+            "인덱스 스캔의 효율성을 높이기 위해서",
+            "데이터 타입 호환성을 위해서",
+            "백업 속도를 향상시키기 위해서"
+        ],
+        correct: 1,
+        explanation: "복합 인덱스에서 컬럼 순서는 인덱스 스캔의 효율성에 직접적인 영향을 미칩니다. 선택도가 높은 컬럼을 앞에 배치하면 더 효율적인 검색이 가능합니다."
+    },
+    {
+        question: "인덱스의 단점으로 올바른 것은?",
+        options: [
+            "추가적인 저장 공간이 필요하다",
+            "INSERT, UPDATE, DELETE 작업이 느려질 수 있다",
+            "인덱스 유지 관리 비용이 발생한다",
+            "위의 모든 것"
+        ],
+        correct: 3,
+        explanation: "인덱스는 추가 저장 공간을 필요로 하고, 데이터 변경 시 인덱스도 함께 갱신되어야 하므로 DML 작업이 느려질 수 있으며, 지속적인 유지 관리가 필요합니다."
+    },
+    {
+        question: "해시 인덱스(Hash Index)의 특징은?",
+        options: [
+            "범위 검색에 매우 효율적이다",
+            "등등 비교(=) 검색에 매우 빠르다",
+            "ORDER BY 절에서 정렬을 피할 수 있다",
+            "B-Tree보다 저장 공간을 많이 사용한다"
+        ],
+        correct: 1,
+        explanation: "해시 인덱스는 등등 비교(=) 검색에서 O(1)의 시간복잡도로 매우 빠른 성능을 제공합니다. 하지만 범위 검색이나 정렬에는 적합하지 않습니다."
+    },
+    {
+        question: "다음 중 인덱스 힌트(Index Hint)를 사용하는 이유는?",
+        options: [
+            "옵티마이저의 잘못된 실행 계획을 수정하기 위해",
+            "인덱스 생성 속도를 높이기 위해",
+            "메모리 사용량을 줄이기 위해"
+        ],
+        correct: 0,
+        explanation: "인덱스 힌트는 옵티마이저가 잘못된 실행 계획을 선택했을 때, 개발자가 직접 사용할 인덱스를 지정하여 성능을 개선하기 위해 사용됩니다."
+    },
+    {
+        question: "인덱스 스캔 방식 중 'Index Full Scan'의 특징은?",
+        options: [
+            "인덱스의 루트에서 리프까지만 스캔한다",
+            "인덱스의 모든 리프 블록을 순차적으로 읽는다",
+            "특정 키 값만을 찾아서 스캔한다",
+            "인덱스를 역순으로 스캔한다"
+        ],
+        correct: 1,
+        explanation: "Index Full Scan은 인덱스의 모든 리프 블록을 순차적으로 읽는 방식입니다. 주로 인덱스에 포함된 모든 컬럼이 SELECT나 WHERE 절에서 사용될 때 발생합니다."
+    }
+];
+
+// 퀴즈 상태 변수들
+let currentQuestionIndex = 0;
+let score = 0;
+let selectedAnswer = null;
+let isAnswered = false;
+
+// DOM 요소들
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const submitBtn = document.getElementById('submitBtn');
+const resultContainer = document.getElementById('resultContainer');
+const resultMessage = document.getElementById('resultMessage');
+const explanation = document.getElementById('explanation');
+const nextBtn = document.getElementById('nextBtn');
+const quizContainer = document.getElementById('quizContainer');
+const finalResult = document.getElementById('finalResult');
+const currentQuestionSpan = document.getElementById('currentQuestion');
+const totalQuestionsSpan = document.getElementById('totalQuestions');
+const progress = document.getElementById('progress');
+const finalScore = document.getElementById('finalScore');
+const finalTotal = document.getElementById('finalTotal');
+const scorePercentage = document.getElementById('scorePercentage');
+
+// 퀴즈 초기화
+function initQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    selectedAnswer = null;
+    isAnswered = false;
+    
+    totalQuestionsSpan.textContent = quizData.length;
+    finalTotal.textContent = quizData.length;
+    
+    quizContainer.style.display = 'block';
+    finalResult.style.display = 'none';
+    resultContainer.style.display = 'none';
+    
+    loadQuestion();
+}
+
+// 질문 로드
+function loadQuestion() {
+    const currentQuestion = quizData[currentQuestionIndex];
+    
+    questionText.textContent = currentQuestion.question;
+    currentQuestionSpan.textContent = currentQuestionIndex + 1;
+    
+    // 진행률 업데이트
+    const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
+    progress.style.width = progressPercent + '%';
+    
+    // 선택지 생성
+    optionsContainer.innerHTML = '';
+    currentQuestion.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'option';
+        optionElement.onclick = () => selectOption(index);
+        
+        const optionLabel = document.createElement('span');
+        optionLabel.className = 'option-label';
+        optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+        
+        const optionText = document.createElement('span');
+        optionText.textContent = option;
+        
+        optionElement.appendChild(optionLabel);
+        optionElement.appendChild(optionText);
+        optionsContainer.appendChild(optionElement);
+    });
+    
+    // 상태 초기화
+    selectedAnswer = null;
+    isAnswered = false;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '답 제출하기';
+    resultContainer.style.display = 'none';
+}
+
+// 선택지 선택
+function selectOption(index) {
+    if (isAnswered) return;
+    
+    // 이전 선택 제거
+    document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('selected');
+    });
+    
+    // 새로운 선택 표시
+    const options = document.querySelectorAll('.option');
+    options[index].classList.add('selected');
+    
+    selectedAnswer = index;
+    submitBtn.disabled = false;
+}
+
+// 답 제출
+function submitAnswer() {
+    if (selectedAnswer === null || isAnswered) return;
+    
+    isAnswered = true;
+    const currentQuestion = quizData[currentQuestionIndex];
+    const isCorrect = selectedAnswer === currentQuestion.correct;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    // 모든 선택지에 결과 표시
+    const options = document.querySelectorAll('.option');
+    options.forEach((option, index) => {
+        option.classList.add('disabled');
+        if (index === currentQuestion.correct) {
+            option.classList.add('correct');
+        } else if (index === selectedAnswer && !isCorrect) {
+            option.classList.add('incorrect');
+        }
+    });
+    
+    // 결과 메시지 표시
+    resultMessage.className = 'result-message ' + (isCorrect ? 'correct' : 'incorrect');
+    resultMessage.innerHTML = isCorrect ? 
+        '🎉 정답입니다!' : 
+        '❌ 틀렸습니다. 정답은 ' + String.fromCharCode(65 + currentQuestion.correct) + '번입니다.';
+    
+    // 해설 표시
+    explanation.innerHTML = '<h3>💡 해설</h3><p>' + currentQuestion.explanation + '</p>';
+    
+    // 다음 버튼 텍스트 설정
+    if (currentQuestionIndex === quizData.length - 1) {
+        nextBtn.textContent = '결과 보기';
+    } else {
+        nextBtn.textContent = '다음 문제';
+    }
+    
+    resultContainer.style.display = 'block';
+    submitBtn.style.display = 'none';
+}
+
+// 다음 문제 또는 결과 표시
+function nextQuestion() {
+    if (currentQuestionIndex === quizData.length - 1) {
+        showFinalResult();
+    } else {
+        currentQuestionIndex++;
+        submitBtn.style.display = 'block';
+        loadQuestion();
+    }
+}
+
+// 최종 결과 표시
+function showFinalResult() {
+    quizContainer.style.display = 'none';
+    finalResult.style.display = 'block';
+    
+    finalScore.textContent = score;
+    const percentage = Math.round((score / quizData.length) * 100);
+    scorePercentage.textContent = percentage + '%';
+    
+    // 성과에 따른 메시지
+    let message = '';
+    if (percentage >= 90) {
+        message = '🏆 완벽합니다! DB 인덱스 전문가네요!';
+    } else if (percentage >= 70) {
+        message = '👍 훌륭합니다! 좋은 이해도를 보여주셨네요!';
+    } else if (percentage >= 50) {
+        message = '📚 괜찮습니다! 조금 더 학습하면 완벽해질 거예요!';
+    } else {
+        message = '💪 화이팅! 다시 도전해보세요!';
+    }
+    
+    document.querySelector('.final-result h2').textContent = message;
+}
+
+// 퀴즈 재시작
+function restartQuiz() {
+    initQuiz();
+}
+
+// 페이지 로드 시 퀴즈 초기화
+document.addEventListener('DOMContentLoaded', initQuiz);
