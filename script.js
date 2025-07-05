@@ -180,8 +180,6 @@ function loadQuestion() {
         currentQuestion.options.forEach((option, index) => {
             const optionElement = document.createElement('div');
             optionElement.className = 'option';
-            optionElement.style.opacity = '0';
-            optionElement.style.transform = 'translateX(50px)';
             optionElement.onclick = () => selectOption(index);
             
             const optionLabel = document.createElement('span');
@@ -194,13 +192,6 @@ function loadQuestion() {
             optionElement.appendChild(optionLabel);
             optionElement.appendChild(optionText);
             optionsContainer.appendChild(optionElement);
-            
-            // 순차적 애니메이션
-            setTimeout(() => {
-                optionElement.style.transition = 'all 0.5s ease';
-                optionElement.style.opacity = '1';
-                optionElement.style.transform = 'translateX(0)';
-            }, index * 100 + 200);
         });
         
         optionsContainer.style.transition = 'opacity 0.3s ease';

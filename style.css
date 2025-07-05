@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #020259 0%, #1a0b6b 50%, #2d1b8a 100%);
+    background: linear-gradient(135deg, #4a5bcc 0%, #6366f1 50%, #8b5cf6 100%);
     min-height: 100vh;
     color: #ffffff;
     line-height: 1.6;
@@ -139,25 +139,18 @@ header p {
 .option {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 18px;
-    padding: 15px 20px;
-    margin-bottom: 15px;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(10px);
-    animation: slideInFromRight 0.6s ease-out;
-    animation-fill-mode: both;
 }
-
-.option:nth-child(1) { animation-delay: 0.1s; }
-.option:nth-child(2) { animation-delay: 0.2s; }
-.option:nth-child(3) { animation-delay: 0.3s; }
-.option:nth-child(4) { animation-delay: 0.4s; }
 
 .option:hover {
     background: rgba(255, 255, 255, 0.2);
@@ -193,14 +186,15 @@ header p {
 
 .option-label {
     font-weight: bold;
-    margin-right: 15px;
-    background: #020259;
+    margin-right: 10px;
+    background: #4a5bcc;
     color: white;
-    padding: 5px 12px;
-    border-radius: 8px;
-    min-width: 35px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    min-width: 25px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(2, 2, 89, 0.3);
+    box-shadow: 0 2px 6px rgba(74, 91, 204, 0.3);
+    font-size: 0.9rem;
 }
 
 .submit-btn, .next-btn, .restart-btn {
@@ -217,14 +211,14 @@ header p {
 }
 
 .submit-btn {
-    background: linear-gradient(45deg, #020259, #1a0b6b);
+    background: linear-gradient(45deg, #4a5bcc, #6366f1);
     color: white;
-    box-shadow: 0 8px 20px rgba(2, 2, 89, 0.4);
+    box-shadow: 0 8px 20px rgba(74, 91, 204, 0.4);
 }
 
 .submit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(2, 2, 89, 0.6);
+    box-shadow: 0 12px 30px rgba(74, 91, 204, 0.6);
 }
 
 .submit-btn:disabled {
@@ -235,7 +229,7 @@ header p {
 
 .next-btn {
     background: linear-gradient(45deg, #4ade80, #22c55e);
-    color: #020259;
+    color: #4a5bcc;
     box-shadow: 0 8px 20px rgba(74, 222, 128, 0.4);
 }
 
@@ -491,16 +485,15 @@ header p {
     }
     
     .option {
-        padding: 12px 15px;
-        font-size: 1rem;
-        border-radius: 15px;
-        animation: slideInFromRight 0.4s ease-out;
+        padding: 8px 10px;
+        font-size: 0.8rem;
+        border-radius: 10px;
     }
     
     .option-label {
-        padding: 4px 10px;
-        min-width: 30px;
-        font-size: 0.9rem;
+        padding: 3px 7px;
+        min-width: 20px;
+        font-size: 0.7rem;
     }
     
     .submit-btn, .next-btn, .restart-btn {
@@ -534,15 +527,15 @@ header p {
     }
     
     .option {
-        padding: 10px 12px;
-        font-size: 0.9rem;
-        margin-bottom: 10px;
+        padding: 7px 8px;
+        font-size: 0.7rem;
+        margin-bottom: 8px;
     }
     
     .option-label {
-        padding: 3px 8px;
-        min-width: 25px;
-        font-size: 0.8rem;
+        padding: 2px 6px;
+        min-width: 18px;
+        font-size: 0.6rem;
     }
     
     .score-percentage {
@@ -570,7 +563,7 @@ header p {
 /* 다크모드 지원 */
 @media (prefers-color-scheme: dark) {
     body {
-        background: linear-gradient(135deg, #020259 0%, #0a0628 50%, #1a0b3d 100%);
+        background: linear-gradient(135deg, #2d2a6e 0%, #4338ca 50%, #6366f1 100%);
     }
     
     .quiz-container {
