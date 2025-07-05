@@ -139,8 +139,17 @@ function initQuiz() {
     selectedAnswer = null;
     isAnswered = false;
     
+    // 총 문제 수 업데이트 (HTML과 JavaScript 모두)
     totalQuestionsSpan.textContent = quizData.length;
     finalTotal.textContent = quizData.length;
+    
+    // Thymeleaf가 설정하지 않은 경우를 위한 추가 업데이트
+    const allTotalElements = document.querySelectorAll('[id*="totalQuestions"], [class*="total-questions"]');
+    allTotalElements.forEach(el => {
+        if (el.textContent === '10' || el.textContent === '') {
+            el.textContent = quizData.length;
+        }
+    });
     
     quizContainer.style.display = 'block';
     finalResult.style.display = 'none';

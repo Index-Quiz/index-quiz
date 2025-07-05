@@ -2,7 +2,25 @@
 document.addEventListener('DOMContentLoaded', () => {
     initHomePageAnimations();
     setupInteractiveElements();
+    updateQuizInfo();
 });
+
+// 퀴즈 정보 업데이트 (기본값 설정)
+function updateQuizInfo() {
+    // 기본 퀴즈 문제 수 (서버에서 전달되지 않은 경우)
+    const defaultQuizCount = 10;
+    
+    // Thymeleaf가 설정하지 않은 경우 기본값 표시
+    const quizCountElements = document.querySelectorAll('.info-item strong');
+    quizCountElements.forEach(el => {
+        if (el.textContent === '' || el.textContent === '0') {
+            el.textContent = defaultQuizCount;
+        }
+    });
+    
+    // 개발자 도구 로그
+    console.log('홈페이지 퀴즈 정보 업데이트 완료');
+}
 
 // 홈페이지 애니메이션 초기화
 function initHomePageAnimations() {
