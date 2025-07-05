@@ -153,31 +153,59 @@ function initQuiz() {
 function loadQuestion() {
     const currentQuestion = quizData[currentQuestionIndex];
     
-    questionText.textContent = currentQuestion.question;
+    // 질문 애니메이션
+    questionText.style.opacity = '0';
+    questionText.style.transform = 'translateY(-20px)';
+    
+    setTimeout(() => {
+        questionText.textContent = currentQuestion.question;
+        questionText.style.transition = 'all 0.5s ease';
+        questionText.style.opacity = '1';
+        questionText.style.transform = 'translateY(0)';
+    }, 100);
+    
     currentQuestionSpan.textContent = currentQuestionIndex + 1;
     
-    // 진행률 업데이트
+    // 진행률 업데이트 애니메이션
     const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
-    progress.style.width = progressPercent + '%';
+    setTimeout(() => {
+        progress.style.width = progressPercent + '%';
+    }, 300);
     
-    // 선택지 생성
+    // 선택지 생성 애니메이션
+    optionsContainer.style.opacity = '0';
     optionsContainer.innerHTML = '';
-    currentQuestion.options.forEach((option, index) => {
-        const optionElement = document.createElement('div');
-        optionElement.className = 'option';
-        optionElement.onclick = () => selectOption(index);
+    
+    setTimeout(() => {
+        currentQuestion.options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.className = 'option';
+            optionElement.style.opacity = '0';
+            optionElement.style.transform = 'translateX(50px)';
+            optionElement.onclick = () => selectOption(index);
+            
+            const optionLabel = document.createElement('span');
+            optionLabel.className = 'option-label';
+            optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+            
+            const optionText = document.createElement('span');
+            optionText.textContent = option;
+            
+            optionElement.appendChild(optionLabel);
+            optionElement.appendChild(optionText);
+            optionsContainer.appendChild(optionElement);
+            
+            // 순차적 애니메이션
+            setTimeout(() => {
+                optionElement.style.transition = 'all 0.5s ease';
+                optionElement.style.opacity = '1';
+                optionElement.style.transform = 'translateX(0)';
+            }, index * 100 + 200);
+        });
         
-        const optionLabel = document.createElement('span');
-        optionLabel.className = 'option-label';
-        optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
-        
-        const optionText = document.createElement('span');
-        optionText.textContent = option;
-        
-        optionElement.appendChild(optionLabel);
-        optionElement.appendChild(optionText);
-        optionsContainer.appendChild(optionElement);
-    });
+        optionsContainer.style.transition = 'opacity 0.3s ease';
+        optionsContainer.style.opacity = '1';
+    }, 200);
     
     // 상태 초기화
     selectedAnswer = null;
@@ -185,23 +213,47 @@ function loadQuestion() {
     submitBtn.disabled = true;
     submitBtn.textContent = '답 제출하기';
     resultContainer.style.display = 'none';
+    
+    // 버튼 애니메이션
+    submitBtn.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+        submitBtn.style.transition = 'all 0.3s ease';
+        submitBtn.style.transform = 'scale(1)';
+    }, 800);
 }
 
 // 선택지 선택
 function selectOption(index) {
     if (isAnswered) return;
     
-    // 이전 선택 제거
+    // 이전 선택 제거 애니메이션
     document.querySelectorAll('.option').forEach(opt => {
         opt.classList.remove('selected');
+        opt.style.transform = 'scale(1)';
     });
     
-    // 새로운 선택 표시
+    // 새로운 선택 표시 애니메이션
     const options = document.querySelectorAll('.option');
-    options[index].classList.add('selected');
+    const selectedOption = options[index];
+    
+    selectedOption.classList.add('selected');
+    selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+    selectedOption.style.transform = 'scale(1.02)';
+    
+    // 선택 피드백 효과
+    selectedOption.style.animation = 'pulse 0.6s ease';
+    setTimeout(() => {
+        selectedOption.style.animation = '';
+    }, 600);
     
     selectedAnswer = index;
+    
+    // 버튼 활성화 애니메이션
     submitBtn.disabled = false;
+    submitBtn.style.transform = 'scale(1.05)';
+    setTimeout(() => {
+        submitBtn.style.transform = 'scale(1)';
+    }, 150);
 }
 
 // 답 제출
@@ -260,32 +312,162 @@ function nextQuestion() {
 
 // 최종 결과 표시
 function showFinalResult() {
-    quizContainer.style.display = 'none';
-    finalResult.style.display = 'block';
+    quizContainer.style.opacity = '0';
+    quizContainer.style.transform = 'translateX(-100px)';
     
-    finalScore.textContent = score;
-    const percentage = Math.round((score / quizData.length) * 100);
-    scorePercentage.textContent = percentage + '%';
+    setTimeout(() => {
+        quizContainer.style.display = 'none';
+        finalResult.style.display = 'block';
+        
+        // 점수 카운트업 애니메이션
+        animateScore();
+        
+        const percentage = Math.round((score / quizData.length) * 100);
+        
+        // 백분율 카운트업 애니메이션
+        animatePercentage(percentage);
+        
+        // 성과에 따른 메시지
+        let message = '';
+        let emoji = '';
+        if (percentage >= 90) {
+            message = '완벽합니다! DB 인덱스 전문가네요!';
+            emoji = '🏆';
+        } else if (percentage >= 70) {
+            message = '훌륭합니다! 좋은 이해도를 보여주셨네요!';
+            emoji = '👍';
+        } else if (percentage >= 50) {
+            message = '괜찮습니다! 조금 더 학습하면 완벽해질 거예요!';
+            emoji = '📚';
+        } else {
+            message = '화이팅! 다시 도전해보세요!';
+            emoji = '💪';
+        }
+        
+        // 메시지 타이핑 효과
+        setTimeout(() => {
+            typeMessage(emoji + ' ' + message);
+        }, 1500);
+        
+    }, 300);
+}
+
+// 점수 카운트업 애니메이션
+function animateScore() {
+    let currentScore = 0;
+    const increment = score / 30; // 30프레임에 걸쳐 애니메이션
     
-    // 성과에 따른 메시지
-    let message = '';
-    if (percentage >= 90) {
-        message = '🏆 완벽합니다! DB 인덱스 전문가네요!';
-    } else if (percentage >= 70) {
-        message = '👍 훌륭합니다! 좋은 이해도를 보여주셨네요!';
-    } else if (percentage >= 50) {
-        message = '📚 괜찮습니다! 조금 더 학습하면 완벽해질 거예요!';
-    } else {
-        message = '💪 화이팅! 다시 도전해보세요!';
-    }
+    const scoreTimer = setInterval(() => {
+        currentScore += increment;
+        if (currentScore >= score) {
+            currentScore = score;
+            clearInterval(scoreTimer);
+        }
+        finalScore.textContent = Math.floor(currentScore);
+    }, 50);
+}
+
+// 백분율 카운트업 애니메이션
+function animatePercentage(targetPercentage) {
+    let currentPercentage = 0;
+    const increment = targetPercentage / 40; // 40프레임에 걸쳐 애니메이션
     
-    document.querySelector('.final-result h2').textContent = message;
+    setTimeout(() => {
+        const percentageTimer = setInterval(() => {
+            currentPercentage += increment;
+            if (currentPercentage >= targetPercentage) {
+                currentPercentage = targetPercentage;
+                clearInterval(percentageTimer);
+                
+                // 최종 애니메이션 효과
+                scorePercentage.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    scorePercentage.style.transform = 'scale(1)';
+                }, 200);
+            }
+            scorePercentage.textContent = Math.floor(currentPercentage) + '%';
+        }, 60);
+    }, 800);
+}
+
+// 타이핑 효과
+function typeMessage(message) {
+    const messageElement = document.querySelector('.final-result h2');
+    messageElement.textContent = '';
+    let i = 0;
+    
+    const typeTimer = setInterval(() => {
+        if (i < message.length) {
+            messageElement.textContent += message.charAt(i);
+            i++;
+        } else {
+            clearInterval(typeTimer);
+            
+            // 메시지 완성 후 효과
+            messageElement.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                messageElement.style.transform = 'scale(1)';
+            }, 300);
+        }
+    }, 80);
 }
 
 // 퀴즈 재시작
 function restartQuiz() {
-    initQuiz();
+    // 재시작 애니메이션
+    finalResult.style.opacity = '0';
+    finalResult.style.transform = 'translateY(-50px)';
+    
+    setTimeout(() => {
+        initQuiz();
+    }, 300);
+}
+
+// 초기 로딩 애니메이션
+function initLoadingAnimation() {
+    const header = document.querySelector('header');
+    const container = document.querySelector('.quiz-container');
+    
+    header.style.opacity = '0';
+    header.style.transform = 'translateY(-30px)';
+    container.style.opacity = '0';
+    container.style.transform = 'translateY(30px)';
+    
+    setTimeout(() => {
+        header.style.transition = 'all 0.8s ease';
+        header.style.opacity = '1';
+        header.style.transform = 'translateY(0)';
+    }, 200);
+    
+    setTimeout(() => {
+        container.style.transition = 'all 0.8s ease';
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+    }, 400);
 }
 
 // 페이지 로드 시 퀴즈 초기화
-document.addEventListener('DOMContentLoaded', initQuiz);
+document.addEventListener('DOMContentLoaded', () => {
+    initLoadingAnimation();
+    setTimeout(initQuiz, 600);
+});
+
+// 키보드 단축키 지원
+document.addEventListener('keydown', (e) => {
+    if (isAnswered) return;
+    
+    // A, B, C, D 키로 선택지 선택
+    const keyMap = { 'KeyA': 0, 'KeyB': 1, 'KeyC': 2, 'KeyD': 3 };
+    if (keyMap.hasOwnProperty(e.code)) {
+        const optionIndex = keyMap[e.code];
+        const currentQuestion = quizData[currentQuestionIndex];
+        if (optionIndex < currentQuestion.options.length) {
+            selectOption(optionIndex);
+        }
+    }
+    
+    // Enter 키로 답 제출
+    if (e.code === 'Enter' && selectedAnswer !== null && !isAnswered) {
+        submitAnswer();
+    }
+});

@@ -45,12 +45,33 @@ header p {
 
 .quiz-container {
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
     padding: 30px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);
     flex: 1;
+    position: relative;
+    overflow: hidden;
+    animation: slideInFromLeft 0.8s ease-out;
+}
+
+.quiz-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.quiz-container:hover::before {
+    left: 100%;
 }
 
 .quiz-header {
@@ -68,10 +89,33 @@ header p {
 
 .progress {
     height: 100%;
-    background: linear-gradient(90deg, #4ade80, #22c55e);
+    background: linear-gradient(90deg, #4ade80, #22c55e, #16a34a);
     border-radius: 4px;
-    transition: width 0.3s ease;
-    box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
+    position: relative;
+    overflow: hidden;
+    animation: pulse 2s infinite;
+}
+
+.progress::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
 }
 
 .question-number {
@@ -95,15 +139,25 @@ header p {
 .option {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
+    border-radius: 18px;
     padding: 15px 20px;
     margin-bottom: 15px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     font-size: 1.1rem;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    animation: slideInFromRight 0.6s ease-out;
+    animation-fill-mode: both;
 }
+
+.option:nth-child(1) { animation-delay: 0.1s; }
+.option:nth-child(2) { animation-delay: 0.2s; }
+.option:nth-child(3) { animation-delay: 0.3s; }
+.option:nth-child(4) { animation-delay: 0.4s; }
 
 .option:hover {
     background: rgba(255, 255, 255, 0.2);
@@ -121,13 +175,15 @@ header p {
 .option.correct {
     background: rgba(34, 197, 94, 0.3);
     border-color: #22c55e;
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.6);
+    animation: correctAnswer 0.6s ease-out;
 }
 
 .option.incorrect {
     background: rgba(239, 68, 68, 0.3);
     border-color: #ef4444;
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+    animation: incorrectShake 0.6s ease-out;
 }
 
 .option.disabled {
@@ -245,40 +301,78 @@ header p {
 
 .final-result {
     text-align: center;
-    animation: fadeIn 0.5s ease;
+    animation: bounceIn 1s ease;
 }
 
 .final-result h2 {
     font-size: 2.2rem;
     margin-bottom: 30px;
-    background: linear-gradient(45deg, #4ade80, #22c55e);
+    background: linear-gradient(45deg, #4ade80, #22c55e, #16a34a);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: slideInFromLeft 0.8s ease-out;
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .score {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 30px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 25px;
+    padding: 35px;
     margin-bottom: 30px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    animation: slideInFromRight 0.8s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.score::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(74, 222, 128, 0.1), transparent);
+    animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .score p {
     font-size: 1.5rem;
     margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
 }
 
 .score-percentage {
-    font-size: 3rem !important;
+    font-size: 4rem !important;
     font-weight: bold;
-    background: linear-gradient(45deg, #4ade80, #22c55e);
+    background: linear-gradient(45deg, #4ade80, #22c55e, #16a34a, #4ade80);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+    text-shadow: 0 0 30px rgba(74, 222, 128, 0.5);
+    animation: bounceIn 1.2s ease;
+    background-size: 300% 300%;
+    animation: gradientShift 2s ease infinite, pulse 2s infinite;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes fadeIn {
@@ -292,6 +386,88 @@ header p {
     }
 }
 
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+    }
+}
+
+@keyframes progressAnimation {
+    0% {
+        width: 0%;
+    }
+}
+
+@keyframes correctAnswer {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes incorrectShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .container {
@@ -300,15 +476,25 @@ header p {
     
     header h1 {
         font-size: 2rem;
+        animation: bounceIn 1s ease;
+    }
+    
+    header p {
+        font-size: 1rem;
+        animation: fadeIn 1.2s ease;
     }
     
     .quiz-container {
         padding: 20px;
+        border-radius: 20px;
+        animation: slideInFromLeft 0.6s ease-out;
     }
     
     .option {
         padding: 12px 15px;
         font-size: 1rem;
+        border-radius: 15px;
+        animation: slideInFromRight 0.4s ease-out;
     }
     
     .option-label {
@@ -320,5 +506,80 @@ header p {
     .submit-btn, .next-btn, .restart-btn {
         font-size: 1.1rem;
         padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .score-percentage {
+        font-size: 3rem !important;
+    }
+    
+    .final-result h2 {
+        font-size: 1.8rem;
+    }
+    
+    .score {
+        padding: 25px;
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .quiz-container {
+        padding: 15px;
+        margin: 10px 0;
+    }
+    
+    .option {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+    
+    .option-label {
+        padding: 3px 8px;
+        min-width: 25px;
+        font-size: 0.8rem;
+    }
+    
+    .score-percentage {
+        font-size: 2.5rem !important;
+    }
+    
+    .final-result h2 {
+        font-size: 1.5rem;
+    }
+    
+    .progress-bar {
+        height: 6px;
+    }
+}
+
+/* 성능 최적화를 위한 미디어 쿼리 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 다크모드 지원 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #020259 0%, #0a0628 50%, #1a0b3d 100%);
+    }
+    
+    .quiz-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .option {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
     }
 }
