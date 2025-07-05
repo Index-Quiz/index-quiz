@@ -1,5 +1,5 @@
 // DB 인덱스 퀴즈 데이터
-const quizData = [
+const quizData1 = [
     {
         question: "데이터베이스 인덱스의 주요 목적은 무엇입니까?",
         options: [
@@ -134,14 +134,15 @@ const scorePercentage = document.getElementById('scorePercentage');
 
 // 퀴즈 초기화
 function initQuiz() {
+    console.log('initQuiz() 실행됨'); // ← 이게 콘솔에 나오는지 확인
     currentQuestionIndex = 0;
     score = 0;
     selectedAnswer = null;
     isAnswered = false;
     
     // 총 문제 수 업데이트 (HTML과 JavaScript 모두)
-    totalQuestionsSpan.textContent = quizData.length;
-    finalTotal.textContent = quizData.length;
+    totalQuestionsSpan.textContent = quizData1.length;
+    finalTotal.textContent = quizData1.length;
     
     // Thymeleaf가 설정하지 않은 경우를 위한 추가 업데이트
     const allTotalElements = document.querySelectorAll('[id*="totalQuestions"], [class*="total-questions"]');
@@ -160,7 +161,7 @@ function initQuiz() {
 
 // 질문 로드
 function loadQuestion() {
-    const currentQuestion = quizData[currentQuestionIndex];
+    const currentQuestion = quizData1[currentQuestionIndex];
     
     // 질문 애니메이션
     questionText.style.opacity = '0';
@@ -261,7 +262,7 @@ function submitAnswer() {
     if (selectedAnswer === null || isAnswered) return;
     
     isAnswered = true;
-    const currentQuestion = quizData[currentQuestionIndex];
+    const currentQuestion = quizData1[currentQuestionIndex];
     const isCorrect = selectedAnswer === currentQuestion.correct;
     
     if (isCorrect) {
@@ -289,7 +290,7 @@ function submitAnswer() {
     displayExplanation(currentQuestion);
     
     // 다음 버튼 텍스트 설정
-    if (currentQuestionIndex === quizData.length - 1) {
+    if (currentQuestionIndex === quizData1.length - 1) {
         nextBtn.textContent = '결과 보기';
     } else {
         nextBtn.textContent = '다음 문제';
@@ -301,7 +302,7 @@ function submitAnswer() {
 
 // 다음 문제 또는 결과 표시
 function nextQuestion() {
-    if (currentQuestionIndex === quizData.length - 1) {
+    if (currentQuestionIndex === quizData1.length - 1) {
         showFinalResult();
     } else {
         currentQuestionIndex++;
@@ -322,7 +323,7 @@ function showFinalResult() {
         // 점수 카운트업 애니메이션
         animateScore();
         
-        const percentage = Math.round((score / quizData.length) * 100);
+        const percentage = Math.round((score / quizData1.length) * 100);
         
         // 백분율 카운트업 애니메이션
         animatePercentage(percentage);
@@ -587,7 +588,7 @@ document.addEventListener('keydown', (e) => {
     const keyMap = { 'KeyA': 0, 'KeyB': 1, 'KeyC': 2, 'KeyD': 3 };
     if (keyMap.hasOwnProperty(e.code)) {
         const optionIndex = keyMap[e.code];
-        const currentQuestion = quizData[currentQuestionIndex];
+        const currentQuestion = quizData1[currentQuestionIndex];
         if (optionIndex < currentQuestion.options.length) {
             selectOption(optionIndex);
         }
