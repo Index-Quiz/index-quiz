@@ -10,7 +10,6 @@ jobs:
   main:
     runs-on: ubuntu-latest
     env:
-      APP_DIR: indexquiz
       REGISTRY_URL: ${{ secrets.ECR_REGISTRY_URL }}
     steps:
       - name: Checkout
@@ -49,5 +48,5 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
-          docker build -t ${REGISTRY_URL}/${APP_DIR}:${SAFE_TAG} .
-          docker push ${REGISTRY_URL}/${APP_DIR}:${SAFE_TAG}
+          docker build -t ${REGISTRY_URL}:${SAFE_TAG} .
+          docker push ${REGISTRY_URL}:${SAFE_TAG}
