@@ -28,7 +28,7 @@ jobs:
       - name: Gradle Build
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: clean indexquiz:build
+          arguments: clean build
           cache-read-only: false
 
       - name: Configure AWS credentials
