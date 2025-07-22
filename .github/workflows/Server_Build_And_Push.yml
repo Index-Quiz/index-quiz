@@ -42,6 +42,10 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Set safe tag
+        id: vars
+        run: echo "SAFE_TAG=${GITHUB_REF_NAME//\//-}" | tr -d '#' >> $GITHUB_ENV
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
