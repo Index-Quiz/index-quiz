@@ -70,3 +70,7 @@ jacocoTestReport {
 		return System.getenv('TEST_REPORT') == 'true'
 	}
 }
+
+bootJar {
+	layered {enabled = true }
+}
