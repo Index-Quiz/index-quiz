@@ -1,4 +1,4 @@
-name: Server Build & Push on Branch
+name: Dev_CD
 
 on:
   push:
@@ -41,12 +41,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set safe tag
-        id: vars
-        run: echo "SAFE_TAG=${GITHUB_REF_NAME//\//-}" | tr -d '#' >> $GITHUB_ENV
-
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
-          docker build -t ${REGISTRY_URL}:${SAFE_TAG} .
-          docker push ${REGISTRY_URL}:${SAFE_TAG}
+          docker build -t ${REGISTRY_URL}:dev .
+          docker push ${REGISTRY_URL}:dev
+
+      - name: Excuting remote ssh commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.REMOTE_IP }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/deploy
+            sh ./deploy.sh dev
