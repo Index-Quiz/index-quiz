@@ -41,11 +41,37 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Pull current dev image as previous
+        run: |            
+            echo "[1] 이전 dev 이미지 pull 시도 (없으면 실패해도 무시)"
+            docker pull ${REGISTRY_URL}:dev || echo "No existing dev image"
+            
+            echo "[2] dev 이미지가 있으면 previous로 태그 변경 및 푸시"
+            if docker images | grep "${REGISTRY_URL}" | grep "dev"; then
+              docker tag ${REGISTRY_URL}:dev ${REGISTRY_URL}:previous
+              docker push ${REGISTRY_URL}:previous
+            else
+              echo "No dev image to tag as previous"
+            fi
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         run: |
           docker build -t ${REGISTRY_URL}:dev .
           docker push ${REGISTRY_URL}:dev
+
+      - name: Clean up old images in ECR except dev and previous
+        run: |
+          aws ecr list-images --repository-name $(basename ${REGISTRY_URL}) --query 'imageIds[?!(imageTag==`dev` || imageTag==`previous`)]' --output json > old_images.json
+          old_count=$(jq length old_images.json)
+          echo "Found $old_count old images to delete."
+        
+          if [ "$old_count" -gt 0 ]; then
+            aws ecr batch-delete-image --repository-name $(basename ${REGISTRY_URL}) --image-ids file://old_images.json
+            echo "Deleted old images."
+          else
+            echo "No old images to delete."
+          fi
 
   deploy:
     runs-on: dev
@@ -53,6 +79,7 @@ jobs:
     env:
       IMAGE_NAME: ${{ secrets.ECR_REGISTRY_URL }}
       IMAGE_TAG: dev
+      PREV_TAG: previous
       CONTAINER_NAME: iq-dev
     steps:
       - name: Configure AWS credentials
@@ -81,13 +108,44 @@ jobs:
 
       - name : container run
         run: |
-            echo "[4] 컨테이너 실행"
+            echo "[4] 컨테이너 실행 및 3초 대기"
             docker run -d --name $CONTAINER_NAME \
               -p 8080:8080 \
               --restart unless-stopped \
               $IMAGE_NAME:$IMAGE_TAG
+            sleep 3
 
       - name: check container run
         run : |
           echo "[5] 컨테이너 실행 확인"
           docker ps
+          status=$(docker inspect -f '{{.State.Running}}' ${CONTAINER_NAME})
+          if [ "$status" != "true" ]; then
+            echo "Container failed to start"
+            exit 1
+          fi
+
+      - name: Delete previous image if dev run successful
+        if: success()
+        run: |
+            aws ecr batch-delete-image --repository-name $(basename ${IMAGE_NAME}) --image-ids imageTag=${PREV_TAG} || echo "No previous image to delete"
+
+      - name: Rollback if dev container failed
+        if: failure()
+        run: |
+            echo "Rollback triggered: dev container failed"
+                
+            echo "[1] 기존 dev 컨테이너 중지 및 삭제"
+            docker stop ${CONTAINER_NAME} 2>/dev/null || true
+            docker rm ${CONTAINER_NAME} 2>/dev/null || true
+                
+            echo "[2] previous 이미지 pull 및 실행"
+            docker pull ${IMAGE_NAME}:${PREV_TAG}
+            docker run -d --name ${CONTAINER_NAME} -p 8080:8080 --restart unless-stopped ${IMAGE_NAME}:${PREV_TAG}
+                
+            echo "[3] previous 이미지를 dev로 retag 및 push"
+            docker tag ${IMAGE_NAME}:${PREV_TAG} ${IMAGE_NAME}:${IMAGE_TAG}
+            docker push ${IMAGE_NAME}:${IMAGE_TAG}
+
+      - name: Clean dangling images and containers
+        run: docker system prune -af
