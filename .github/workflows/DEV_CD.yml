@@ -62,7 +62,10 @@ jobs:
 
       - name: Clean up old images in ECR except dev and previous
         run: |
-          aws ecr list-images --repository-name $(basename ${REGISTRY_URL}) --query 'imageIds[?!(imageTag==`dev` || imageTag==`previous`)]' --output json > old_images.json
+          REPO_NAME = ${REGISTRY_URL}
+          aws ecr list-images --repository-name $REPO_NAME \
+            --query 'imageIds[?!(imageTag==`dev` || imageTag==`previous`)]' 
+            --output json > old_images.json
           old_count=$(jq length old_images.json)
           echo "Found $old_count old images to delete."
         
