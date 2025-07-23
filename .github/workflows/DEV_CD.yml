@@ -7,7 +7,7 @@ on:
       - develop
 
 jobs:
-  main:
+  push:
     runs-on: ubuntu-latest
     env:
       REGISTRY_URL: ${{ secrets.ECR_REGISTRY_URL }}
@@ -47,12 +47,31 @@ jobs:
           docker build -t ${REGISTRY_URL}:dev .
           docker push ${REGISTRY_URL}:dev
 
-      - name: Excuting remote ssh commands
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.REMOTE_IP }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.REMOTE_PRIVATE_KEY }}
-          script: |
-            cd /home/ubuntu/deploy
-            sh ./deploy.sh dev
+  deploy:
+    runs-on: dev
+    needs : push
+    env:
+      REGISTRY_URL: ${{ secrets.ECR_REGISTRY_URL }}
+    steps:
+      - name: Pull & Run Docker Container
+        run: |
+            IMAGE_TAG=dev
+            IMAGE_NAME= ${REGISTRY_URL}
+            CONTAINER_NAME= iq-dev
+            
+            echo "[1] 로그인 to ECR"
+            aws ecr get-login-password --region ap-northeast-2 \
+              | docker login --username AWS --password-stdin $IMAGE_NAME
+            
+            echo "[2] 기존 컨테이너 중지 및 삭제"
+            docker stop $CONTAINER_NAME 2>/dev/null || true
+            docker rm $CONTAINER_NAME 2>/dev/null || true
+            
+            echo "[3] 이미지 Pull: $IMAGE_NAME:$IMAGE_TAG"
+            docker pull $IMAGE_NAME:$IMAGE_TAG
+            
+            echo "[4] 컨테이너 실행"
+            docker run -d --name $CONTAINER_NAME \
+              -p 8080:8080 \
+              --restart unless-stopped \
+              $IMAGE_NAME:$IMAGE_TAG
