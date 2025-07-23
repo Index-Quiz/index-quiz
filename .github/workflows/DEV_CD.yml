@@ -133,7 +133,7 @@ jobs:
         if: success()
         run: |
             aws ecr batch-delete-image \
-              --repository-name ${ECR_REPO_NAME} \ 
+              --repository-name ${ECR_REPO_NAME} \
               --image-ids imageTag=${PREV_TAG} || echo "No previous image to delete"
 
       - name: Rollback if dev container failed
