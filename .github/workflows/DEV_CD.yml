@@ -3,7 +3,6 @@ name: Dev_CD
 on:
   push:
     branches:
-      - chore/#18-layered-jar-build
       - develop
 
 jobs:
