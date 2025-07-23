@@ -64,13 +64,13 @@ jobs:
       - name: Clean up old images in ECR except dev and previous
         run: |
           aws ecr list-images --repository-name ${ECR_REPO_NAME} \
-            --query 'imageIds[?!(imageTag==`dev` || imageTag==`previous`)]' 
+            --query 'imageIds[?!(imageTag==`dev` || imageTag==`previous`)]' \
             --output json > old_images.json
           old_count=$(jq length old_images.json)
           echo "Found $old_count old images to delete."
         
           if [ "$old_count" -gt 0 ]; then
-            aws ecr batch-delete-image --repository-name $(basename ${REGISTRY_URL}) --image-ids file://old_images.json
+            aws ecr batch-delete-image  --repository-name ${ECR_REPO_NAME} --image-ids file://old_images.json
             echo "Deleted old images."
           else
             echo "No old images to delete."
@@ -132,8 +132,8 @@ jobs:
       - name: Delete previous image if dev run successful
         if: success()
         run: |
-            aws ecr batch-delete-image 
-              --repository-name ${ECR_REPO_NAME} 
+            aws ecr batch-delete-image \
+              --repository-name ${ECR_REPO_NAME} \ 
               --image-ids imageTag=${PREV_TAG} || echo "No previous image to delete"
 
       - name: Rollback if dev container failed
