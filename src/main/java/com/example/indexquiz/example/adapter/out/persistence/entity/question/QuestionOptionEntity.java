@@ -1,6 +1,7 @@
 package com.example.indexquiz.example.adapter.out.persistence.entity.question;
 
-import com.example.indexquiz.example.domain.question.QuestionType;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,16 +13,17 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "question")
+@Table(name = "question_options")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class QuestionEntity {
+public class QuestionOptionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private QuestionType type;
+    @Column(name = "question_id")
+    private long questionId;
 
     @NotBlank
     private String content;
