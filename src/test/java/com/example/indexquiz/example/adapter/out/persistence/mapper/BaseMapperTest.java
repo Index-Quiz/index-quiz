@@ -1,4 +1,4 @@
-package com.example.indexquiz.example.adapter.out.persistence.mapper.answer;
+package com.example.indexquiz.example.adapter.out.persistence.mapper;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
