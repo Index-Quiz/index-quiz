@@ -36,6 +36,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
 
+	//MapStruct - 반드시 Lombok 뒤에 의존성이 추가될 것
+	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.rest-assured:rest-assured:5.5.0'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
