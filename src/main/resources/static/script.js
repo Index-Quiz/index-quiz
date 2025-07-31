@@ -18,16 +18,19 @@ async function fetchQuestion(questionId) {
     }
 }
 
-// 답 제출 API 호출 함수
-async function submitAnswerToAPI(questionId, selectedOptionIndex) {
+// 답 제출 API 호출 함수 (다중 선택 지원)
+async function submitAnswerToAPI(questionId, selectedAnswers) {
     try {
-        const response = await fetch(`/api/questions/${questionId}/submit`, {
+        // selectedAnswers 배열을 1부터 시작하는 인덱스로 변환
+        const choices = selectedAnswers.map(index => index + 1);
+        
+        const response = await fetch(`/api/questions/${questionId}/userAnswers`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                selectedOption: selectedOptionIndex
+                choices: choices
             })
         });
         
@@ -36,7 +39,7 @@ async function submitAnswerToAPI(questionId, selectedOptionIndex) {
         }
         
         const result = await response.json();
-        return result; // { correct: boolean, correctAnswer: number, explanation: string }
+        return result; // { questionId, isCorrect, submittedAnswers, correctAnswers, solution }
     } catch (error) {
         console.error('답 제출 중 오류가 발생했습니다:', error);
         throw error;
@@ -86,7 +89,7 @@ function parseMarkdownToHtml(content) {
 // 퀴즈 상태 변수들
 let currentQuestionIndex = 0;
 let score = 0;
-let selectedAnswer = null;
+let selectedAnswers = []; // 다중 선택 지원을 위해 배열로 변경
 let isAnswered = false;
 
 // DOM 요소들
@@ -144,7 +147,7 @@ async function initQuiz() {
     console.log('initQuiz() 실행됨');
     currentQuestionIndex = 0;
     score = 0;
-    selectedAnswer = null;
+    selectedAnswers = [];
     isAnswered = false;
     
     // 총 문제 수 업데이트
@@ -201,30 +204,40 @@ async function loadQuestion() {
         optionsContainer.style.opacity = '0';
         optionsContainer.innerHTML = '';
         
-        setTimeout(() => {
-            currentQuestion.options.forEach((option, index) => {
-                const optionElement = document.createElement('div');
-                optionElement.className = 'option';
-                optionElement.onclick = () => selectOption(index);
+                    setTimeout(() => {
+                // 다중 선택 안내 메시지 추가
+                const instructionDiv = document.createElement('div');
+                instructionDiv.className = 'selection-instruction';
+                instructionDiv.innerHTML = `
+                    <p style="font-size: 0.9rem; color: #b8c5d6; margin-bottom: 15px; text-align: center;">
+                        💡 <strong>선택지를 클릭하여 답을 선택하세요.</strong> 다중 선택이 가능합니다.
+                    </p>
+                `;
+                optionsContainer.appendChild(instructionDiv);
                 
-                const optionLabel = document.createElement('span');
-                optionLabel.className = 'option-label';
-                optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+                currentQuestion.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    optionElement.onclick = () => selectOption(index);
+                    
+                    const optionLabel = document.createElement('span');
+                    optionLabel.className = 'option-label';
+                    optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+                    
+                    const optionText = document.createElement('span');
+                    optionText.textContent = option;
+                    
+                    optionElement.appendChild(optionLabel);
+                    optionElement.appendChild(optionText);
+                    optionsContainer.appendChild(optionElement);
+                });
                 
-                const optionText = document.createElement('span');
-                optionText.textContent = option;
-                
-                optionElement.appendChild(optionLabel);
-                optionElement.appendChild(optionText);
-                optionsContainer.appendChild(optionElement);
-            });
-            
-            optionsContainer.style.transition = 'opacity 0.3s ease';
-            optionsContainer.style.opacity = '1';
-        }, 200);
+                optionsContainer.style.transition = 'opacity 0.3s ease';
+                optionsContainer.style.opacity = '1';
+            }, 200);
         
         // 상태 초기화
-        selectedAnswer = null;
+        selectedAnswers = [];
         isAnswered = false;
         submitBtn.disabled = true;
         submitBtn.textContent = '답 제출하기';
@@ -254,43 +267,66 @@ async function loadQuestion() {
     }
 }
 
-// 선택지 선택
+// 선택지 선택 (다중 선택 지원)
 function selectOption(index) {
     if (isAnswered) return;
     
-    // 이전 선택 제거 애니메이션
-    document.querySelectorAll('.option').forEach(opt => {
-        opt.classList.remove('selected');
-        opt.style.transform = 'scale(1)';
-    });
-    
-    // 새로운 선택 표시 애니메이션
     const options = document.querySelectorAll('.option');
     const selectedOption = options[index];
     
-    selectedOption.classList.add('selected');
-    selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-    selectedOption.style.transform = 'scale(1.02)';
+    // 이미 선택된 항목인지 확인
+    const isAlreadySelected = selectedAnswers.includes(index);
     
-    // 선택 피드백 효과
-    selectedOption.style.animation = 'pulse 0.6s ease';
-    setTimeout(() => {
-        selectedOption.style.animation = '';
-    }, 600);
+    if (isAlreadySelected) {
+        // 선택 해제
+        selectedAnswers = selectedAnswers.filter(i => i !== index);
+        selectedOption.classList.remove('selected');
+        selectedOption.style.transform = 'scale(1)';
+    } else {
+        // 새로운 선택 추가
+        selectedAnswers.push(index);
+        selectedOption.classList.add('selected');
+        selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        selectedOption.style.transform = 'scale(1.02)';
+        
+        // 선택 피드백 효과
+        selectedOption.style.animation = 'pulse 0.6s ease';
+        setTimeout(() => {
+            selectedOption.style.animation = '';
+        }, 600);
+    }
     
-    selectedAnswer = index;
-    
-    // 버튼 활성화 애니메이션
-    submitBtn.disabled = false;
-    submitBtn.style.transform = 'scale(1.05)';
-    setTimeout(() => {
-        submitBtn.style.transform = 'scale(1)';
-    }, 150);
+    // 선택된 답안 수에 따른 버튼 텍스트 업데이트
+    updateSubmitButton();
+}
+
+// 제출 버튼 상태 업데이트
+function updateSubmitButton() {
+    if (selectedAnswers.length === 0) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '답 선택하기';
+    } else if (selectedAnswers.length === 1) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '답 제출하기';
+        // 버튼 활성화 애니메이션
+        submitBtn.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            submitBtn.style.transform = 'scale(1)';
+        }, 150);
+    } else {
+        submitBtn.disabled = false;
+        submitBtn.textContent = `${selectedAnswers.length}개 답안 제출하기`;
+        // 버튼 활성화 애니메이션
+        submitBtn.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            submitBtn.style.transform = 'scale(1)';
+        }, 150);
+    }
 }
 
 // 답 제출
 async function submitAnswer() {
-    if (selectedAnswer === null || isAnswered) return;
+    if (selectedAnswers.length === 0 || isAnswered) return;
     
     isAnswered = true;
     submitBtn.disabled = true;
@@ -299,10 +335,11 @@ async function submitAnswer() {
     try {
         // API에 답 제출
         const questionId = currentQuestionIndex + 1;
-        const result = await submitAnswerToAPI(questionId, selectedAnswer);
+        const result = await submitAnswerToAPI(questionId, selectedAnswers);
         
-        const isCorrect = result.correct;
-        const correctAnswer = result.correctAnswer;
+        const isCorrect = result.isCorrect;
+        const correctAnswers = result.correctAnswers.map(answer => answer - 1); // 0부터 시작하는 인덱스로 변환
+        const submittedAnswers = result.submittedAnswers.map(answer => answer - 1); // 0부터 시작하는 인덱스로 변환
         
         if (isCorrect) {
             score++;
@@ -312,21 +349,30 @@ async function submitAnswer() {
         const options = document.querySelectorAll('.option');
         options.forEach((option, index) => {
             option.classList.add('disabled');
-            if (index === correctAnswer) {
+            
+            // 정답 표시
+            if (correctAnswers.includes(index)) {
                 option.classList.add('correct');
-            } else if (index === selectedAnswer && !isCorrect) {
+            }
+            
+            // 사용자가 선택했지만 틀린 답 표시
+            if (submittedAnswers.includes(index) && !correctAnswers.includes(index)) {
                 option.classList.add('incorrect');
             }
         });
         
         // 결과 메시지 표시
         resultMessage.className = 'result-message ' + (isCorrect ? 'correct' : 'incorrect');
-        resultMessage.innerHTML = isCorrect ? 
-            '🎉 정답입니다!' : 
-            '❌ 틀렸습니다. 정답은 ' + String.fromCharCode(65 + correctAnswer) + '번입니다.';
+        
+        if (isCorrect) {
+            resultMessage.innerHTML = '🎉 정답입니다!';
+        } else {
+            const correctLabels = correctAnswers.map(index => String.fromCharCode(65 + index)).join(', ');
+            resultMessage.innerHTML = `❌ 틀렸습니다. 정답은 ${correctLabels}번입니다.`;
+        }
         
         // 해설 표시 (API에서 받은 해설 사용)
-        displayExplanationFromAPI(result.explanation);
+        displayExplanationFromAPI(result.solution);
         
         // 다음 버튼 텍스트 설정
         if (currentQuestionIndex === totalQuestions - 1) {
@@ -344,7 +390,7 @@ async function submitAnswer() {
         // 오류 시 UI 복원
         isAnswered = false;
         submitBtn.disabled = false;
-        submitBtn.textContent = '답 제출하기';
+        updateSubmitButton();
         
         // 오류 메시지 표시
         alert('답 제출 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -663,7 +709,7 @@ document.addEventListener('keydown', (e) => {
     }
     
     // Enter 키로 답 제출
-    if (e.code === 'Enter' && selectedAnswer !== null && !isAnswered) {
+    if (e.code === 'Enter' && selectedAnswers.length > 0 && !isAnswered) {
         submitAnswer();
     }
 });

@@ -205,6 +205,19 @@ header p {
     background: rgba(74, 222, 128, 0.2);
     border-color: #4ade80;
     box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+    position: relative;
+}
+
+.option.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #4ade80;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.8);
 }
 
 .option.correct {
