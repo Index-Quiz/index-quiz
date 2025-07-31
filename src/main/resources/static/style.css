@@ -167,15 +167,91 @@ header p {
 }
 
 .question-container h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin-bottom: 25px;
     color: #ffffff;
-    text-align: center;
-    line-height: 1.4;
+    text-align: left;
+    line-height: 1.5;
+    font-weight: 500;
 }
 
 .options {
     margin-bottom: 30px;
+}
+
+/* 코드 블록 스타일 */
+.code-block {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin: 15px 0;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.code-header {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #a8d8ff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.code-block pre {
+    margin: 0;
+    padding: 15px;
+    background: transparent;
+    overflow-x: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.code-block code {
+    color: #e8f4fd;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    font-family: inherit;
+    white-space: pre;
+}
+
+/* 인라인 코드 스타일 */
+.inline-code {
+    background: rgba(255, 255, 255, 0.1);
+    color: #a8d8ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.85em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 코드 블록 내 SQL 하이라이팅 */
+.language-sql {
+    color: #e8f4fd;
+}
+
+/* 스크롤바 스타일링 (코드 블록용) */
+.code-block pre::-webkit-scrollbar {
+    height: 8px;
+}
+
+.code-block pre::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.code-block pre::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.code-block pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .option {

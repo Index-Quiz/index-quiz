@@ -19,13 +19,13 @@ const MOCK_DATA = {
         },
         2: {
             questionId: 2,
-            type: "MULTIPLE_CHOICE",
-            content: "B-Tree 인덱스의 특징으로 올바른 것은?\n\n**B-Tree 인덱스**는 데이터베이스에서 가장 널리 사용되는 인덱스 구조입니다.\n\n다음 중 B-Tree 인덱스에 대한 설명으로 **올바른 것**을 모두 선택하세요.",
+            type: "SINGLE_CHOICE",
+            content: "다음과 같이 인덱스가 없는 `table_a`와 인덱스가 설정된 `table_b`가 있습니다.\n\n```sql\nCREATE TABLE table_a (\n    id BIGINT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(255),\n    age INT,\n    city VARCHAR(255)\n);\n\nCREATE TABLE table_b(\n    id BIGINT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(255),\n    age INT,\n    city VARCHAR(255),\n    INDEX idx_name (name),\n    INDEX idx_age_city (age, city)\n);\n```\n\n다음 두 쿼리를 실행했을 때 각각 **어느 테이블에서 더 빠른 성능을 보이는지** 고르세요.\n\n```sql\n-- A쿼리: 10만 건의 더미 데이터를 삽입\nINSERT INTO 테이블 (name, age, city)\nSELECT \n    CONCAT('NewName', FLOOR(RAND() * 1000000)),\n    FLOOR(RAND() * 100),\n    CONCAT('NewCity', FLOOR(RAND() * 1000))\nFROM\n    (SELECT 1 FROM information_schema.tables LIMIT 100000) a;\n\n-- B쿼리: 특정 name 값 검색\nSELECT * FROM 테이블 WHERE name = 'Name12345';\n```",
             options: [
-                "모든 리프 노드가 같은 레벨에 위치한다",
-                "범위 검색에 적합하지 않다",
-                "삽입과 삭제 시 트리의 균형이 유지되지 않는다",
-                "정렬된 순서로 데이터를 유지한다"
+                "A(insert) : table_a - B(select) : table_a",
+                "A(insert) : table_a - B(select) : table_b",
+                "A(insert) : table_b - B(select) : table_a",
+                "A(insert) : table_b - B(select) : table_b"
             ]
         }
     },
@@ -39,10 +39,10 @@ const MOCK_DATA = {
         },
         2: {
             questionId: 2,
-            isCorrect: false,
-            submittedAnswers: [1, 2],
-            correctAnswers: [1, 4],
-            solution: "정답은 **1번, 4번**입니다.\n\n**B-Tree 인덱스**의 올바른 특징들:\n\n**1번 - 모든 리프 노드가 같은 레벨에 위치한다** ✓\n- B-Tree는 균형 트리 구조로, 모든 리프 노드가 같은 레벨에 위치합니다\n- 이는 모든 검색 경로의 길이가 동일함을 보장합니다\n\n**4번 - 정렬된 순서로 데이터를 유지한다** ✓\n- B-Tree는 키 값에 따라 정렬된 순서를 유지합니다\n- 이로 인해 범위 검색과 정렬된 결과 조회가 효율적입니다\n\n**틀린 선택지들:**\n- **2번**: B-Tree는 범위 검색에 매우 적합합니다\n- **3번**: 삽입과 삭제 시에도 트리의 균형이 자동으로 유지됩니다"
+            isCorrect: true,
+            submittedAnswers: [2],
+            correctAnswers: [2],
+            solution: "정답은 **2번**입니다.\n\n**A쿼리 (INSERT)**: `table_a`가 더 빠름\n- 인덱스가 없는 `table_a`는 단순히 데이터만 삽입하면 됩니다\n- 인덱스가 있는 `table_b`는 데이터 삽입 시 인덱스도 함께 업데이트해야 하므로 더 느립니다\n\n```sql\n-- table_b에서는 다음 인덱스들이 모두 업데이트됨\nINDEX idx_name (name)        -- name 컬럼 인덱스 업데이트\nINDEX idx_age_city (age, city)  -- age, city 복합 인덱스 업데이트\n```\n\n**B쿼리 (SELECT)**: `table_b`가 더 빠름\n- `table_b`는 `idx_name` 인덱스를 사용하여 빠르게 검색할 수 있습니다\n- `table_a`는 인덱스가 없어 전체 테이블을 스캔해야 합니다\n\n```sql\n-- table_b: 인덱스 스캔 (빠름)\nSELECT * FROM table_b WHERE name = 'Name12345';\n-- table_a: 풀 테이블 스캔 (느림)\nSELECT * FROM table_a WHERE name = 'Name12345';\n```"
         }
     }
 };
@@ -154,9 +154,22 @@ function parseMarkdownImages(content) {
     return images;
 }
 
-// 마크다운 텍스트를 HTML로 변환 (간단한 변환)
+// 마크다운 텍스트를 HTML로 변환 (개선된 변환)
 function parseMarkdownToHtml(content) {
     let html = content;
+    
+    // 코드 블록 변환 (```언어\n코드\n``` 형식)
+    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
+        const lang = language || '';
+        const langClass = lang ? ` class="language-${lang}"` : '';
+        return `<div class="code-block">
+            ${lang ? `<div class="code-header">${lang.toUpperCase()}</div>` : ''}
+            <pre><code${langClass}>${code.trim()}</code></pre>
+        </div>`;
+    });
+    
+    // 인라인 코드 변환 (`코드` 형식)
+    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
     
     // 이미지 변환
     html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, 
@@ -166,7 +179,7 @@ function parseMarkdownToHtml(content) {
     // 볼드 텍스트 변환
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     
-    // 줄바꿈 변환
+    // 줄바꿈 변환 (코드 블록 내부는 제외)
     html = html.replace(/\n\n/g, '</p><p>');
     html = html.replace(/\n/g, '<br>');
     
