@@ -1,113 +1,87 @@
-// DB 인덱스 퀴즈 데이터
-const quizData1 = [
-    {
-        question: "데이터베이스 인덱스의 주요 목적은 무엇입니까?",
-        options: [
-            "데이터의 저장 공간을 줄이기 위해서",
-            "쿼리의 검색 속도를 향상시키기 위해서",
-            "데이터의 보안을 강화하기 위해서",
-            "데이터베이스의 백업을 용이하게 하기 위해서"
-        ],
-        correct: 1,
-        explanation: "인덱스의 주요 목적은 쿼리의 검색 속도를 향상시키는 것입니다. 인덱스는 테이블의 특정 컬럼에 대한 빠른 접근 경로를 제공하여 데이터 검색 시간을 단축시킵니다."
-    },
-    {
-        question: "B-Tree 인덱스의 특징으로 올바른 것은?",
-        options: [
-            "모든 리프 노드가 같은 레벨에 위치한다",
-            "범위 검색에 적합하지 않다",
-            "삽입과 삭제 시 트리의 균형이 유지되지 않는다"
-        ],
-        correct: 0,
-        explanation: "B-Tree 인덱스는 균형 트리 구조로, 모든 리프 노드가 같은 레벨에 위치합니다. 이는 모든 검색 경로의 길이가 동일함을 보장하여 일관된 성능을 제공합니다."
-    },
-    {
-        question: "다음 중 인덱스를 생성하면 성능 향상을 기대할 수 있는 경우는?",
-        options: [
-            "WHERE 절에서 자주 사용되는 컬럼",
-            "ORDER BY 절에서 자주 사용되는 컬럼",
-            "JOIN 조건에서 자주 사용되는 컬럼",
-            "위의 모든 경우"
-        ],
-        correct: 3,
-        explanation: "WHERE, ORDER BY, JOIN 조건에서 자주 사용되는 컬럼들은 모두 인덱스를 생성했을 때 성능 향상을 기대할 수 있습니다. 이러한 절들은 데이터 접근 패턴을 결정하기 때문입니다."
-    },
-    {
-        question: "클러스터드 인덱스(Clustered Index)의 특징은?",
-        options: [
-            "테이블당 여러 개 생성할 수 있다",
-            "실제 데이터의 물리적 순서를 결정한다",
-            "별도의 저장 공간이 필요하다"
-        ],
-        correct: 1,
-        explanation: "클러스터드 인덱스는 실제 데이터의 물리적 순서를 결정합니다. 테이블당 하나만 생성할 수 있으며, 데이터 페이지 자체가 인덱스의 리프 노드 역할을 합니다."
-    },
-    {
-        question: "다음 중 인덱스 사용을 방해하는 WHERE 조건은?",
-        options: [
-            "WHERE age = 25",
-            "WHERE name LIKE 'John%'",
-            "WHERE UPPER(name) = 'JOHN'",
-            "WHERE age BETWEEN 20 AND 30"
-        ],
-        correct: 2,
-        explanation: "WHERE UPPER(name) = 'JOHN'과 같이 컬럼에 함수를 적용하면 인덱스 사용이 방해됩니다. 옵티마이저가 함수 결과를 예측할 수 없어 인덱스 스캔 대신 풀 테이블 스캔을 수행할 가능성이 높습니다."
-    },
-    {
-        question: "복합 인덱스(Composite Index)에서 컬럼 순서가 중요한 이유는?",
-        options: [
-            "저장 공간을 절약하기 위해서",
-            "인덱스 스캔의 효율성을 높이기 위해서",
-            "데이터 타입 호환성을 위해서",
-            "백업 속도를 향상시키기 위해서"
-        ],
-        correct: 1,
-        explanation: "복합 인덱스에서 컬럼 순서는 인덱스 스캔의 효율성에 직접적인 영향을 미칩니다. 선택도가 높은 컬럼을 앞에 배치하면 더 효율적인 검색이 가능합니다."
-    },
-    {
-        question: "인덱스의 단점으로 올바른 것은?",
-        options: [
-            "추가적인 저장 공간이 필요하다",
-            "INSERT, UPDATE, DELETE 작업이 느려질 수 있다",
-            "인덱스 유지 관리 비용이 발생한다",
-            "위의 모든 것"
-        ],
-        correct: 3,
-        explanation: "인덱스는 추가 저장 공간을 필요로 하고, 데이터 변경 시 인덱스도 함께 갱신되어야 하므로 DML 작업이 느려질 수 있으며, 지속적인 유지 관리가 필요합니다."
-    },
-    {
-        question: "해시 인덱스(Hash Index)의 특징은?",
-        options: [
-            "범위 검색에 매우 효율적이다",
-            "등등 비교(=) 검색에 매우 빠르다",
-            "ORDER BY 절에서 정렬을 피할 수 있다",
-            "B-Tree보다 저장 공간을 많이 사용한다"
-        ],
-        correct: 1,
-        explanation: "해시 인덱스는 등등 비교(=) 검색에서 O(1)의 시간복잡도로 매우 빠른 성능을 제공합니다. 하지만 범위 검색이나 정렬에는 적합하지 않습니다."
-    },
-    {
-        question: "다음 중 인덱스 힌트(Index Hint)를 사용하는 이유는?",
-        options: [
-            "옵티마이저의 잘못된 실행 계획을 수정하기 위해",
-            "인덱스 생성 속도를 높이기 위해",
-            "메모리 사용량을 줄이기 위해"
-        ],
-        correct: 0,
-        explanation: "인덱스 힌트는 옵티마이저가 잘못된 실행 계획을 선택했을 때, 개발자가 직접 사용할 인덱스를 지정하여 성능을 개선하기 위해 사용됩니다."
-    },
-    {
-        question: "인덱스 스캔 방식 중 'Index Full Scan'의 특징은?",
-        options: [
-            "인덱스의 루트에서 리프까지만 스캔한다",
-            "인덱스의 모든 리프 블록을 순차적으로 읽는다",
-            "특정 키 값만을 찾아서 스캔한다",
-            "인덱스를 역순으로 스캔한다"
-        ],
-        correct: 1,
-        explanation: "Index Full Scan은 인덱스의 모든 리프 블록을 순차적으로 읽는 방식입니다. 주로 인덱스에 포함된 모든 컬럼이 SELECT나 WHERE 절에서 사용될 때 발생합니다."
+// API를 통한 퀴즈 데이터 관리
+let quizData = [];
+let totalQuestions = 10; // 기본값, API에서 동적으로 설정될 수 있음
+let currentQuestion = null;
+
+// API 호출 함수
+async function fetchQuestion(questionId) {
+    try {
+        const response = await fetch(`/api/questions/${questionId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const questionData = await response.json();
+        return questionData;
+    } catch (error) {
+        console.error('퀴즈 데이터를 불러오는 중 오류가 발생했습니다:', error);
+        throw error;
     }
-];
+}
+
+// 답 제출 API 호출 함수
+async function submitAnswerToAPI(questionId, selectedOptionIndex) {
+    try {
+        const response = await fetch(`/api/questions/${questionId}/submit`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                selectedOption: selectedOptionIndex
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        return result; // { correct: boolean, correctAnswer: number, explanation: string }
+    } catch (error) {
+        console.error('답 제출 중 오류가 발생했습니다:', error);
+        throw error;
+    }
+}
+
+// 마크다운 이미지 파싱 함수
+function parseMarkdownImages(content) {
+    const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+    const images = [];
+    let match;
+    
+    while ((match = imageRegex.exec(content)) !== null) {
+        images.push({
+            alt: match[1],
+            src: match[2]
+        });
+    }
+    
+    return images;
+}
+
+// 마크다운 텍스트를 HTML로 변환 (간단한 변환)
+function parseMarkdownToHtml(content) {
+    let html = content;
+    
+    // 이미지 변환
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, 
+        '<img src="$2" alt="$1" class="question-image" onclick="openImageModal(\'$2\', \'$1\')" style="max-width: 100%; height: auto; margin: 10px 0; border-radius: 8px; cursor: pointer; transition: transform 0.3s ease;" onmouseover="this.style.transform=\'scale(1.02)\'" onmouseout="this.style.transform=\'scale(1)\'">'
+    );
+    
+    // 볼드 텍스트 변환
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // 줄바꿈 변환
+    html = html.replace(/\n\n/g, '</p><p>');
+    html = html.replace(/\n/g, '<br>');
+    
+    // 단락으로 감싸기
+    if (!html.startsWith('<p>')) {
+        html = '<p>' + html + '</p>';
+    }
+    
+    return html;
+}
 
 // 퀴즈 상태 변수들
 let currentQuestionIndex = 0;
@@ -132,23 +106,56 @@ const finalScore = document.getElementById('finalScore');
 const finalTotal = document.getElementById('finalTotal');
 const scorePercentage = document.getElementById('scorePercentage');
 
+// 로딩 상태 표시
+function showLoading() {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loadingIndicator';
+    loadingDiv.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; padding: 20px;">
+            <div style="border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-right: 10px;"></div>
+            <span>퀴즈를 불러오는 중...</span>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    
+    // 기존 로딩 인디케이터가 있으면 제거
+    const existingLoading = document.getElementById('loadingIndicator');
+    if (existingLoading) {
+        existingLoading.remove();
+    }
+    
+    questionText.appendChild(loadingDiv);
+}
+
+function hideLoading() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        loadingIndicator.remove();
+    }
+}
+
 // 퀴즈 초기화
-function initQuiz() {
-    console.log('initQuiz() 실행됨'); // ← 이게 콘솔에 나오는지 확인
+async function initQuiz() {
+    console.log('initQuiz() 실행됨');
     currentQuestionIndex = 0;
     score = 0;
     selectedAnswer = null;
     isAnswered = false;
     
-    // 총 문제 수 업데이트 (HTML과 JavaScript 모두)
-    totalQuestionsSpan.textContent = quizData1.length;
-    finalTotal.textContent = quizData1.length;
+    // 총 문제 수 업데이트
+    totalQuestionsSpan.textContent = totalQuestions;
+    finalTotal.textContent = totalQuestions;
     
     // Thymeleaf가 설정하지 않은 경우를 위한 추가 업데이트
     const allTotalElements = document.querySelectorAll('[id*="totalQuestions"], [class*="total-questions"]');
     allTotalElements.forEach(el => {
         if (el.textContent === '10' || el.textContent === '') {
-            el.textContent = quizData.length;
+            el.textContent = totalQuestions;
         }
     });
     
@@ -156,71 +163,95 @@ function initQuiz() {
     finalResult.style.display = 'none';
     resultContainer.style.display = 'none';
     
-    loadQuestion();
+    await loadQuestion();
 }
 
-// 질문 로드
-function loadQuestion() {
-    const currentQuestion = quizData1[currentQuestionIndex];
-    
-    // 질문 애니메이션
-    questionText.style.opacity = '0';
-    questionText.style.transform = 'translateY(-20px)';
-    
-    setTimeout(() => {
-        questionText.textContent = currentQuestion.question;
-        questionText.style.transition = 'all 0.5s ease';
-        questionText.style.opacity = '1';
-        questionText.style.transform = 'translateY(0)';
-    }, 100);
-    
-    currentQuestionSpan.textContent = currentQuestionIndex + 1;
-    
-    // 진행률 업데이트 애니메이션
-    const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
-    setTimeout(() => {
-        progress.style.width = progressPercent + '%';
-    }, 300);
-    
-    // 선택지 생성 애니메이션
-    optionsContainer.style.opacity = '0';
-    optionsContainer.innerHTML = '';
-    
-    setTimeout(() => {
-        currentQuestion.options.forEach((option, index) => {
-            const optionElement = document.createElement('div');
-            optionElement.className = 'option';
-            optionElement.onclick = () => selectOption(index);
-            
-            const optionLabel = document.createElement('span');
-            optionLabel.className = 'option-label';
-            optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
-            
-            const optionText = document.createElement('span');
-            optionText.textContent = option;
-            
-            optionElement.appendChild(optionLabel);
-            optionElement.appendChild(optionText);
-            optionsContainer.appendChild(optionElement);
-        });
+// 질문 로드 (API 호출)
+async function loadQuestion() {
+    try {
+        showLoading();
         
-        optionsContainer.style.transition = 'opacity 0.3s ease';
-        optionsContainer.style.opacity = '1';
-    }, 200);
-    
-    // 상태 초기화
-    selectedAnswer = null;
-    isAnswered = false;
-    submitBtn.disabled = true;
-    submitBtn.textContent = '답 제출하기';
-    resultContainer.style.display = 'none';
-    
-    // 버튼 애니메이션
-    submitBtn.style.transform = 'scale(0.9)';
-    setTimeout(() => {
-        submitBtn.style.transition = 'all 0.3s ease';
-        submitBtn.style.transform = 'scale(1)';
-    }, 800);
+        // API에서 현재 문제 번호(1부터 시작)로 데이터 가져오기
+        const questionId = currentQuestionIndex + 1;
+        currentQuestion = await fetchQuestion(questionId);
+        
+        hideLoading();
+        
+        // 질문 애니메이션
+        questionText.style.opacity = '0';
+        questionText.style.transform = 'translateY(-20px)';
+        
+        setTimeout(() => {
+            // 마크다운 콘텐츠를 HTML로 변환하여 표시
+            questionText.innerHTML = parseMarkdownToHtml(currentQuestion.content);
+            questionText.style.transition = 'all 0.5s ease';
+            questionText.style.opacity = '1';
+            questionText.style.transform = 'translateY(0)';
+        }, 100);
+        
+        currentQuestionSpan.textContent = currentQuestionIndex + 1;
+        
+        // 진행률 업데이트 애니메이션
+        const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+        setTimeout(() => {
+            progress.style.width = progressPercent + '%';
+        }, 300);
+        
+        // 선택지 생성 애니메이션
+        optionsContainer.style.opacity = '0';
+        optionsContainer.innerHTML = '';
+        
+        setTimeout(() => {
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.onclick = () => selectOption(index);
+                
+                const optionLabel = document.createElement('span');
+                optionLabel.className = 'option-label';
+                optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+                
+                const optionText = document.createElement('span');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLabel);
+                optionElement.appendChild(optionText);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            optionsContainer.style.transition = 'opacity 0.3s ease';
+            optionsContainer.style.opacity = '1';
+        }, 200);
+        
+        // 상태 초기화
+        selectedAnswer = null;
+        isAnswered = false;
+        submitBtn.disabled = true;
+        submitBtn.textContent = '답 제출하기';
+        resultContainer.style.display = 'none';
+        
+        // 버튼 애니메이션
+        submitBtn.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            submitBtn.style.transition = 'all 0.3s ease';
+            submitBtn.style.transform = 'scale(1)';
+        }, 800);
+        
+    } catch (error) {
+        hideLoading();
+        console.error('문제를 불러오는 중 오류가 발생했습니다:', error);
+        
+        // 오류 메시지 표시
+        questionText.innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #e74c3c;">
+                <h3>❌ 문제를 불러올 수 없습니다</h3>
+                <p>네트워크 연결을 확인하거나 잠시 후 다시 시도해주세요.</p>
+                <button onclick="loadQuestion()" style="margin-top: 10px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    다시 시도
+                </button>
+            </div>
+        `;
+    }
 }
 
 // 선택지 선택
@@ -258,56 +289,76 @@ function selectOption(index) {
 }
 
 // 답 제출
-function submitAnswer() {
+async function submitAnswer() {
     if (selectedAnswer === null || isAnswered) return;
     
     isAnswered = true;
-    const currentQuestion = quizData1[currentQuestionIndex];
-    const isCorrect = selectedAnswer === currentQuestion.correct;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '제출 중...';
     
-    if (isCorrect) {
-        score++;
-    }
-    
-    // 모든 선택지에 결과 표시
-    const options = document.querySelectorAll('.option');
-    options.forEach((option, index) => {
-        option.classList.add('disabled');
-        if (index === currentQuestion.correct) {
-            option.classList.add('correct');
-        } else if (index === selectedAnswer && !isCorrect) {
-            option.classList.add('incorrect');
+    try {
+        // API에 답 제출
+        const questionId = currentQuestionIndex + 1;
+        const result = await submitAnswerToAPI(questionId, selectedAnswer);
+        
+        const isCorrect = result.correct;
+        const correctAnswer = result.correctAnswer;
+        
+        if (isCorrect) {
+            score++;
         }
-    });
-    
-    // 결과 메시지 표시
-    resultMessage.className = 'result-message ' + (isCorrect ? 'correct' : 'incorrect');
-    resultMessage.innerHTML = isCorrect ? 
-        '🎉 정답입니다!' : 
-        '❌ 틀렸습니다. 정답은 ' + String.fromCharCode(65 + currentQuestion.correct) + '번입니다.';
-    
-    // 해설 표시 (이미지 포함)
-    displayExplanation(currentQuestion);
-    
-    // 다음 버튼 텍스트 설정
-    if (currentQuestionIndex === quizData1.length - 1) {
-        nextBtn.textContent = '결과 보기';
-    } else {
-        nextBtn.textContent = '다음 문제';
+        
+        // 모든 선택지에 결과 표시
+        const options = document.querySelectorAll('.option');
+        options.forEach((option, index) => {
+            option.classList.add('disabled');
+            if (index === correctAnswer) {
+                option.classList.add('correct');
+            } else if (index === selectedAnswer && !isCorrect) {
+                option.classList.add('incorrect');
+            }
+        });
+        
+        // 결과 메시지 표시
+        resultMessage.className = 'result-message ' + (isCorrect ? 'correct' : 'incorrect');
+        resultMessage.innerHTML = isCorrect ? 
+            '🎉 정답입니다!' : 
+            '❌ 틀렸습니다. 정답은 ' + String.fromCharCode(65 + correctAnswer) + '번입니다.';
+        
+        // 해설 표시 (API에서 받은 해설 사용)
+        displayExplanationFromAPI(result.explanation);
+        
+        // 다음 버튼 텍스트 설정
+        if (currentQuestionIndex === totalQuestions - 1) {
+            nextBtn.textContent = '결과 보기';
+        } else {
+            nextBtn.textContent = '다음 문제';
+        }
+        
+        resultContainer.style.display = 'block';
+        submitBtn.style.display = 'none';
+        
+    } catch (error) {
+        console.error('답 제출 중 오류가 발생했습니다:', error);
+        
+        // 오류 시 UI 복원
+        isAnswered = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = '답 제출하기';
+        
+        // 오류 메시지 표시
+        alert('답 제출 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
-    
-    resultContainer.style.display = 'block';
-    submitBtn.style.display = 'none';
 }
 
 // 다음 문제 또는 결과 표시
-function nextQuestion() {
-    if (currentQuestionIndex === quizData1.length - 1) {
+async function nextQuestion() {
+    if (currentQuestionIndex === totalQuestions - 1) {
         showFinalResult();
     } else {
         currentQuestionIndex++;
         submitBtn.style.display = 'block';
-        loadQuestion();
+        await loadQuestion();
     }
 }
 
@@ -323,7 +374,7 @@ function showFinalResult() {
         // 점수 카운트업 애니메이션
         animateScore();
         
-        const percentage = Math.round((score / quizData1.length) * 100);
+        const percentage = Math.round((score / totalQuestions) * 100);
         
         // 백분율 카운트업 애니메이션
         animatePercentage(percentage);
@@ -413,7 +464,25 @@ function typeMessage(message) {
     }, 80);
 }
 
-// 해설 표시 함수 (이미지 지원)
+// API에서 받은 해설 표시 함수 (마크다운 지원)
+function displayExplanationFromAPI(explanationText) {
+    const explanationContent = document.getElementById('explanationContent');
+    
+    // 마크다운 텍스트를 HTML로 변환
+    const htmlContent = parseMarkdownToHtml(explanationText);
+    
+    explanationContent.innerHTML = htmlContent;
+    
+    // 이미지 클릭 시 확대 기능
+    const images = explanationContent.querySelectorAll('.question-image');
+    images.forEach(img => {
+        img.addEventListener('click', () => {
+            openImageModal(img.src, img.alt);
+        });
+    });
+}
+
+// 해설 표시 함수 (이미지 지원) - 기존 버전 (호환성을 위해 유지)
 function displayExplanation(question) {
     const explanationContent = document.getElementById('explanationContent');
     
@@ -588,8 +657,7 @@ document.addEventListener('keydown', (e) => {
     const keyMap = { 'KeyA': 0, 'KeyB': 1, 'KeyC': 2, 'KeyD': 3 };
     if (keyMap.hasOwnProperty(e.code)) {
         const optionIndex = keyMap[e.code];
-        const currentQuestion = quizData1[currentQuestionIndex];
-        if (optionIndex < currentQuestion.options.length) {
+        if (currentQuestion && optionIndex < currentQuestion.options.length) {
             selectOption(optionIndex);
         }
     }
