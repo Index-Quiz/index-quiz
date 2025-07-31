@@ -8,6 +8,7 @@ const MOCK_DATA = {
     questions: {
         1: {
             questionId: 1,
+            type: "SINGLE_CHOICE",
             content: "데이터베이스 인덱스의 주요 목적은 무엇입니까?\n\n인덱스는 데이터베이스에서 **검색 성능을 향상**시키는 중요한 자료구조입니다.\n\n다음 중 인덱스의 **주요 목적**으로 가장 적절한 것은?",
             options: [
                 "데이터의 저장 공간을 줄이기 위해서",
@@ -18,6 +19,7 @@ const MOCK_DATA = {
         },
         2: {
             questionId: 2,
+            type: "MULTIPLE_CHOICE",
             content: "B-Tree 인덱스의 특징으로 올바른 것은?\n\n**B-Tree 인덱스**는 데이터베이스에서 가장 널리 사용되는 인덱스 구조입니다.\n\n다음 중 B-Tree 인덱스에 대한 설명으로 **올바른 것**을 모두 선택하세요.",
             options: [
                 "모든 리프 노드가 같은 레벨에 위치한다",
@@ -299,19 +301,33 @@ async function loadQuestion() {
         optionsContainer.innerHTML = '';
         
                     setTimeout(() => {
-                // 다중 선택 안내 메시지 추가
+                // 문제 타입에 따른 안내 메시지 추가
                 const instructionDiv = document.createElement('div');
                 instructionDiv.className = 'selection-instruction';
-                instructionDiv.innerHTML = `
-                    <p style="font-size: 0.9rem; color: #b8c5d6; margin-bottom: 15px; text-align: center;">
-                        💡 <strong>선택지를 클릭하여 답을 선택하세요.</strong> 다중 선택이 가능합니다.
-                    </p>
-                `;
+                
+                const questionType = currentQuestion?.type || "MULTIPLE_CHOICE";
+                let instructionText = "";
+                
+                if (questionType === "SINGLE_CHOICE") {
+                    instructionText = `
+                        <p style="font-size: 0.9rem; color: #b8c5d6; margin-bottom: 15px; text-align: center;">
+                            💡 <strong>선택지를 클릭하여 답을 선택하세요.</strong> 하나만 선택할 수 있습니다.
+                        </p>
+                    `;
+                } else {
+                    instructionText = `
+                        <p style="font-size: 0.9rem; color: #b8c5d6; margin-bottom: 15px; text-align: center;">
+                            💡 <strong>선택지를 클릭하여 답을 선택하세요.</strong> 다중 선택이 가능합니다.
+                        </p>
+                    `;
+                }
+                
+                instructionDiv.innerHTML = instructionText;
                 optionsContainer.appendChild(instructionDiv);
                 
                 currentQuestion.options.forEach((option, index) => {
                     const optionElement = document.createElement('div');
-                    optionElement.className = 'option';
+                    optionElement.className = questionType === "SINGLE_CHOICE" ? 'option single-choice' : 'option';
                     optionElement.onclick = () => selectOption(index);
                     
                     const optionLabel = document.createElement('span');
@@ -361,33 +377,63 @@ async function loadQuestion() {
     }
 }
 
-// 선택지 선택 (다중 선택 지원)
+// 선택지 선택 (단일/다중 선택 지원)
 function selectOption(index) {
     if (isAnswered) return;
     
     const options = document.querySelectorAll('.option');
     const selectedOption = options[index];
+    const questionType = currentQuestion?.type || "MULTIPLE_CHOICE";
     
     // 이미 선택된 항목인지 확인
     const isAlreadySelected = selectedAnswers.includes(index);
     
-    if (isAlreadySelected) {
-        // 선택 해제
-        selectedAnswers = selectedAnswers.filter(i => i !== index);
-        selectedOption.classList.remove('selected');
-        selectedOption.style.transform = 'scale(1)';
+    if (questionType === "SINGLE_CHOICE") {
+        // 단일 선택: 기존 선택을 모두 해제하고 새로운 선택만 유지
+        if (isAlreadySelected) {
+            // 이미 선택된 항목을 다시 클릭하면 선택 해제
+            selectedAnswers = [];
+            selectedOption.classList.remove('selected');
+            selectedOption.style.transform = 'scale(1)';
+        } else {
+            // 모든 선택 해제
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+                opt.style.transform = 'scale(1)';
+            });
+            selectedAnswers = [index];
+            
+            // 새로운 선택 표시
+            selectedOption.classList.add('selected');
+            selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            selectedOption.style.transform = 'scale(1.02)';
+            
+            // 선택 피드백 효과
+            selectedOption.style.animation = 'pulse 0.6s ease';
+            setTimeout(() => {
+                selectedOption.style.animation = '';
+            }, 600);
+        }
     } else {
-        // 새로운 선택 추가
-        selectedAnswers.push(index);
-        selectedOption.classList.add('selected');
-        selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-        selectedOption.style.transform = 'scale(1.02)';
-        
-        // 선택 피드백 효과
-        selectedOption.style.animation = 'pulse 0.6s ease';
-        setTimeout(() => {
-            selectedOption.style.animation = '';
-        }, 600);
+        // 다중 선택: 기존 로직 유지
+        if (isAlreadySelected) {
+            // 선택 해제
+            selectedAnswers = selectedAnswers.filter(i => i !== index);
+            selectedOption.classList.remove('selected');
+            selectedOption.style.transform = 'scale(1)';
+        } else {
+            // 새로운 선택 추가
+            selectedAnswers.push(index);
+            selectedOption.classList.add('selected');
+            selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            selectedOption.style.transform = 'scale(1.02)';
+            
+            // 선택 피드백 효과
+            selectedOption.style.animation = 'pulse 0.6s ease';
+            setTimeout(() => {
+                selectedOption.style.animation = '';
+            }, 600);
+        }
     }
     
     // 선택된 답안 수에 따른 버튼 텍스트 업데이트
@@ -396,10 +442,13 @@ function selectOption(index) {
 
 // 제출 버튼 상태 업데이트
 function updateSubmitButton() {
+    const questionType = currentQuestion?.type || "MULTIPLE_CHOICE";
+    
     if (selectedAnswers.length === 0) {
         submitBtn.disabled = true;
         submitBtn.textContent = '답 선택하기';
-    } else if (selectedAnswers.length === 1) {
+    } else if (questionType === "SINGLE_CHOICE") {
+        // 단일 선택 문제
         submitBtn.disabled = false;
         submitBtn.textContent = '답 제출하기';
         // 버튼 활성화 애니메이션
@@ -408,8 +457,13 @@ function updateSubmitButton() {
             submitBtn.style.transform = 'scale(1)';
         }, 150);
     } else {
+        // 다중 선택 문제
         submitBtn.disabled = false;
-        submitBtn.textContent = `${selectedAnswers.length}개 답안 제출하기`;
+        if (selectedAnswers.length === 1) {
+            submitBtn.textContent = '답 제출하기';
+        } else {
+            submitBtn.textContent = `${selectedAnswers.length}개 답안 제출하기`;
+        }
         // 버튼 활성화 애니메이션
         submitBtn.style.transform = 'scale(1.05)';
         setTimeout(() => {
