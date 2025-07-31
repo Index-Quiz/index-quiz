@@ -44,7 +44,7 @@ const MOCK_DATA = {
             isCorrect: true,
             submittedAnswers: [2],
             correctAnswers: [2],
-            solution: "정답은 **2번**입니다.\n\n**A쿼리 (INSERT)**: `table_a`가 더 빠름\n- 인덱스가 없는 `table_a`는 단순히 데이터만 삽입하면 됩니다\n- 인덱스가 있는 `table_b`는 데이터 삽입 시 인덱스도 함께 업데이트해야 하므로 더 느립니다\n\n```sql\n-- table_b에서는 다음 인덱스들이 모두 업데이트됨\nINDEX idx_name (name)        -- name 컬럼 인덱스 업데이트\nINDEX idx_age_city (age, city)  -- age, city 복합 인덱스 업데이트\n```\n\n**B쿼리 (SELECT)**: `table_b`가 더 빠름\n- `table_b`는 `idx_name` 인덱스를 사용하여 빠르게 검색할 수 있습니다\n- `table_a`는 인덱스가 없어 전체 테이블을 스캔해야 합니다\n\n```sql\n-- table_b: 인덱스 스캔 (빠름)\nSELECT * FROM table_b WHERE name = 'Name12345';\n-- table_a: 풀 테이블 스캔 (느림)\nSELECT * FROM table_a WHERE name = 'Name12345';\n```"
+            solution: "## **정답**\n\n더보기\n\n1) A(insert) : table_a - B(select) : table_a\n\n**2) A(insert) : table_a - B(select) : table_b**\n\n3) A(insert) : table_b - B(select) : table_a\n\n4) A(insert) : table_b - B(select) : table_b\n\n## **해설**\n\n인덱스는 WHERE 절의 조건 탐색, ORDER BY 의 정렬, JOIN, 조회 등을 빠르게 수행할 수 있도록 도와주지만\n\n데이터가 추가되거나 변경될 때마다 인덱스도 갱신되어야 하므로 삽입·수정·삭제 연산이 느려질 수 있습니다.\n\n따라서 삽입 쿼리인 A에서는 인덱스가 설정되지 않은 table_a의 성능이 상대적으로 빠르며,\n\n조회 쿼리인 B에서는 인덱스를 활용하여 탐색하는 table_b의 성능이 상대적으로 빠릅니다.\n\n---\n\nDB 인덱스란 무엇일까요? DB 인덱스란 책의 인덱스(색인)과 같은 역할을 합니다.\n\n여기 한권의 책이 있습니다. 우리는 두꺼운 책에서 '가위', '나비', '두꺼비' 등의 단어를 찾고자 합니다. \n\n그럼 우리는 책을 한장한장 넘기며 단어를 찾아야합니다. 이 과정은 굉장한 시간이 필요합니다.\n\n![책에서 원하는 데이터를 찾기 힘든 경우의 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-1.png)\n\n그러나, 책에 인덱스(색인)이 붙어있다면 어떨까요?\n\n![책에 인덱스가 있을 때 데이터를 쉽게 찾는 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-2.png)\n\nㄱ 인덱스 -> 가위 찾기\n\nㄴ 인덱스 -> 나비 찾기\n\nㄷ 인덱스 -> 두꺼비 찾기\n\n처럼 우리가 원하는 데이터를 찾는 과정이 훨씬 수월할 것입니다.\n\n즉, **인덱스는 우리가 원하는 데이터를 찾고 조회하는 것을 쉽게 만들어줍니다.**\n\n그러나, 새로운 단어인 '라면'이 삽입되면 어떻게 될까요?\n\n![새로운 데이터를 삽입할 때 인덱스까지 갱신해야 하는 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-3.png)\n\n단순히 데이터를 추가하는 것이 아니라 데이터에 해당하는 인덱스(색인)까지 만들어주어야 합니다.\n\n데이터를 삭제할 때도 데이터 뿐만 아니라 그 데이터에 할당된 인덱스까지 삭제해주어야 합니다.\n\n데이터를 업데이트할 때도 데이터에 할당된 인덱스를 같이 갱신해주어야 하는 시간이 필요합니다.\n\n즉, 인덱스는 **데이터의 생성, 갱신, 삭제 시 데이터 뿐만이 아니라 인덱스의 생성, 갱신, 삭제를 위한 추가적인 시간이 필요**합니다. \n\n그럼 문제의 예제를 통해 위의 두가지 사실을 복습해보겠습니다.\n\n## **실습으로 확인하기**\n\n**1) 인덱스는 삽입,수정,삭제 연산의 성능이 느려질 수 있다.**\n\n실제로 10만건에서는 그 성능차이가 미미했으나 1000만건이 더미 데이터를 넣어 실험해본 결과입니다.\n\n| 테이블 | 삽입 쿼리 속도 |\n| --- | --- |\n| table_a(인덱스 X) | **268ms** |\n| table_b(인덱스 O) | 626ms |\n\n인덱스가 없는 table_a의 데이터 삽입 속도가 인덱스를 같이 생성해야 하는 table_b보다 더욱 빨랐습니다.\n\n**2) 인덱스는 조회 성능을 좋게 만들어준다.**\n\n반대로 이름을 활용한 조회 쿼리의 경우 인덱스를 활용한 table_b의 속도가 4배 가량 빨랐습니다.\n\n```sql\nSELECT * FROM 테이블 WHERE name = 'Name12345';\n```\n\n| 테이블 | 조회 쿼리 속도 |\n| --- | --- |\n| table_a(인덱스 X) | 36ms |\n| table_b(인덱스 O) | **9ms** |\n\ntable_b의 경우 인덱스를 활용해 빠르게 조회 대상인 데이터를 찾아갈 수 있었던 반면에\n\ntable_a의 경우 테이블 전체 데이터를 탐색하며 동등조건을 판단해야 했기 때문입니다.\n\n여기서 우리는 인덱스가 **빠른 조회를 도와주는 무언가** 임을 알 수 있습니다.\n\n반대로, **삽입-삭제-갱신이 빈번한 필드나 데이터의 경우에는 오히려 인덱스가 성능 병목 요인으로 작용할 수 있음**도 알 수 있습니다."
         }
     }
 };
@@ -186,11 +186,11 @@ function highlightSQL(code) {
     return highlightedCode;
 }
 
-// 마크다운 텍스트를 HTML로 변환 (개선된 변환)
+// 마크다운 텍스트를 HTML로 변환 (완전한 마크다운 지원)
 function parseMarkdownToHtml(content) {
     let html = content;
     
-    // 코드 블록 변환 (```언어\n코드\n``` 형식)
+    // 코드 블록 변환 (```언어\n코드\n``` 형식) - 먼저 처리하여 다른 변환과 충돌 방지
     html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
         const lang = language || '';
         const langClass = lang ? ` class="language-${lang}"` : '';
@@ -207,25 +207,69 @@ function parseMarkdownToHtml(content) {
         </div>`;
     });
     
-    // 인라인 코드 변환 (`코드` 형식)
-    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+    // 테이블 변환 (| 헤더 | 헤더 | 형식)
+    html = html.replace(/(\|.*\|\n\|.*\|\n(?:\|.*\|\n?)*)/g, (match) => {
+        const rows = match.trim().split('\n');
+        if (rows.length < 2) return match;
+        
+        const headerRow = rows[0];
+        const separatorRow = rows[1];
+        const dataRows = rows.slice(2);
+        
+        // 헤더 파싱
+        const headers = headerRow.split('|').map(h => h.trim()).filter(h => h);
+        
+        // 데이터 행 파싱
+        const dataRowsHtml = dataRows.map(row => {
+            const cells = row.split('|').map(c => c.trim()).filter(c => c);
+            return `<tr>${cells.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
+        }).join('');
+        
+        return `<div class="table-container">
+            <table class="markdown-table">
+                <thead>
+                    <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
+                </thead>
+                <tbody>
+                    ${dataRowsHtml}
+                </tbody>
+            </table>
+        </div>`;
+    });
+    
+    // 헤딩 변환 (## 헤딩)
+    html = html.replace(/^### (.*$)/gm, '<h3 class="markdown-h3">$1</h3>');
+    html = html.replace(/^## (.*$)/gm, '<h2 class="markdown-h2">$1</h2>');
+    html = html.replace(/^# (.*$)/gm, '<h1 class="markdown-h1">$1</h1>');
+    
+    // 구분선 변환 (---)
+    html = html.replace(/^---$/gm, '<hr class="markdown-divider">');
     
     // 이미지 변환
     html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, 
-        '<img src="$2" alt="$1" class="question-image" onclick="openImageModal(\'$2\', \'$1\')" style="max-width: 100%; height: auto; margin: 10px 0; border-radius: 8px; cursor: pointer; transition: transform 0.3s ease;" onmouseover="this.style.transform=\'scale(1.02)\'" onmouseout="this.style.transform=\'scale(1)\'">'
+        '<div class="image-container"><img src="$2" alt="$1" class="question-image" onclick="openImageModal(\'$2\', \'$1\')" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="this.style.opacity=\'1\';" style="opacity: 0; transition: opacity 0.5s ease;"><div class="image-placeholder" style="display: none;">📷 이미지를 불러올 수 없습니다</div></div>'
     );
     
+    // 인라인 코드 변환 (`코드` 형식)
+    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+    
     // 볼드 텍스트 변환
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>');
     
-    // 줄바꿈 변환 (코드 블록 내부는 제외)
-    html = html.replace(/\n\n/g, '</p><p>');
-    html = html.replace(/\n/g, '<br>');
-    
-    // 단락으로 감싸기
-    if (!html.startsWith('<p>')) {
-        html = '<p>' + html + '</p>';
-    }
+    // 줄바꿈을 단락으로 변환
+    html = html.split('\n\n').map(paragraph => {
+        paragraph = paragraph.trim();
+        if (!paragraph) return '';
+        
+        // 이미 HTML 태그로 시작하는 경우 그대로 반환
+        if (paragraph.startsWith('<h') || paragraph.startsWith('<div') || 
+            paragraph.startsWith('<hr') || paragraph.startsWith('<table')) {
+            return paragraph;
+        }
+        
+        // 일반 텍스트는 p 태그로 감싸기
+        return `<p class="markdown-paragraph">${paragraph.replace(/\n/g, '<br>')}</p>`;
+    }).join('');
     
     return html;
 }
