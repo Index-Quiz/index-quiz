@@ -1,10 +1,72 @@
 // API를 통한 퀴즈 데이터 관리
 let quizData = [];
-let totalQuestions = 10; // 기본값, API에서 동적으로 설정될 수 있음
+let totalQuestions = USE_MOCK_DATA ? 2 : 10; // 목데이터 사용 시 2문제, 실제 API는 10문제
 let currentQuestion = null;
+
+// 목데이터 (백엔드 개발 완료 전까지 사용)
+const MOCK_DATA = {
+    questions: {
+        1: {
+            questionId: 1,
+            content: "데이터베이스 인덱스의 주요 목적은 무엇입니까?\n\n인덱스는 데이터베이스에서 **검색 성능을 향상**시키는 중요한 자료구조입니다.\n\n다음 중 인덱스의 **주요 목적**으로 가장 적절한 것은?",
+            options: [
+                "데이터의 저장 공간을 줄이기 위해서",
+                "쿼리의 검색 속도를 향상시키기 위해서",
+                "데이터의 보안을 강화하기 위해서",
+                "데이터베이스의 백업을 용이하게 하기 위해서"
+            ]
+        },
+        2: {
+            questionId: 2,
+            content: "B-Tree 인덱스의 특징으로 올바른 것은?\n\n**B-Tree 인덱스**는 데이터베이스에서 가장 널리 사용되는 인덱스 구조입니다.\n\n다음 중 B-Tree 인덱스에 대한 설명으로 **올바른 것**을 모두 선택하세요.",
+            options: [
+                "모든 리프 노드가 같은 레벨에 위치한다",
+                "범위 검색에 적합하지 않다",
+                "삽입과 삭제 시 트리의 균형이 유지되지 않는다",
+                "정렬된 순서로 데이터를 유지한다"
+            ]
+        }
+    },
+    answers: {
+        1: {
+            questionId: 1,
+            isCorrect: true,
+            submittedAnswers: [2],
+            correctAnswers: [2],
+            solution: "정답은 **2번**입니다.\n\n인덱스의 주요 목적은 **쿼리의 검색 속도를 향상**시키는 것입니다.\n\n인덱스는 테이블의 특정 컬럼에 대한 빠른 접근 경로를 제공하여 데이터 검색 시간을 단축시킵니다.\n\n다른 선택지들은 다음과 같은 이유로 부적절합니다:\n- **1번**: 인덱스는 오히려 추가적인 저장 공간을 필요로 합니다\n- **3번**: 보안은 인덱스의 주요 목적이 아닙니다\n- **4번**: 백업과는 직접적인 관련이 없습니다"
+        },
+        2: {
+            questionId: 2,
+            isCorrect: false,
+            submittedAnswers: [1, 2],
+            correctAnswers: [1, 4],
+            solution: "정답은 **1번, 4번**입니다.\n\n**B-Tree 인덱스**의 올바른 특징들:\n\n**1번 - 모든 리프 노드가 같은 레벨에 위치한다** ✓\n- B-Tree는 균형 트리 구조로, 모든 리프 노드가 같은 레벨에 위치합니다\n- 이는 모든 검색 경로의 길이가 동일함을 보장합니다\n\n**4번 - 정렬된 순서로 데이터를 유지한다** ✓\n- B-Tree는 키 값에 따라 정렬된 순서를 유지합니다\n- 이로 인해 범위 검색과 정렬된 결과 조회가 효율적입니다\n\n**틀린 선택지들:**\n- **2번**: B-Tree는 범위 검색에 매우 적합합니다\n- **3번**: 삽입과 삭제 시에도 트리의 균형이 자동으로 유지됩니다"
+        }
+    }
+};
+
+// 목데이터 사용 여부 (개발 중에는 true, 프로덕션에서는 false)
+const USE_MOCK_DATA = true;
 
 // API 호출 함수
 async function fetchQuestion(questionId) {
+    // 목데이터 사용 시
+    if (USE_MOCK_DATA) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const mockQuestion = MOCK_DATA.questions[questionId];
+                if (mockQuestion) {
+                    console.log(`[MOCK] 문제 ${questionId} 조회:`, mockQuestion);
+                    resolve(mockQuestion);
+                } else {
+                    console.warn(`⚠️ [MOCK] 문제 ${questionId}에 대한 목데이터가 없습니다. 사용 가능한 문제: ${Object.keys(MOCK_DATA.questions).join(', ')}`);
+                    reject(new Error(`Mock data not found for question ${questionId}`));
+                }
+            }, 500); // 실제 API 호출처럼 지연 시뮬레이션
+        });
+    }
+    
+    // 실제 API 호출
     try {
         const response = await fetch(`/api/questions/${questionId}`);
         if (!response.ok) {
@@ -20,10 +82,32 @@ async function fetchQuestion(questionId) {
 
 // 답 제출 API 호출 함수 (다중 선택 지원)
 async function submitAnswerToAPI(questionId, selectedAnswers) {
+    // selectedAnswers 배열을 1부터 시작하는 인덱스로 변환
+    const choices = selectedAnswers.map(index => index + 1);
+    
+    // 목데이터 사용 시
+    if (USE_MOCK_DATA) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const mockAnswer = MOCK_DATA.answers[questionId];
+                if (mockAnswer) {
+                    // 실제 사용자의 답안으로 업데이트
+                    const result = {
+                        ...mockAnswer,
+                        submittedAnswers: choices,
+                        isCorrect: arraysEqual(choices.sort(), mockAnswer.correctAnswers.sort())
+                    };
+                    console.log(`[MOCK] 문제 ${questionId} 채점:`, result);
+                    resolve(result);
+                } else {
+                    reject(new Error(`Mock answer not found for question ${questionId}`));
+                }
+            }, 800); // 실제 API 호출처럼 지연 시뮬레이션
+        });
+    }
+    
+    // 실제 API 호출
     try {
-        // selectedAnswers 배열을 1부터 시작하는 인덱스로 변환
-        const choices = selectedAnswers.map(index => index + 1);
-        
         const response = await fetch(`/api/questions/${questionId}/userAnswers`, {
             method: 'POST',
             headers: {
@@ -44,6 +128,12 @@ async function submitAnswerToAPI(questionId, selectedAnswers) {
         console.error('답 제출 중 오류가 발생했습니다:', error);
         throw error;
     }
+}
+
+// 배열 비교 헬퍼 함수
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every((val, index) => val === b[index]);
 }
 
 // 마크다운 이미지 파싱 함수
@@ -145,6 +235,10 @@ function hideLoading() {
 // 퀴즈 초기화
 async function initQuiz() {
     console.log('initQuiz() 실행됨');
+    if (USE_MOCK_DATA) {
+        console.log('🧪 [MOCK MODE] 목데이터를 사용하여 퀴즈를 진행합니다.');
+        console.log('📝 총 문제 수:', totalQuestions);
+    }
     currentQuestionIndex = 0;
     score = 0;
     selectedAnswers = [];
