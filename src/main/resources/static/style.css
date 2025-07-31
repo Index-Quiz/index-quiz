@@ -89,7 +89,7 @@ header p {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     border-radius: 25px;
-    padding: 30px;
+    padding: 35px;
     box-shadow: 
         0 25px 50px rgba(0, 0, 0, 0.3),
         0 0 0 1px rgba(255, 255, 255, 0.1),
@@ -99,6 +99,7 @@ header p {
     position: relative;
     overflow: hidden;
     animation: slideInFromLeft 0.8s ease-out;
+    margin: 0 10px;
 }
 
 .quiz-container::before {
@@ -166,13 +167,19 @@ header p {
     color: #d1d9e6;
 }
 
+.question-container {
+    padding: 0 15px;
+    margin-bottom: 25px;
+}
+
 .question-container h2 {
     font-size: 1.3rem;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     color: #ffffff;
     text-align: left;
-    line-height: 1.5;
+    line-height: 1.6;
     font-weight: 500;
+    padding: 0 5px;
 }
 
 .options {
@@ -181,42 +188,82 @@ header p {
 
 /* 코드 블록 스타일 */
 .code-block {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    margin: 15px 0;
+    background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3a 100%);
+    border: 1px solid rgba(168, 216, 255, 0.2);
+    border-radius: 12px;
+    margin: 20px 0;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(168, 216, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .code-header {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 8px 15px;
-    font-size: 0.8rem;
-    font-weight: bold;
+    background: linear-gradient(90deg, rgba(168, 216, 255, 0.15), rgba(74, 222, 128, 0.15));
+    padding: 10px 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
     color: #a8d8ff;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(168, 216, 255, 0.2);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+}
+
+.code-header::before {
+    content: '◉ ◉ ◉';
+    color: rgba(255, 255, 255, 0.3);
+    margin-right: 10px;
+    font-size: 0.6rem;
 }
 
 .code-block pre {
     margin: 0;
-    padding: 15px;
+    padding: 20px;
     background: transparent;
     overflow-x: auto;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 0.9rem;
-    line-height: 1.4;
+    font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
 }
 
 .code-block code {
-    color: #e8f4fd;
+    color: #f8f8f2;
     background: transparent;
     padding: 0;
     border-radius: 0;
     font-family: inherit;
     white-space: pre;
+}
+
+/* SQL 문법 하이라이팅 */
+.language-sql {
+    color: #f8f8f2;
+}
+
+/* SQL 키워드 스타일링 */
+.code-block code {
+    background: transparent;
+}
+
+.code-block .sql-keyword {
+    color: #ff79c6;
+    font-weight: 600;
+}
+
+.code-block .sql-string {
+    color: #f1fa8c;
+}
+
+.code-block .sql-comment {
+    color: #6272a4;
+    font-style: italic;
+}
+
+.code-block .sql-number {
+    color: #bd93f9;
 }
 
 /* 인라인 코드 스타일 */

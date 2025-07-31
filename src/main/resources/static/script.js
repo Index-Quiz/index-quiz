@@ -1,5 +1,7 @@
+// 목데이터 사용 여부 (개발 중에는 true, 프로덕션에서는 false)
+const USE_MOCK_DATA = true;
+
 // API를 통한 퀴즈 데이터 관리
-let quizData = [];
 let totalQuestions = USE_MOCK_DATA ? 2 : 10; // 목데이터 사용 시 2문제, 실제 API는 10문제
 let currentQuestion = null;
 
@@ -46,9 +48,6 @@ const MOCK_DATA = {
         }
     }
 };
-
-// 목데이터 사용 여부 (개발 중에는 true, 프로덕션에서는 false)
-const USE_MOCK_DATA = true;
 
 // API 호출 함수
 async function fetchQuestion(questionId) {
@@ -154,6 +153,39 @@ function parseMarkdownImages(content) {
     return images;
 }
 
+// SQL 키워드 하이라이팅 함수
+function highlightSQL(code) {
+    const sqlKeywords = [
+        'SELECT', 'FROM', 'WHERE', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 'ALTER',
+        'TABLE', 'INDEX', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'CONSTRAINT',
+        'AUTO_INCREMENT', 'NOT', 'NULL', 'DEFAULT', 'UNIQUE', 'CHECK',
+        'AND', 'OR', 'IN', 'LIKE', 'BETWEEN', 'ORDER', 'BY', 'GROUP', 'HAVING',
+        'LIMIT', 'OFFSET', 'JOIN', 'LEFT', 'RIGHT', 'INNER', 'OUTER', 'ON',
+        'UNION', 'DISTINCT', 'AS', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END',
+        'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'CONCAT', 'FLOOR', 'RAND',
+        'VARCHAR', 'INT', 'BIGINT', 'DECIMAL', 'DATE', 'DATETIME', 'TIMESTAMP'
+    ];
+    
+    let highlightedCode = code;
+    
+    // SQL 키워드 하이라이팅
+    sqlKeywords.forEach(keyword => {
+        const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+        highlightedCode = highlightedCode.replace(regex, `<span class="sql-keyword">${keyword}</span>`);
+    });
+    
+    // 문자열 하이라이팅 ('문자열')
+    highlightedCode = highlightedCode.replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>');
+    
+    // 숫자 하이라이팅
+    highlightedCode = highlightedCode.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
+    
+    // 주석 하이라이팅 (-- 주석)
+    highlightedCode = highlightedCode.replace(/(--.*$)/gm, '<span class="sql-comment">$1</span>');
+    
+    return highlightedCode;
+}
+
 // 마크다운 텍스트를 HTML로 변환 (개선된 변환)
 function parseMarkdownToHtml(content) {
     let html = content;
@@ -162,9 +194,16 @@ function parseMarkdownToHtml(content) {
     html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
         const lang = language || '';
         const langClass = lang ? ` class="language-${lang}"` : '';
+        
+        // SQL 코드인 경우 하이라이팅 적용
+        let processedCode = code.trim();
+        if (lang.toLowerCase() === 'sql') {
+            processedCode = highlightSQL(processedCode);
+        }
+        
         return `<div class="code-block">
             ${lang ? `<div class="code-header">${lang.toUpperCase()}</div>` : ''}
-            <pre><code${langClass}>${code.trim()}</code></pre>
+            <pre><code${langClass}>${processedCode}</code></pre>
         </div>`;
     });
     
