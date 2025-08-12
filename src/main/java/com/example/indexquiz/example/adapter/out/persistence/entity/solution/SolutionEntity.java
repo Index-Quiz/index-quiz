@@ -29,5 +29,6 @@ public class SolutionEntity {
     private long questionId;
 
     @NotBlank
+    @Column(columnDefinition = "TEXT")
     private String description;
 }

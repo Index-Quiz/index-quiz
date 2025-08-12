@@ -1,6 +1,7 @@
 package com.example.indexquiz.example.adapter.out.persistence.entity.question;
 
 import com.example.indexquiz.example.domain.question.QuestionType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class QuestionEntity {
     private QuestionType type;
 
     @NotBlank
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private long order;
