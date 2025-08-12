@@ -36,7 +36,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
 
-	//MapStruct - 반드시 Lombok 뒤에 의존성이 추가될 것
+	// MapStruct - 반드시 Lombok 뒤에 의존성이 추가될 것
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 
