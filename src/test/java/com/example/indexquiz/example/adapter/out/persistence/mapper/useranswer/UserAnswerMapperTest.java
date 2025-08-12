@@ -28,7 +28,7 @@ class UserAnswerMapperTest extends BaseMapperTest {
                     () -> assertThat(userAnswerEntity.getId()).isEqualTo(userAnswer.getId()),
                     () -> assertThat(userAnswerEntity.getQuestionId()).isEqualTo(userAnswer.getQuestionId()),
                     () -> assertThat(userAnswerEntity.getOptionId()).isEqualTo(userAnswer.getOptionId()),
-                    () -> assertThat(userAnswerEntity.getSolutionId()).isEqualTo(userAnswer.getSolutionId())
+                    () -> assertThat(userAnswerEntity.getSubmitId()).isEqualTo(userAnswer.getSubmitId())
             );
         }
     }
@@ -46,7 +46,7 @@ class UserAnswerMapperTest extends BaseMapperTest {
                     () -> assertThat(userAnswer.getId()).isEqualTo(userAnswerEntity.getId()),
                     () -> assertThat(userAnswer.getQuestionId()).isEqualTo(userAnswerEntity.getQuestionId()),
                     () -> assertThat(userAnswer.getOptionId()).isEqualTo(userAnswerEntity.getOptionId()),
-                    () -> assertThat(userAnswer.getSolutionId()).isEqualTo(userAnswerEntity.getSolutionId())
+                    () -> assertThat(userAnswer.getSubmitId()).isEqualTo(userAnswerEntity.getSubmitId())
             );
         }
     }
