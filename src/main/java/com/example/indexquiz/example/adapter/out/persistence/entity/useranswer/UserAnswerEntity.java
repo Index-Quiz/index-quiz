@@ -33,6 +33,6 @@ public class UserAnswerEntity {
     private long optionId;
 
     @NotNull
-    @Column(name = "solution_id")
-    private long solutionId;
+    @Column(name = "submit_id")
+    private long submitId;
 }
