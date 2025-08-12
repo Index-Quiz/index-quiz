@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 public class Question {
 
     private final Long id;
+
     private final QuestionType type;
+
     private final String content;
+
     private final long order;
 }

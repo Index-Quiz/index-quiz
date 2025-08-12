@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 public class Answer {
 
     private final Long id;
+
     private final long questionId;
+
     private final long optionId;
 }
