@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,15 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "answer")
+@Table(
+        name = "answer",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_question_option",
+                        columnNames = {"question_id", "option_id"}
+                )
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class AnswerEntity {
