@@ -6,14 +6,19 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.example.indexquiz.example.adapter.out.persistence.entity.solution.SolutionEntity;
 import com.example.indexquiz.example.adapter.out.persistence.mapper.BaseMapperTest;
 import com.example.indexquiz.example.domain.solution.Solution;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mapstruct.factory.Mappers;
 
 class SolutionMapperTest extends BaseMapperTest {
 
-    @Autowired
     private SolutionMapper solutionMapper;
+
+    @BeforeEach
+    void setUp() {
+        solutionMapper = Mappers.getMapper(SolutionMapper.class);
+    }
 
     @Nested
     class MapToEntity {
