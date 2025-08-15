@@ -27,7 +27,7 @@ class QuestionOptionMapperTest extends BaseMapperTest {
         void 도메인에서_엔티티로_매핑할_수_있다() {
             QuestionOption questionOption = new QuestionOption(1L, 1L, "선택지 내용", 1L);
 
-            QuestionOptionEntity questionOptionEntity = questionOptionMapper.mapToEntity(questionOption);
+            QuestionOptionEntity questionOptionEntity = questionOptionMapper.mapToQuestionOptionEntity(questionOption);
 
             assertAll(
                     () -> assertThat(questionOptionEntity.getId()).isEqualTo(questionOption.getId()),
@@ -45,7 +45,7 @@ class QuestionOptionMapperTest extends BaseMapperTest {
         void 엔티티에서_도메인으로_매핑할_수_있다() {
             QuestionOptionEntity questionOptionEntity = new QuestionOptionEntity(1L, 1L, "선택지 내용", 1L);
 
-            QuestionOption questionOption = questionOptionMapper.mapToDomain(questionOptionEntity);
+            QuestionOption questionOption = questionOptionMapper.mapToQuestionOption(questionOptionEntity);
 
             assertAll(
                     () -> assertThat(questionOption.getId()).isEqualTo(questionOptionEntity.getId()),

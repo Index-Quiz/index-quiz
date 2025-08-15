@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfiguration.class)
 public interface SolutionMapper {
 
-    SolutionEntity mapToEntity(Solution solution);
+    SolutionEntity mapToSolutionEntity(Solution solution);
 
-    Solution mapToDomain(SolutionEntity solutionEntity);
+    Solution mapToSolution(SolutionEntity solutionEntity);
 }

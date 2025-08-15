@@ -28,7 +28,7 @@ class UserAnswerMapperTest extends BaseMapperTest {
         void 도메인에서_엔티티로_매핑할_수_있다() {
             UserAnswer userAnswer = new UserAnswer(1L, 1L, 1L, 1L);
 
-            UserAnswerEntity userAnswerEntity = userAnswerMapper.mapToEntity(userAnswer);
+            UserAnswerEntity userAnswerEntity = userAnswerMapper.mapToUserAnswerEntity(userAnswer);
 
             assertAll(
                     () -> assertThat(userAnswerEntity.getId()).isEqualTo(userAnswer.getId()),
@@ -46,7 +46,7 @@ class UserAnswerMapperTest extends BaseMapperTest {
         void 엔티티에서_도메인으로_매핑할_수_있다() {
             UserAnswerEntity userAnswerEntity = new UserAnswerEntity(1L, 1L, 1L, 1L);
 
-            UserAnswer userAnswer = userAnswerMapper.mapToDomain(userAnswerEntity);
+            UserAnswer userAnswer = userAnswerMapper.mapToUserAnswer(userAnswerEntity);
 
             assertAll(
                     () -> assertThat(userAnswer.getId()).isEqualTo(userAnswerEntity.getId()),

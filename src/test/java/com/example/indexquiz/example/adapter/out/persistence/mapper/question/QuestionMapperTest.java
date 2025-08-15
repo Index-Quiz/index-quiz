@@ -28,7 +28,7 @@ class QuestionMapperTest extends BaseMapperTest {
         void 도메인에서_엔티티로_매핑할_수_있다() {
             Question question = new Question(1L, QuestionType.SINGLE_CHOICE, "질문 내용", 1L);
 
-            QuestionEntity questionEntity = questionMapper.mapToEntity(question);
+            QuestionEntity questionEntity = questionMapper.mapToQuestionEntity(question);
 
             assertAll(
                     () -> assertThat(questionEntity.getId()).isEqualTo(question.getId()),
@@ -46,7 +46,7 @@ class QuestionMapperTest extends BaseMapperTest {
         void 엔티티에서_도메인으로_매핑할_수_있다() {
             QuestionEntity questionEntity = new QuestionEntity(1L, QuestionType.SINGLE_CHOICE, "질문 내용", 1L);
 
-            Question question = questionMapper.mapToDomain(questionEntity);
+            Question question = questionMapper.mapToQuestion(questionEntity);
 
             assertAll(
                     () -> assertThat(question.getId()).isEqualTo(questionEntity.getId()),

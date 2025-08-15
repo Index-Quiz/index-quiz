@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfiguration.class)
 public interface UserAnswerMapper {
 
-    UserAnswerEntity mapToEntity(UserAnswer userAnswer);
+    UserAnswerEntity mapToUserAnswerEntity(UserAnswer userAnswer);
 
-    UserAnswer mapToDomain(UserAnswerEntity userAnswerEntity);
+    UserAnswer mapToUserAnswer(UserAnswerEntity userAnswerEntity);
 }

@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfiguration.class)
 public interface QuestionMapper {
 
-    QuestionEntity mapToEntity(Question question);
+    QuestionEntity mapToQuestionEntity(Question question);
 
-    Question mapToDomain(QuestionEntity questionEntity);
+    Question mapToQuestion(QuestionEntity questionEntity);
 }

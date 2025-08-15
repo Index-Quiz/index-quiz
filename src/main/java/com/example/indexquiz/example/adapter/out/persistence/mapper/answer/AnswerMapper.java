@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfiguration.class)
 public interface AnswerMapper {
 
-    AnswerEntity mapToEntity(Answer answer);
+    AnswerEntity mapToAnswerEntity(Answer answer);
 
-    Answer mapToDomain(AnswerEntity answerEntity);
+    Answer mapToAnswer(AnswerEntity answerEntity);
 }
