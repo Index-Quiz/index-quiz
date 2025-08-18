@@ -1,7 +1,7 @@
 package com.example.indexquiz.question.adapter.in.web;
 
-import com.example.indexquiz.question.adapter.in.web.dto.GetQuestionResponse;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
+import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

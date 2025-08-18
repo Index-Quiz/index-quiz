@@ -1,7 +1,7 @@
 package com.example.indexquiz.question.application.service;
 
-import com.example.indexquiz.question.adapter.in.web.dto.GetQuestionResponse;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
+import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
 import com.example.indexquiz.question.application.port.out.GetQuestionPort;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
 import lombok.RequiredArgsConstructor;

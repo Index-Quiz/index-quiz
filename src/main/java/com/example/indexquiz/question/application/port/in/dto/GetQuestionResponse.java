@@ -1,4 +1,4 @@
-package com.example.indexquiz.question.adapter.in.web.dto;
+package com.example.indexquiz.question.application.port.in.dto;
 
 import com.example.indexquiz.question.domain.QuestionType;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
