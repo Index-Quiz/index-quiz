@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class QuestionPersistenceAdapter implements GetQuestionPort {
+public class GetQuestionPersistenceAdapter implements GetQuestionPort {
 
     private final QuestionJpaRepository questionJpaRepository;
 
