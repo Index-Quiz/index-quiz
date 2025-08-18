@@ -1,7 +1,7 @@
 package com.example.indexquiz.useranswer.adapter.out.mapper;
 
-import com.example.indexquiz.useranswer.adapter.out.persistence.UserAnswerEntity;
 import com.example.indexquiz.common.mapper.MapperConfiguration;
+import com.example.indexquiz.useranswer.adapter.out.persistence.UserAnswerEntity;
 import com.example.indexquiz.useranswer.domain.UserAnswer;
 import org.mapstruct.Mapper;
 

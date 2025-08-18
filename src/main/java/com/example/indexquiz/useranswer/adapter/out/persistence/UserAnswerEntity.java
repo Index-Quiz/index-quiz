@@ -34,5 +34,5 @@ public class UserAnswerEntity {
 
     @NotNull
     @Column(name = "submit_id")
-    private long submitId;
+    private String submitId;
 }
