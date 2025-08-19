@@ -28,32 +28,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> handleBindingException(BindException exception) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.FIELD_ERROR);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException exception) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.URL_PARAMETER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException exception) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.METHOD_ARGUMENT_TYPE_MISMATCH);
     }
 
     @ExceptionHandler(ClientAbortException.class)
     public ResponseEntity<ErrorResponse> handleClientAbortException(ClientAbortException exception) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.ALREADY_DISCONNECTED);
     }
 
     @ExceptionHandler(AsyncRequestNotUsableException.class)
     public ResponseEntity<ErrorResponse> handleAsyncError(AsyncRequestNotUsableException exception) {
-        loggingError(exception);
+        loggingClientError(exception);
         if (isClientDisconnect(exception.getCause())) {
             return toResponse(ErrorCode.ALREADY_DISCONNECTED);
         }
@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(
             HttpRequestMethodNotSupportedException exception
     ) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.METHOD_NOT_SUPPORTED);
     }
 
@@ -78,43 +78,51 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleHttpMediaTypeNotSupportedException(
             HttpMediaTypeNotSupportedException exception
     ) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.MEDIA_TYPE_NOT_SUPPORTED);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException exception) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.NO_RESOURCE_FOUND);
     }
 
     @ExceptionHandler(MissingRequestCookieException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestCookieException(MissingRequestCookieException exception) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.NO_COOKIE_FOUND);
     }
 
     @ExceptionHandler(MultipartException.class)
     public ResponseEntity<ErrorResponse> handleMultipartException(MultipartException exception) {
-        loggingError(exception);
+        loggingClientError(exception);
         return toResponse(ErrorCode.FILE_UPLOAD_ERROR);
     }
 
     @ExceptionHandler(IndexQuizException.class)
-    public ResponseEntity<ErrorResponse> handleClientException(IndexQuizException exception) {
-        loggingError(exception);
+    public ResponseEntity<ErrorResponse> handleApplicationException(IndexQuizException exception) {
+        if (exception.getErrorCode().getStatus().is4xxClientError()) {
+            loggingClientError(exception);
+        }
+        loggingServerError(exception);
         return toResponse(exception.getErrorCode());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        loggingError(exception);
+        loggingServerError(exception);
         return toResponse(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
-    private void loggingError(Exception exception) {
+    private void loggingClientError(Exception exception) {
         log.warn("exception message: {}", exception.getMessage());
     }
+
+    private void loggingServerError(Exception exception) {
+        log.error("exception message: {}", exception.getMessage());
+    }
+
 
     private ResponseEntity<ErrorResponse> toResponse(ErrorCode errorCode) {
         HttpStatus status = errorCode.getStatus();
