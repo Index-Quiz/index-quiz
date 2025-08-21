@@ -5,8 +5,8 @@ import org.mapstruct.ReportingPolicy;
 
 @MapperConfig(
         componentModel = "spring",
-        unmappedSourcePolicy = ReportingPolicy.ERROR,
-        unmappedTargetPolicy = ReportingPolicy.ERROR
+        unmappedSourcePolicy = ReportingPolicy.IGNORE,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface MapperConfiguration {
 
