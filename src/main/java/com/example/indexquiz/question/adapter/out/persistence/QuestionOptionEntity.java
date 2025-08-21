@@ -32,5 +32,5 @@ public class QuestionOptionEntity {
     @NotBlank
     private String content;
 
-    private long order;
+    private long optionOrder;
 }

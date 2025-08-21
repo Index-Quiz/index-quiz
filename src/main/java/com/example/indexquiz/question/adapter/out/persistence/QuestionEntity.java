@@ -32,5 +32,5 @@ public class QuestionEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private long order;
+    private long questionOrder;
 }

@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.indexquiz.BaseMapperTest;
-import com.example.indexquiz.question.adapter.out.mapper.QuestionMapper;
 import com.example.indexquiz.question.adapter.out.persistence.QuestionEntity;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionType;
@@ -35,7 +34,7 @@ class QuestionMapperTest extends BaseMapperTest {
                     () -> assertThat(questionEntity.getId()).isEqualTo(question.getId()),
                     () -> assertThat(questionEntity.getType()).isEqualTo(question.getType()),
                     () -> assertThat(questionEntity.getContent()).isEqualTo(question.getContent()),
-                    () -> assertThat(questionEntity.getOrder()).isEqualTo(question.getOrder())
+                    () -> assertThat(questionEntity.getQuestionOrder()).isEqualTo(question.getOrder())
             );
         }
     }
@@ -53,7 +52,7 @@ class QuestionMapperTest extends BaseMapperTest {
                     () -> assertThat(question.getId()).isEqualTo(questionEntity.getId()),
                     () -> assertThat(question.getType()).isEqualTo(questionEntity.getType()),
                     () -> assertThat(question.getContent()).isEqualTo(questionEntity.getContent()),
-                    () -> assertThat(question.getOrder()).isEqualTo(questionEntity.getOrder())
+                    () -> assertThat(question.getOrder()).isEqualTo(questionEntity.getQuestionOrder())
             );
         }
     }
