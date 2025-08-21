@@ -1,10 +1,13 @@
 package com.example.indexquiz.question.adapter.out.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.indexquiz.BaseRepositoryTest;
 import com.example.indexquiz.common.EntityFixture;
+import com.example.indexquiz.common.exception.custom.IndexQuizException;
+import com.example.indexquiz.common.exception.errorcode.ErrorCode;
 import com.example.indexquiz.question.adapter.out.mapper.QuestionMapperImpl;
 import com.example.indexquiz.question.adapter.out.mapper.QuestionOptionMapperImpl;
 import com.example.indexquiz.question.domain.Question;
@@ -57,6 +60,14 @@ class GetQuestionPersistenceAdapterTest extends BaseRepositoryTest {
                                     .toList())
 
             );
+        }
+
+        @Test
+        void 존재하지_않는_질문의_경우_예외를_반환한다() {
+            // when & then
+            assertThatThrownBy(() -> getQuestionPersistenceAdapter.getQuestionWithOptions(1L))
+                    .isInstanceOf(IndexQuizException.class)
+                    .hasMessage(ErrorCode.QUESTION_NOT_FOUND.getMessage());
         }
     }
 }

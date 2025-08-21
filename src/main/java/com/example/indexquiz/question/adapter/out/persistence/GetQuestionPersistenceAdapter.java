@@ -1,5 +1,7 @@
 package com.example.indexquiz.question.adapter.out.persistence;
 
+import com.example.indexquiz.common.exception.custom.IndexQuizException;
+import com.example.indexquiz.common.exception.errorcode.ErrorCode;
 import com.example.indexquiz.question.adapter.out.mapper.QuestionMapper;
 import com.example.indexquiz.question.adapter.out.mapper.QuestionOptionMapper;
 import com.example.indexquiz.question.application.port.out.GetQuestionPort;
@@ -26,7 +28,7 @@ public class GetQuestionPersistenceAdapter implements GetQuestionPort {
     public QuestionWithOptions getQuestionWithOptions(long questionId) {
         Question question = questionJpaRepository.findById(questionId)
                 .map(questionMapper::mapToQuestion)
-                .orElseThrow(IllegalStateException::new); // TODO: change to IndexQuestionException when #21 merge.
+                .orElseThrow(() -> new IndexQuizException(ErrorCode.QUESTION_NOT_FOUND));
         List<QuestionOption> options = questionOptionJpaRepository.findAllByQuestionId(question.getId())
                 .stream()
                 .map(questionOptionMapper::mapToQuestionOption)
