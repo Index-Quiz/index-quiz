@@ -32,7 +32,6 @@ public class GetQuestionPersistenceAdapter implements GetQuestionPort {
         List<QuestionOption> options = questionOptionJpaRepository.findAllByQuestionId(question.getId())
                 .stream()
                 .map(questionOptionMapper::mapToQuestionOption)
-                .sorted(QuestionOption.getDefaultComparator())
                 .toList();
         return new QuestionWithOptions(question, options);
     }

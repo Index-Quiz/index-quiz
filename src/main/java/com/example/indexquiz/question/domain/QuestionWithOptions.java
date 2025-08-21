@@ -10,11 +10,16 @@ public class QuestionWithOptions {
 
     private final Question question;
 
-    private final List<QuestionOption> options;
+    private final QuestionOptions options;
 
     public List<String> getOptionContents() {
-        return options.stream()
+        return options.getQuestionOptions().stream()
                 .map(QuestionOption::getContent)
                 .toList();
+    }
+
+    public QuestionWithOptions(Question question, List<QuestionOption> options) {
+        this.question = question;
+        this.options = new QuestionOptions(options);
     }
 }
