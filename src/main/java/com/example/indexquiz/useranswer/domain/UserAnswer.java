@@ -1,11 +1,10 @@
 package com.example.indexquiz.useranswer.domain;
 
+import com.example.indexquiz.common.mapper.Default;
 import java.util.UUID;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class UserAnswer {
 
     private final Long id;
@@ -18,5 +17,13 @@ public class UserAnswer {
 
     public UserAnswer(long questionId, long optionId) {
         this(null, questionId, optionId, UUID.randomUUID().toString());
+    }
+
+    @Default
+    public UserAnswer(Long id, long questionId, long optionId, String submitId) {
+        this.id = id;
+        this.questionId = questionId;
+        this.optionId = optionId;
+        this.submitId = submitId;
     }
 }
