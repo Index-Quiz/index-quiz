@@ -9,7 +9,6 @@ import com.example.indexquiz.question.domain.QuestionWithOptions;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +23,6 @@ public class GetQuestionPersistenceAdapter implements GetQuestionPort {
     private final QuestionOptionMapper questionOptionMapper;
 
     @Override
-    @Transactional(readOnly = true)
     public QuestionWithOptions getQuestionWithOptions(long questionId) {
         Question question = questionJpaRepository.findById(questionId)
                 .map(questionMapper::mapToQuestion)

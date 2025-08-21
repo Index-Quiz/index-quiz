@@ -7,7 +7,6 @@ import com.example.indexquiz.question.application.port.out.QuestionWithOptionsMa
 import com.example.indexquiz.question.domain.QuestionWithOptions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +17,6 @@ public class QuestionService implements QuestionUseCase {
     private final QuestionWithOptionsMapper questionWithOptionsMapper;
 
     @Override
-    @Transactional(readOnly = true)
     public GetQuestionResponse getQuestion(long questionId) {
         QuestionWithOptions questionWithOptions = getQuestionPort.getQuestionWithOptions(questionId);
         return questionWithOptionsMapper.mapToGetQuestionResponse(questionWithOptions);
