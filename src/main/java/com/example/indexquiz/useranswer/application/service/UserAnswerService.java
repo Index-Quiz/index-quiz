@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class UserAnswerService implements UserAnswerUseCase {
     private final GetQuestionPort getQuestionPort;
 
     @Override
-    @Transactional
     public void saveUserAnswers(long questionId, SaveUserAnswerRequest request) {
         QuestionWithOptions questionWithOptions = getQuestionPort.getQuestionWithOptions(questionId);
         validateQuestionOptionsValid(questionWithOptions.getOptions(), request.options());

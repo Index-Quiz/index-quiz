@@ -16,4 +16,8 @@ public class QuestionWithOptions {
     public QuestionWithOptions(Question question, List<QuestionOption> options) {
         this(question, new QuestionOptions(options));
     }
+
+    public List<QuestionOption> getOptions() {
+        return options.getQuestionOptions();
+    }
 }

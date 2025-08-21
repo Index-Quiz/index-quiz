@@ -51,7 +51,7 @@ class GetQuestionPersistenceAdapterTest extends BaseRepositoryTest {
 
             // then
             Question actualQuestion = actual.getQuestion();
-            List<QuestionOption> actualOptions = actual.getOptions().getQuestionOptions();
+            List<QuestionOption> actualOptions = actual.getOptions();
             assertAll(
                     () -> assertThat(actualQuestion.getId()).isEqualTo(savedQuestion.getId()),
                     () -> assertThat(actualOptions.stream().map(QuestionOption::getId).toList())

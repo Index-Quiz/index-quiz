@@ -6,7 +6,6 @@ import com.example.indexquiz.useranswer.domain.UserAnswer;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +16,6 @@ public class UserAnswerPersistenceAdapter implements SaveUserAnswerPort {
     private final UserAnswerMapper userAnswerMapper;
 
     @Override
-    @Transactional
     public void saveUserAnswers(List<UserAnswer> userAnswers) {
         List<UserAnswerEntity> userAnswerEntities = userAnswers.stream()
                 .map(userAnswerMapper::mapToUserAnswerEntity)
