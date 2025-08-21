@@ -1,4 +1,4 @@
-package com.example.indexquiz.question.adapter.out.mapper;
+package com.example.indexquiz.question.application.port.out;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.example.indexquiz.BaseMapperTest;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionOptionResponse;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
-import com.example.indexquiz.question.application.port.out.QuestionWithOptionsMapper;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;
 import com.example.indexquiz.question.domain.QuestionType;
