@@ -8,13 +8,13 @@ public record GetQuestionResponse(
         long id,
         QuestionType type,
         String content,
-        List<String> options
+        List<GetQuestionOptionResponse> options
 ) {
 
     public GetQuestionResponse(QuestionWithOptions questionWithOptions) {
         this(questionWithOptions.getQuestion().getId(),
                 questionWithOptions.getQuestion().getType(),
                 questionWithOptions.getQuestion().getContent(),
-                questionWithOptions.getOptionContents());
+                questionWithOptions.getOptions().stream().map(GetQuestionOptionResponse::new).toList());
     }
 }
