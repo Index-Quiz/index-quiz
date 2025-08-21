@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/api")
+@RestController("/api/questions")
 @RequiredArgsConstructor
 public class QuestionController {
 
     private final QuestionUseCase questionUseCase;
 
-    @GetMapping("/questions/{questionId}")
-    public GetQuestionResponse getQuestion(@PathVariable long questionId) {
+    @GetMapping("/{questionId}")
+    public GetQuestionResponse getQuestion(@PathVariable(name = "questionId") long questionId) {
         return questionUseCase.getQuestion(questionId);
     }
 }
