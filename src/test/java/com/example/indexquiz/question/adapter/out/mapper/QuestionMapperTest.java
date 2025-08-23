@@ -34,7 +34,7 @@ class QuestionMapperTest extends BaseMapperTest {
                     () -> assertThat(questionEntity.getId()).isEqualTo(question.getId()),
                     () -> assertThat(questionEntity.getType()).isEqualTo(question.getType()),
                     () -> assertThat(questionEntity.getContent()).isEqualTo(question.getContent()),
-                    () -> assertThat(questionEntity.getQuestionOrder()).isEqualTo(question.getOrder())
+                    () -> assertThat(questionEntity.getQuestionOrder()).isEqualTo(question.getQuestionOrder())
             );
         }
     }
@@ -52,7 +52,7 @@ class QuestionMapperTest extends BaseMapperTest {
                     () -> assertThat(question.getId()).isEqualTo(questionEntity.getId()),
                     () -> assertThat(question.getType()).isEqualTo(questionEntity.getType()),
                     () -> assertThat(question.getContent()).isEqualTo(questionEntity.getContent()),
-                    () -> assertThat(question.getOrder()).isEqualTo(questionEntity.getQuestionOrder())
+                    () -> assertThat(question.getQuestionOrder()).isEqualTo(questionEntity.getQuestionOrder())
             );
         }
     }

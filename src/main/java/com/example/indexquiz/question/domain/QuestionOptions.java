@@ -8,7 +8,7 @@ import lombok.Getter;
 public class QuestionOptions {
 
     private static final Comparator<QuestionOption> DEFAULT_COMPARATOR = Comparator
-            .comparingLong(QuestionOption::getOrder);
+            .comparingLong(QuestionOption::getOptionOrder);
 
     private final List<QuestionOption> questionOptions;
 

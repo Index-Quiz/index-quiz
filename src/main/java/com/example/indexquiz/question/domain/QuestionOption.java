@@ -13,5 +13,5 @@ public class QuestionOption {
 
     private final String content;
 
-    private final long order;
+    private final long optionOrder;
 }

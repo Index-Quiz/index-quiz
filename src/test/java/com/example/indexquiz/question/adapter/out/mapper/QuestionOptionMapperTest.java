@@ -33,7 +33,7 @@ class QuestionOptionMapperTest extends BaseMapperTest {
                     () -> assertThat(questionOptionEntity.getId()).isEqualTo(questionOption.getId()),
                     () -> assertThat(questionOptionEntity.getQuestionId()).isEqualTo(questionOption.getQuestionId()),
                     () -> assertThat(questionOptionEntity.getContent()).isEqualTo(questionOption.getContent()),
-                    () -> assertThat(questionOptionEntity.getOptionOrder()).isEqualTo(questionOption.getOrder())
+                    () -> assertThat(questionOptionEntity.getOptionOrder()).isEqualTo(questionOption.getOptionOrder())
             );
         }
     }
@@ -51,7 +51,7 @@ class QuestionOptionMapperTest extends BaseMapperTest {
                     () -> assertThat(questionOption.getId()).isEqualTo(questionOptionEntity.getId()),
                     () -> assertThat(questionOption.getQuestionId()).isEqualTo(questionOptionEntity.getQuestionId()),
                     () -> assertThat(questionOption.getContent()).isEqualTo(questionOptionEntity.getContent()),
-                    () -> assertThat(questionOption.getOrder()).isEqualTo(questionOptionEntity.getOptionOrder())
+                    () -> assertThat(questionOption.getOptionOrder()).isEqualTo(questionOptionEntity.getOptionOrder())
             );
         }
     }
