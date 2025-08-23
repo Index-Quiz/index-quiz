@@ -1,6 +1,5 @@
 package com.example.indexquiz.useranswer.adapter.out.persistence;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
