@@ -175,8 +175,34 @@ public class ConventionTest {
     @Nested
     class AnnotationTest {
 
-        //규칙1. Controller는 @RestController가 붙어있어야 한다
-        //규칙2. Service는 @Service가 붙어있어야 한다.
+        @Test
+        void 컨트롤러에는_RestController_어노테이션이_붙어있어야_한다() {
+            JavaClasses importedClasses = new ClassFileImporter()
+                    .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                    .importPackages("com.example.indexquiz");
 
+            ArchRule rule = ArchRuleDefinition.classes()
+                    .that()
+                    .haveSimpleNameEndingWith("Controller")
+                    .should()
+                    .beAnnotatedWith(RestController.class);
+
+            rule.check(importedClasses);
+        }
+
+        @Test
+        void 서비스는_Service_어노테이션이_붙어있어야_한다() {
+            JavaClasses importedClasses = new ClassFileImporter()
+                    .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                    .importPackages("com.example.indexquiz");
+
+            ArchRule rule = ArchRuleDefinition.classes()
+                    .that()
+                    .haveSimpleNameEndingWith("Service")
+                    .should()
+                    .beAnnotatedWith(Service.class);
+
+            rule.check(importedClasses);
+        }
     }
 }
