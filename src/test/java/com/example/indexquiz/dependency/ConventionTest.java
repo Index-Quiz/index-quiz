@@ -120,7 +120,7 @@ public class ConventionTest {
                     .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                     .importPackages("com.example.indexquiz");
 
-            ArchRule rule  = ArchRuleDefinition.classes()
+            ArchRule rule = ArchRuleDefinition.classes()
                     .that()
                     .areAnnotatedWith(Entity.class)
                     .should()
@@ -136,7 +136,7 @@ public class ConventionTest {
                     .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
                     .importPackages("com.example.indexquiz");
 
-            ArchRule rule  = ArchRuleDefinition.classes()
+            ArchRule rule = ArchRuleDefinition.classes()
                     .that()
                     .areAnnotatedWith(RestController.class)
                     .should()
@@ -235,7 +235,6 @@ public class ConventionTest {
 
             sliceRule.check(importedClasses);
         }
-
     }
 
     @Nested
