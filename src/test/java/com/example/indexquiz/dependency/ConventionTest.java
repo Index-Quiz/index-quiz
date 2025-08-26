@@ -251,7 +251,9 @@ public class ConventionTest {
                     .that()
                     .haveSimpleNameEndingWith("Controller")
                     .should()
-                    .beAnnotatedWith(RestController.class);
+                    .beAnnotatedWith(RestController.class)
+                    .orShould()
+                    .beAnnotatedWith(Controller.class);
 
             rule.check(importedClasses);
         }
