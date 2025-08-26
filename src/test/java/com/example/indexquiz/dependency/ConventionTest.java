@@ -8,8 +8,10 @@ import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import com.tngtech.archunit.library.dependencies.SliceRule;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 import jakarta.persistence.Entity;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -147,10 +149,74 @@ public class ConventionTest {
 
     @Nested
     class NamingRuleTest {
-        //규칙1. UseCase는 *UserCase로 이름이 끝나야 한다
-        //규칙2. Port는 *Port로 이름이 끝나야 한다
-        //규칙3. Service는 *Service로 이름이 끝나야 한다
-        //규칙4. Controller는 *Controller로 이름이 끝나야 한다
+
+        @Test
+        void 유즈케이스는_UserCase로_네이밍이_끝나야한다() {
+            JavaClasses importedClasses = new ClassFileImporter()
+                    .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                    .importPackages("com.example.indexquiz");
+
+            ArchRule rule = ArchRuleDefinition.classes()
+                    .that()
+                    .resideInAPackage("..port.in..")
+                    .and()
+                    .areInterfaces()
+                    .should()
+                    .haveSimpleNameEndingWith("UseCase");
+
+            rule.check(importedClasses);
+        }
+
+        @Test
+        @Disabled
+        void 포트는_Port로_네이밍이_끝나야한다() {
+
+            //TODO QuestionWithOptionsMapper 위치 논의 필요
+            JavaClasses importedClasses = new ClassFileImporter()
+                    .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                    .importPackages("com.example.indexquiz");
+
+            ArchRule rule = ArchRuleDefinition.classes()
+                    .that()
+                    .resideInAPackage("..port.out..")
+                    .and()
+                    .areInterfaces()
+                    .should()
+                    .haveSimpleNameEndingWith("Port");
+
+            rule.check(importedClasses);
+        }
+
+        @Test
+        void 서비스는_Service로_네이밍이_끝나야한다() {
+            JavaClasses importedClasses = new ClassFileImporter()
+                    .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                    .importPackages("com.example.indexquiz");
+
+            ArchRule rule = ArchRuleDefinition.classes()
+                    .that()
+                    .areAnnotatedWith(Service.class)
+                    .should()
+                    .haveSimpleNameEndingWith("Service");
+
+            rule.check(importedClasses);
+        }
+
+        @Test
+        void 컨트롤러는_Controller로_네이밍이_끝나야한다() {
+            JavaClasses importedClasses = new ClassFileImporter()
+                    .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                    .importPackages("com.example.indexquiz");
+
+            ArchRule rule = ArchRuleDefinition.classes()
+                    .that()
+                    .areAnnotatedWith(RestController.class)
+                    .or().areAnnotatedWith(Controller.class)
+                    .should()
+                    .haveSimpleNameEndingWith("Controller");
+
+            rule.check(importedClasses);
+        }
     }
 
     @Nested
