@@ -1,118 +1,283 @@
-// DB 인덱스 퀴즈 데이터
-const quizData1 = [
-    {
-        question: "데이터베이스 인덱스의 주요 목적은 무엇입니까?",
-        options: [
-            "데이터의 저장 공간을 줄이기 위해서",
-            "쿼리의 검색 속도를 향상시키기 위해서",
-            "데이터의 보안을 강화하기 위해서",
-            "데이터베이스의 백업을 용이하게 하기 위해서"
-        ],
-        correct: 1,
-        explanation: "인덱스의 주요 목적은 쿼리의 검색 속도를 향상시키는 것입니다. 인덱스는 테이블의 특정 컬럼에 대한 빠른 접근 경로를 제공하여 데이터 검색 시간을 단축시킵니다."
+// 목데이터 사용 여부 (개발 중에는 true, 프로덕션에서는 false)
+const USE_MOCK_DATA = true;
+
+// API를 통한 퀴즈 데이터 관리
+let totalQuestions = USE_MOCK_DATA ? 2 : 10; // 목데이터 사용 시 2문제, 실제 API는 10문제
+let currentQuestion = null;
+
+// 목데이터 (백엔드 개발 완료 전까지 사용)
+const MOCK_DATA = {
+    questions: {
+        1: {
+            questionId: 1,
+            type: "SINGLE_CHOICE",
+            content: "데이터베이스 인덱스의 주요 목적은 무엇입니까?\n\n인덱스는 데이터베이스에서 **검색 성능을 향상**시키는 중요한 자료구조입니다.\n\n다음 중 인덱스의 **주요 목적**으로 가장 적절한 것은?",
+            options: [
+                "데이터의 저장 공간을 줄이기 위해서",
+                "쿼리의 검색 속도를 향상시키기 위해서",
+                "데이터의 보안을 강화하기 위해서",
+                "데이터베이스의 백업을 용이하게 하기 위해서"
+            ]
+        },
+        2: {
+            questionId: 2,
+            type: "SINGLE_CHOICE",
+            content: "다음과 같이 인덱스가 없는 `table_a`와 인덱스가 설정된 `table_b`가 있습니다.\n\n```sql\nCREATE TABLE table_a (\n    id BIGINT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(255),\n    age INT,\n    city VARCHAR(255)\n);\n\nCREATE TABLE table_b(\n    id BIGINT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(255),\n    age INT,\n    city VARCHAR(255),\n    INDEX idx_name (name),\n    INDEX idx_age_city (age, city)\n);\n```\n\n다음 두 쿼리를 실행했을 때 각각 **어느 테이블에서 더 빠른 성능을 보이는지** 고르세요.\n\n```sql\n-- A쿼리: 10만 건의 더미 데이터를 삽입\nINSERT INTO 테이블 (name, age, city)\nSELECT \n    CONCAT('NewName', FLOOR(RAND() * 1000000)),\n    FLOOR(RAND() * 100),\n    CONCAT('NewCity', FLOOR(RAND() * 1000))\nFROM\n    (SELECT 1 FROM information_schema.tables LIMIT 100000) a;\n\n-- B쿼리: 특정 name 값 검색\nSELECT * FROM 테이블 WHERE name = 'Name12345';\n```",
+            options: [
+                "A(insert) : table_a - B(select) : table_a",
+                "A(insert) : table_a - B(select) : table_b",
+                "A(insert) : table_b - B(select) : table_a",
+                "A(insert) : table_b - B(select) : table_b"
+            ]
+        }
     },
-    {
-        question: "B-Tree 인덱스의 특징으로 올바른 것은?",
-        options: [
-            "모든 리프 노드가 같은 레벨에 위치한다",
-            "범위 검색에 적합하지 않다",
-            "삽입과 삭제 시 트리의 균형이 유지되지 않는다"
-        ],
-        correct: 0,
-        explanation: "B-Tree 인덱스는 균형 트리 구조로, 모든 리프 노드가 같은 레벨에 위치합니다. 이는 모든 검색 경로의 길이가 동일함을 보장하여 일관된 성능을 제공합니다."
-    },
-    {
-        question: "다음 중 인덱스를 생성하면 성능 향상을 기대할 수 있는 경우는?",
-        options: [
-            "WHERE 절에서 자주 사용되는 컬럼",
-            "ORDER BY 절에서 자주 사용되는 컬럼",
-            "JOIN 조건에서 자주 사용되는 컬럼",
-            "위의 모든 경우"
-        ],
-        correct: 3,
-        explanation: "WHERE, ORDER BY, JOIN 조건에서 자주 사용되는 컬럼들은 모두 인덱스를 생성했을 때 성능 향상을 기대할 수 있습니다. 이러한 절들은 데이터 접근 패턴을 결정하기 때문입니다."
-    },
-    {
-        question: "클러스터드 인덱스(Clustered Index)의 특징은?",
-        options: [
-            "테이블당 여러 개 생성할 수 있다",
-            "실제 데이터의 물리적 순서를 결정한다",
-            "별도의 저장 공간이 필요하다"
-        ],
-        correct: 1,
-        explanation: "클러스터드 인덱스는 실제 데이터의 물리적 순서를 결정합니다. 테이블당 하나만 생성할 수 있으며, 데이터 페이지 자체가 인덱스의 리프 노드 역할을 합니다."
-    },
-    {
-        question: "다음 중 인덱스 사용을 방해하는 WHERE 조건은?",
-        options: [
-            "WHERE age = 25",
-            "WHERE name LIKE 'John%'",
-            "WHERE UPPER(name) = 'JOHN'",
-            "WHERE age BETWEEN 20 AND 30"
-        ],
-        correct: 2,
-        explanation: "WHERE UPPER(name) = 'JOHN'과 같이 컬럼에 함수를 적용하면 인덱스 사용이 방해됩니다. 옵티마이저가 함수 결과를 예측할 수 없어 인덱스 스캔 대신 풀 테이블 스캔을 수행할 가능성이 높습니다."
-    },
-    {
-        question: "복합 인덱스(Composite Index)에서 컬럼 순서가 중요한 이유는?",
-        options: [
-            "저장 공간을 절약하기 위해서",
-            "인덱스 스캔의 효율성을 높이기 위해서",
-            "데이터 타입 호환성을 위해서",
-            "백업 속도를 향상시키기 위해서"
-        ],
-        correct: 1,
-        explanation: "복합 인덱스에서 컬럼 순서는 인덱스 스캔의 효율성에 직접적인 영향을 미칩니다. 선택도가 높은 컬럼을 앞에 배치하면 더 효율적인 검색이 가능합니다."
-    },
-    {
-        question: "인덱스의 단점으로 올바른 것은?",
-        options: [
-            "추가적인 저장 공간이 필요하다",
-            "INSERT, UPDATE, DELETE 작업이 느려질 수 있다",
-            "인덱스 유지 관리 비용이 발생한다",
-            "위의 모든 것"
-        ],
-        correct: 3,
-        explanation: "인덱스는 추가 저장 공간을 필요로 하고, 데이터 변경 시 인덱스도 함께 갱신되어야 하므로 DML 작업이 느려질 수 있으며, 지속적인 유지 관리가 필요합니다."
-    },
-    {
-        question: "해시 인덱스(Hash Index)의 특징은?",
-        options: [
-            "범위 검색에 매우 효율적이다",
-            "등등 비교(=) 검색에 매우 빠르다",
-            "ORDER BY 절에서 정렬을 피할 수 있다",
-            "B-Tree보다 저장 공간을 많이 사용한다"
-        ],
-        correct: 1,
-        explanation: "해시 인덱스는 등등 비교(=) 검색에서 O(1)의 시간복잡도로 매우 빠른 성능을 제공합니다. 하지만 범위 검색이나 정렬에는 적합하지 않습니다."
-    },
-    {
-        question: "다음 중 인덱스 힌트(Index Hint)를 사용하는 이유는?",
-        options: [
-            "옵티마이저의 잘못된 실행 계획을 수정하기 위해",
-            "인덱스 생성 속도를 높이기 위해",
-            "메모리 사용량을 줄이기 위해"
-        ],
-        correct: 0,
-        explanation: "인덱스 힌트는 옵티마이저가 잘못된 실행 계획을 선택했을 때, 개발자가 직접 사용할 인덱스를 지정하여 성능을 개선하기 위해 사용됩니다."
-    },
-    {
-        question: "인덱스 스캔 방식 중 'Index Full Scan'의 특징은?",
-        options: [
-            "인덱스의 루트에서 리프까지만 스캔한다",
-            "인덱스의 모든 리프 블록을 순차적으로 읽는다",
-            "특정 키 값만을 찾아서 스캔한다",
-            "인덱스를 역순으로 스캔한다"
-        ],
-        correct: 1,
-        explanation: "Index Full Scan은 인덱스의 모든 리프 블록을 순차적으로 읽는 방식입니다. 주로 인덱스에 포함된 모든 컬럼이 SELECT나 WHERE 절에서 사용될 때 발생합니다."
+    answers: {
+        1: {
+            questionId: 1,
+            isCorrect: true,
+            submittedAnswers: [2],
+            correctAnswers: [2],
+            solution: "정답은 **2번**입니다.\n\n인덱스의 주요 목적은 **쿼리의 검색 속도를 향상**시키는 것입니다.\n\n인덱스는 테이블의 특정 컬럼에 대한 빠른 접근 경로를 제공하여 데이터 검색 시간을 단축시킵니다.\n\n다른 선택지들은 다음과 같은 이유로 부적절합니다:\n- **1번**: 인덱스는 오히려 추가적인 저장 공간을 필요로 합니다\n- **3번**: 보안은 인덱스의 주요 목적이 아닙니다\n- **4번**: 백업과는 직접적인 관련이 없습니다"
+        },
+        2: {
+            questionId: 2,
+            isCorrect: true,
+            submittedAnswers: [2],
+            correctAnswers: [2],
+            solution: "## **정답**\n\n1) A(insert) : table_a - B(select) : table_a  \n**2) A(insert) : table_a - B(select) : table_b**  \n3) A(insert) : table_b - B(select) : table_a  \n4) A(insert) : table_b - B(select) : table_b  \n\n---\n\n## **해설**\n\n인덱스는 `WHERE` 절의 조건 탐색, `ORDER BY` 의 정렬, `JOIN`, **조회 성능을 빠르게 수행**할 수 있도록 도와줍니다.  \n하지만 **데이터가 추가·수정·삭제될 때마다 인덱스도 갱신**되어야 하므로, 삽입·수정·삭제 연산은 느려질 수 있습니다.\n\n따라서:\n\n- **삽입 쿼리(A)** → 인덱스가 없는 **`table_a`**가 더 빠름  \n- **조회 쿼리(B)** → 인덱스를 활용할 수 있는 **`table_b`**가 더 빠름  \n\n---\n\n## **DB 인덱스란?**\n\nDB 인덱스는 **책의 색인과 같은 역할**을 합니다.\n\n예를 들어, 두꺼운 책에서 **'가위', '나비', '두꺼비'**를 찾으려면?  \n인덱스가 없다면 책을 **한 장씩 넘기며 찾는** 시간이 필요합니다.\n\n![책에서 원하는 데이터를 찾기 힘든 경우의 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-1.png)\n\n하지만 인덱스(색인)가 있다면?\n\n![책에 인덱스가 있을 때 데이터를 쉽게 찾는 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-2.png)\n\n- ㄱ 인덱스 → 가위 찾기  \n- ㄴ 인덱스 → 나비 찾기  \n- ㄷ 인덱스 → 두꺼비 찾기  \n\n즉, **인덱스는 원하는 데이터를 빠르게 찾고 조회**할 수 있게 도와줍니다.\n\n---\n\n## **인덱스가 삽입·수정·삭제에 미치는 영향**\n\n새로운 단어 **'라면'**을 삽입하면?  \n\n![새로운 데이터를 삽입할 때 인덱스까지 갱신해야 하는 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-3.png)\n\n단순히 데이터를 추가하는 것이 아니라,  \n**해당 데이터에 맞는 인덱스도 새로 만들어야 합니다.**\n\n- 데이터 **삭제** → 데이터 + 인덱스도 삭제  \n- 데이터 **수정** → 데이터 + 인덱스도 갱신  \n\n즉, 인덱스는 **생성·갱신·삭제 시 추가 시간이 필요**합니다.\n\n---\n\n## **실습으로 확인하기**\n\n### 1) 인덱스가 있는 경우 삽입 속도는 느려진다\n10만 건은 차이가 미미했지만, **1천만 건** 더미 데이터를 넣어보니:\n\n| 테이블 | 삽입 쿼리 속도 |\n| :---: | :---: |\n| **table_a (인덱스 X)** | **268ms** |\n| table_b (인덱스 O) | 626ms |\n\n→ **인덱스 없는 `table_a`**가 더 빠름.\n\n---\n\n### 2) 인덱스가 있는 경우 조회 속도는 빨라진다\n\n이름으로 조회하는 쿼리:\n\n```sql\nSELECT * FROM 테이블 WHERE name = 'Name12345';\n```\n\n결과:\n\n| 테이블 | 조회 쿼리 속도 |\n| :---: | :---: |\n| table_a (인덱스 X) | 36ms |\n| **table_b (인덱스 O)** | **9ms** |\n\n→ **인덱스 있는 `table_b`**가 4배 빠름.\n\n---\n\n즉, 인덱스는 **빠른 조회**를 도와주지만,  \n**삽입·삭제·갱신이 잦은 경우에는 오히려 성능 병목이 될 수 있음**도 알 수 있습니다."
+        }
     }
-];
+};
+
+// API 호출 함수
+async function fetchQuestion(questionId) {
+    // 목데이터 사용 시
+    if (USE_MOCK_DATA) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const mockQuestion = MOCK_DATA.questions[questionId];
+                if (mockQuestion) {
+                    console.log(`[MOCK] 문제 ${questionId} 조회:`, mockQuestion);
+                    resolve(mockQuestion);
+                } else {
+                    console.warn(`⚠️ [MOCK] 문제 ${questionId}에 대한 목데이터가 없습니다. 사용 가능한 문제: ${Object.keys(MOCK_DATA.questions).join(', ')}`);
+                    reject(new Error(`Mock data not found for question ${questionId}`));
+                }
+            }, 500); // 실제 API 호출처럼 지연 시뮬레이션
+        });
+    }
+    
+    // 실제 API 호출
+    try {
+        const response = await fetch(`/api/questions/${questionId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const questionData = await response.json();
+        return questionData;
+    } catch (error) {
+        console.error('퀴즈 데이터를 불러오는 중 오류가 발생했습니다:', error);
+        throw error;
+    }
+}
+
+// 답 제출 API 호출 함수 (다중 선택 지원)
+async function submitAnswerToAPI(questionId, selectedAnswers) {
+    // selectedAnswers 배열을 1부터 시작하는 인덱스로 변환
+    const choices = selectedAnswers.map(index => index + 1);
+    
+    // 목데이터 사용 시
+    if (USE_MOCK_DATA) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const mockAnswer = MOCK_DATA.answers[questionId];
+                if (mockAnswer) {
+                    // 실제 사용자의 답안으로 업데이트
+                    const result = {
+                        ...mockAnswer,
+                        submittedAnswers: choices,
+                        isCorrect: arraysEqual(choices.sort(), mockAnswer.correctAnswers.sort())
+                    };
+                    console.log(`[MOCK] 문제 ${questionId} 채점:`, result);
+                    resolve(result);
+                } else {
+                    reject(new Error(`Mock answer not found for question ${questionId}`));
+                }
+            }, 800); // 실제 API 호출처럼 지연 시뮬레이션
+        });
+    }
+    
+    // 실제 API 호출
+    try {
+        const response = await fetch(`/api/questions/${questionId}/userAnswers`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                choices: choices
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        return result; // { questionId, isCorrect, submittedAnswers, correctAnswers, solution }
+    } catch (error) {
+        console.error('답 제출 중 오류가 발생했습니다:', error);
+        throw error;
+    }
+}
+
+// 배열 비교 헬퍼 함수
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every((val, index) => val === b[index]);
+}
+
+// 마크다운 이미지 파싱 함수
+function parseMarkdownImages(content) {
+    const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+    const images = [];
+    let match;
+    
+    while ((match = imageRegex.exec(content)) !== null) {
+        images.push({
+            alt: match[1],
+            src: match[2]
+        });
+    }
+    
+    return images;
+}
+
+// SQL 키워드 하이라이팅 함수
+function highlightSQL(code) {
+    const sqlKeywords = [
+        'SELECT', 'FROM', 'WHERE', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 'ALTER',
+        'TABLE', 'INDEX', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'CONSTRAINT',
+        'AUTO_INCREMENT', 'NOT', 'NULL', 'DEFAULT', 'UNIQUE', 'CHECK',
+        'AND', 'OR', 'IN', 'LIKE', 'BETWEEN', 'ORDER', 'BY', 'GROUP', 'HAVING',
+        'LIMIT', 'OFFSET', 'JOIN', 'LEFT', 'RIGHT', 'INNER', 'OUTER', 'ON',
+        'UNION', 'DISTINCT', 'AS', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END',
+        'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'CONCAT', 'FLOOR', 'RAND',
+        'VARCHAR', 'INT', 'BIGINT', 'DECIMAL', 'DATE', 'DATETIME', 'TIMESTAMP'
+    ];
+    
+    let highlightedCode = code;
+    
+    // SQL 키워드 하이라이팅
+    sqlKeywords.forEach(keyword => {
+        const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+        highlightedCode = highlightedCode.replace(regex, `<span class="sql-keyword">${keyword}</span>`);
+    });
+    
+    // 문자열 하이라이팅 ('문자열')
+    highlightedCode = highlightedCode.replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>');
+    
+    // 숫자 하이라이팅
+    highlightedCode = highlightedCode.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
+    
+    // 주석 하이라이팅 (-- 주석)
+    highlightedCode = highlightedCode.replace(/(--.*$)/gm, '<span class="sql-comment">$1</span>');
+    
+    return highlightedCode;
+}
+
+// 마크다운 텍스트를 HTML로 변환 (완전한 마크다운 지원)
+function parseMarkdownToHtml(content) {
+    let html = content;
+    
+    // 코드 블록 변환 (```언어\n코드\n``` 형식) - 먼저 처리하여 다른 변환과 충돌 방지
+    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
+        const lang = language || '';
+        const langClass = lang ? ` class="language-${lang}"` : '';
+        
+        // SQL 코드인 경우 하이라이팅 적용
+        let processedCode = code.trim();
+        if (lang.toLowerCase() === 'sql') {
+            processedCode = highlightSQL(processedCode);
+        }
+        
+        return `<div class="code-block">
+            ${lang ? `<div class="code-header">${lang.toUpperCase()}</div>` : ''}
+            <pre><code${langClass}>${processedCode}</code></pre>
+        </div>`;
+    });
+    
+    // 테이블 변환 (| 헤더 | 헤더 | 형식)
+    html = html.replace(/(\|.*\|\n\|.*\|\n(?:\|.*\|\n?)*)/g, (match) => {
+        const rows = match.trim().split('\n');
+        if (rows.length < 2) return match;
+        
+        const headerRow = rows[0];
+        const separatorRow = rows[1];
+        const dataRows = rows.slice(2);
+        
+        // 헤더 파싱
+        const headers = headerRow.split('|').map(h => h.trim()).filter(h => h);
+        
+        // 데이터 행 파싱
+        const dataRowsHtml = dataRows.map(row => {
+            const cells = row.split('|').map(c => c.trim()).filter(c => c);
+            return `<tr>${cells.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
+        }).join('');
+        
+        return `<div class="table-container">
+            <table class="markdown-table">
+                <thead>
+                    <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
+                </thead>
+                <tbody>
+                    ${dataRowsHtml}
+                </tbody>
+            </table>
+        </div>`;
+    });
+    
+    // 헤딩 변환 (## 헤딩)
+    html = html.replace(/^### (.*$)/gm, '<h3 class="markdown-h3">$1</h3>');
+    html = html.replace(/^## (.*$)/gm, '<h2 class="markdown-h2">$1</h2>');
+    html = html.replace(/^# (.*$)/gm, '<h1 class="markdown-h1">$1</h1>');
+    
+    // 구분선 변환 (---)
+    html = html.replace(/^---$/gm, '<hr class="markdown-divider">');
+    
+    // 이미지 변환
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, 
+        '<div class="image-container"><img src="$2" alt="$1" class="question-image" onclick="openImageModal(\'$2\', \'$1\')" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="this.style.opacity=\'1\';" style="opacity: 0; transition: opacity 0.5s ease;"><div class="image-placeholder" style="display: none;">📷 이미지를 불러올 수 없습니다</div></div>'
+    );
+    
+    // 인라인 코드 변환 (`코드` 형식)
+    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+    
+    // 볼드 텍스트 변환
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>');
+    
+    // 줄바꿈을 단락으로 변환
+    html = html.split('\n\n').map(paragraph => {
+        paragraph = paragraph.trim();
+        if (!paragraph) return '';
+        
+        // 이미 HTML 태그로 시작하는 경우 그대로 반환
+        if (paragraph.startsWith('<h') || paragraph.startsWith('<div') || 
+            paragraph.startsWith('<hr') || paragraph.startsWith('<table')) {
+            return paragraph;
+        }
+        
+        // 일반 텍스트는 p 태그로 감싸기
+        return `<p class="markdown-paragraph">${paragraph.replace(/\n/g, '<br>')}</p>`;
+    }).join('');
+    
+    return html;
+}
 
 // 퀴즈 상태 변수들
 let currentQuestionIndex = 0;
 let score = 0;
-let selectedAnswer = null;
+let selectedAnswers = []; // 다중 선택 지원을 위해 배열로 변경
 let isAnswered = false;
 
 // DOM 요소들
@@ -132,23 +297,60 @@ const finalScore = document.getElementById('finalScore');
 const finalTotal = document.getElementById('finalTotal');
 const scorePercentage = document.getElementById('scorePercentage');
 
+// 로딩 상태 표시
+function showLoading() {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loadingIndicator';
+    loadingDiv.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; padding: 20px;">
+            <div style="border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-right: 10px;"></div>
+            <span>퀴즈를 불러오는 중...</span>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    
+    // 기존 로딩 인디케이터가 있으면 제거
+    const existingLoading = document.getElementById('loadingIndicator');
+    if (existingLoading) {
+        existingLoading.remove();
+    }
+    
+    questionText.appendChild(loadingDiv);
+}
+
+function hideLoading() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        loadingIndicator.remove();
+    }
+}
+
 // 퀴즈 초기화
-function initQuiz() {
-    console.log('initQuiz() 실행됨'); // ← 이게 콘솔에 나오는지 확인
+async function initQuiz() {
+    console.log('initQuiz() 실행됨');
+    if (USE_MOCK_DATA) {
+        console.log('🧪 [MOCK MODE] 목데이터를 사용하여 퀴즈를 진행합니다.');
+        console.log('📝 총 문제 수:', totalQuestions);
+    }
     currentQuestionIndex = 0;
     score = 0;
-    selectedAnswer = null;
+    selectedAnswers = [];
     isAnswered = false;
     
-    // 총 문제 수 업데이트 (HTML과 JavaScript 모두)
-    totalQuestionsSpan.textContent = quizData1.length;
-    finalTotal.textContent = quizData1.length;
+    // 총 문제 수 업데이트
+    totalQuestionsSpan.textContent = totalQuestions;
+    finalTotal.textContent = totalQuestions;
     
     // Thymeleaf가 설정하지 않은 경우를 위한 추가 업데이트
     const allTotalElements = document.querySelectorAll('[id*="totalQuestions"], [class*="total-questions"]');
     allTotalElements.forEach(el => {
         if (el.textContent === '10' || el.textContent === '') {
-            el.textContent = quizData.length;
+            el.textContent = totalQuestions;
         }
     });
     
@@ -156,158 +358,297 @@ function initQuiz() {
     finalResult.style.display = 'none';
     resultContainer.style.display = 'none';
     
-    loadQuestion();
+    await loadQuestion();
 }
 
-// 질문 로드
-function loadQuestion() {
-    const currentQuestion = quizData1[currentQuestionIndex];
-    
-    // 질문 애니메이션
-    questionText.style.opacity = '0';
-    questionText.style.transform = 'translateY(-20px)';
-    
-    setTimeout(() => {
-        questionText.textContent = currentQuestion.question;
-        questionText.style.transition = 'all 0.5s ease';
-        questionText.style.opacity = '1';
-        questionText.style.transform = 'translateY(0)';
-    }, 100);
-    
-    currentQuestionSpan.textContent = currentQuestionIndex + 1;
-    
-    // 진행률 업데이트 애니메이션
-    const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
-    setTimeout(() => {
-        progress.style.width = progressPercent + '%';
-    }, 300);
-    
-    // 선택지 생성 애니메이션
-    optionsContainer.style.opacity = '0';
-    optionsContainer.innerHTML = '';
-    
-    setTimeout(() => {
-        currentQuestion.options.forEach((option, index) => {
-            const optionElement = document.createElement('div');
-            optionElement.className = 'option';
-            optionElement.onclick = () => selectOption(index);
-            
-            const optionLabel = document.createElement('span');
-            optionLabel.className = 'option-label';
-            optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
-            
-            const optionText = document.createElement('span');
-            optionText.textContent = option;
-            
-            optionElement.appendChild(optionLabel);
-            optionElement.appendChild(optionText);
-            optionsContainer.appendChild(optionElement);
-        });
+// 질문 로드 (API 호출)
+async function loadQuestion() {
+    try {
+        showLoading();
         
-        optionsContainer.style.transition = 'opacity 0.3s ease';
-        optionsContainer.style.opacity = '1';
-    }, 200);
-    
-    // 상태 초기화
-    selectedAnswer = null;
-    isAnswered = false;
-    submitBtn.disabled = true;
-    submitBtn.textContent = '답 제출하기';
-    resultContainer.style.display = 'none';
-    
-    // 버튼 애니메이션
-    submitBtn.style.transform = 'scale(0.9)';
-    setTimeout(() => {
-        submitBtn.style.transition = 'all 0.3s ease';
-        submitBtn.style.transform = 'scale(1)';
-    }, 800);
+        // API에서 현재 문제 번호(1부터 시작)로 데이터 가져오기
+        const questionId = currentQuestionIndex + 1;
+        currentQuestion = await fetchQuestion(questionId);
+        
+        hideLoading();
+        
+        // 질문 애니메이션
+        questionText.style.opacity = '0';
+        questionText.style.transform = 'translateY(-20px)';
+        
+        setTimeout(() => {
+            // 마크다운 콘텐츠를 HTML로 변환하여 표시
+            questionText.innerHTML = parseMarkdownToHtml(currentQuestion.content);
+            questionText.style.transition = 'all 0.5s ease';
+            questionText.style.opacity = '1';
+            questionText.style.transform = 'translateY(0)';
+        }, 100);
+        
+        currentQuestionSpan.textContent = currentQuestionIndex + 1;
+        
+        // 진행률 업데이트 애니메이션
+        const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+        setTimeout(() => {
+            progress.style.width = progressPercent + '%';
+        }, 300);
+        
+        // 선택지 생성 애니메이션
+        optionsContainer.style.opacity = '0';
+        optionsContainer.innerHTML = '';
+        
+                    setTimeout(() => {
+                // 문제 타입에 따른 안내 메시지 추가
+                const instructionDiv = document.createElement('div');
+                instructionDiv.className = 'selection-instruction';
+                
+                const questionType = currentQuestion?.type || "MULTIPLE_CHOICE";
+                let instructionText = "";
+                
+                if (questionType === "SINGLE_CHOICE") {
+                    instructionText = `
+                        <p style="font-size: 0.9rem; color: #b8c5d6; margin-bottom: 15px; text-align: center;">
+                            💡 <strong>선택지를 클릭하여 답을 선택하세요.</strong> 하나만 선택할 수 있습니다.
+                        </p>
+                    `;
+                } else {
+                    instructionText = `
+                        <p style="font-size: 0.9rem; color: #b8c5d6; margin-bottom: 15px; text-align: center;">
+                            💡 <strong>선택지를 클릭하여 답을 선택하세요.</strong> 다중 선택이 가능합니다.
+                        </p>
+                    `;
+                }
+                
+                instructionDiv.innerHTML = instructionText;
+                optionsContainer.appendChild(instructionDiv);
+                
+                currentQuestion.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = questionType === "SINGLE_CHOICE" ? 'option single-choice' : 'option';
+                    optionElement.onclick = () => selectOption(index);
+                    
+                    const optionLabel = document.createElement('span');
+                    optionLabel.className = 'option-label';
+                    optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+                    
+                    const optionText = document.createElement('span');
+                    optionText.textContent = option;
+                    
+                    optionElement.appendChild(optionLabel);
+                    optionElement.appendChild(optionText);
+                    optionsContainer.appendChild(optionElement);
+                });
+                
+                optionsContainer.style.transition = 'opacity 0.3s ease';
+                optionsContainer.style.opacity = '1';
+            }, 200);
+        
+        // 상태 초기화
+        selectedAnswers = [];
+        isAnswered = false;
+        submitBtn.disabled = true;
+        submitBtn.textContent = '답 제출하기';
+        resultContainer.style.display = 'none';
+        
+        // 버튼 애니메이션
+        submitBtn.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            submitBtn.style.transition = 'all 0.3s ease';
+            submitBtn.style.transform = 'scale(1)';
+        }, 800);
+        
+    } catch (error) {
+        hideLoading();
+        console.error('문제를 불러오는 중 오류가 발생했습니다:', error);
+        
+        // 오류 메시지 표시
+        questionText.innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #e74c3c;">
+                <h3>❌ 문제를 불러올 수 없습니다</h3>
+                <p>네트워크 연결을 확인하거나 잠시 후 다시 시도해주세요.</p>
+                <button onclick="loadQuestion()" style="margin-top: 10px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    다시 시도
+                </button>
+            </div>
+        `;
+    }
 }
 
-// 선택지 선택
+// 선택지 선택 (단일/다중 선택 지원)
 function selectOption(index) {
     if (isAnswered) return;
     
-    // 이전 선택 제거 애니메이션
-    document.querySelectorAll('.option').forEach(opt => {
-        opt.classList.remove('selected');
-        opt.style.transform = 'scale(1)';
-    });
-    
-    // 새로운 선택 표시 애니메이션
     const options = document.querySelectorAll('.option');
     const selectedOption = options[index];
+    const questionType = currentQuestion?.type || "MULTIPLE_CHOICE";
     
-    selectedOption.classList.add('selected');
-    selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-    selectedOption.style.transform = 'scale(1.02)';
+    // 이미 선택된 항목인지 확인
+    const isAlreadySelected = selectedAnswers.includes(index);
     
-    // 선택 피드백 효과
-    selectedOption.style.animation = 'pulse 0.6s ease';
-    setTimeout(() => {
-        selectedOption.style.animation = '';
-    }, 600);
+    if (questionType === "SINGLE_CHOICE") {
+        // 단일 선택: 기존 선택을 모두 해제하고 새로운 선택만 유지
+        if (isAlreadySelected) {
+            // 이미 선택된 항목을 다시 클릭하면 선택 해제
+            selectedAnswers = [];
+            selectedOption.classList.remove('selected');
+            selectedOption.style.transform = 'scale(1)';
+        } else {
+            // 모든 선택 해제
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+                opt.style.transform = 'scale(1)';
+            });
+            selectedAnswers = [index];
+            
+            // 새로운 선택 표시
+            selectedOption.classList.add('selected');
+            selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            selectedOption.style.transform = 'scale(1.02)';
+            
+            // 선택 피드백 효과
+            selectedOption.style.animation = 'pulse 0.6s ease';
+            setTimeout(() => {
+                selectedOption.style.animation = '';
+            }, 600);
+        }
+    } else {
+        // 다중 선택: 기존 로직 유지
+        if (isAlreadySelected) {
+            // 선택 해제
+            selectedAnswers = selectedAnswers.filter(i => i !== index);
+            selectedOption.classList.remove('selected');
+            selectedOption.style.transform = 'scale(1)';
+        } else {
+            // 새로운 선택 추가
+            selectedAnswers.push(index);
+            selectedOption.classList.add('selected');
+            selectedOption.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            selectedOption.style.transform = 'scale(1.02)';
+            
+            // 선택 피드백 효과
+            selectedOption.style.animation = 'pulse 0.6s ease';
+            setTimeout(() => {
+                selectedOption.style.animation = '';
+            }, 600);
+        }
+    }
     
-    selectedAnswer = index;
+    // 선택된 답안 수에 따른 버튼 텍스트 업데이트
+    updateSubmitButton();
+}
+
+// 제출 버튼 상태 업데이트
+function updateSubmitButton() {
+    const questionType = currentQuestion?.type || "MULTIPLE_CHOICE";
     
-    // 버튼 활성화 애니메이션
-    submitBtn.disabled = false;
-    submitBtn.style.transform = 'scale(1.05)';
-    setTimeout(() => {
-        submitBtn.style.transform = 'scale(1)';
-    }, 150);
+    if (selectedAnswers.length === 0) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '답 선택하기';
+    } else if (questionType === "SINGLE_CHOICE") {
+        // 단일 선택 문제
+        submitBtn.disabled = false;
+        submitBtn.textContent = '답 제출하기';
+        // 버튼 활성화 애니메이션
+        submitBtn.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            submitBtn.style.transform = 'scale(1)';
+        }, 150);
+    } else {
+        // 다중 선택 문제
+        submitBtn.disabled = false;
+        if (selectedAnswers.length === 1) {
+            submitBtn.textContent = '답 제출하기';
+        } else {
+            submitBtn.textContent = `${selectedAnswers.length}개 답안 제출하기`;
+        }
+        // 버튼 활성화 애니메이션
+        submitBtn.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            submitBtn.style.transform = 'scale(1)';
+        }, 150);
+    }
 }
 
 // 답 제출
-function submitAnswer() {
-    if (selectedAnswer === null || isAnswered) return;
+async function submitAnswer() {
+    if (selectedAnswers.length === 0 || isAnswered) return;
     
     isAnswered = true;
-    const currentQuestion = quizData1[currentQuestionIndex];
-    const isCorrect = selectedAnswer === currentQuestion.correct;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '제출 중...';
     
-    if (isCorrect) {
-        score++;
-    }
-    
-    // 모든 선택지에 결과 표시
-    const options = document.querySelectorAll('.option');
-    options.forEach((option, index) => {
-        option.classList.add('disabled');
-        if (index === currentQuestion.correct) {
-            option.classList.add('correct');
-        } else if (index === selectedAnswer && !isCorrect) {
-            option.classList.add('incorrect');
+    try {
+        // API에 답 제출
+        const questionId = currentQuestionIndex + 1;
+        const result = await submitAnswerToAPI(questionId, selectedAnswers);
+        
+        const isCorrect = result.isCorrect;
+        const correctAnswers = result.correctAnswers.map(answer => answer - 1); // 0부터 시작하는 인덱스로 변환
+        const submittedAnswers = result.submittedAnswers.map(answer => answer - 1); // 0부터 시작하는 인덱스로 변환
+        
+        if (isCorrect) {
+            score++;
         }
-    });
-    
-    // 결과 메시지 표시
-    resultMessage.className = 'result-message ' + (isCorrect ? 'correct' : 'incorrect');
-    resultMessage.innerHTML = isCorrect ? 
-        '🎉 정답입니다!' : 
-        '❌ 틀렸습니다. 정답은 ' + String.fromCharCode(65 + currentQuestion.correct) + '번입니다.';
-    
-    // 해설 표시 (이미지 포함)
-    displayExplanation(currentQuestion);
-    
-    // 다음 버튼 텍스트 설정
-    if (currentQuestionIndex === quizData1.length - 1) {
-        nextBtn.textContent = '결과 보기';
-    } else {
-        nextBtn.textContent = '다음 문제';
+        
+        // 모든 선택지에 결과 표시
+        const options = document.querySelectorAll('.option');
+        options.forEach((option, index) => {
+            option.classList.add('disabled');
+            
+            // 정답 표시
+            if (correctAnswers.includes(index)) {
+                option.classList.add('correct');
+            }
+            
+            // 사용자가 선택했지만 틀린 답 표시
+            if (submittedAnswers.includes(index) && !correctAnswers.includes(index)) {
+                option.classList.add('incorrect');
+            }
+        });
+        
+        // 결과 메시지 표시
+        resultMessage.className = 'result-message ' + (isCorrect ? 'correct' : 'incorrect');
+        
+        if (isCorrect) {
+            resultMessage.innerHTML = '🎉 정답입니다!';
+        } else {
+            const correctLabels = correctAnswers.map(index => String.fromCharCode(65 + index)).join(', ');
+            resultMessage.innerHTML = `❌ 틀렸습니다. 정답은 ${correctLabels}번입니다.`;
+        }
+        
+        // 해설 표시 (API에서 받은 해설 사용)
+        displayExplanationFromAPI(result.solution);
+        
+        // 다음 버튼 텍스트 설정
+        if (currentQuestionIndex === totalQuestions - 1) {
+            nextBtn.textContent = '결과 보기';
+        } else {
+            nextBtn.textContent = '다음 문제';
+        }
+        
+        resultContainer.style.display = 'block';
+        submitBtn.style.display = 'none';
+        
+    } catch (error) {
+        console.error('답 제출 중 오류가 발생했습니다:', error);
+        
+        // 오류 시 UI 복원
+        isAnswered = false;
+        submitBtn.disabled = false;
+        updateSubmitButton();
+        
+        // 오류 메시지 표시
+        alert('답 제출 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
-    
-    resultContainer.style.display = 'block';
-    submitBtn.style.display = 'none';
 }
 
 // 다음 문제 또는 결과 표시
-function nextQuestion() {
-    if (currentQuestionIndex === quizData1.length - 1) {
+async function nextQuestion() {
+    if (currentQuestionIndex === totalQuestions - 1) {
         showFinalResult();
     } else {
         currentQuestionIndex++;
         submitBtn.style.display = 'block';
-        loadQuestion();
+        await loadQuestion();
     }
 }
 
@@ -323,7 +664,7 @@ function showFinalResult() {
         // 점수 카운트업 애니메이션
         animateScore();
         
-        const percentage = Math.round((score / quizData1.length) * 100);
+        const percentage = Math.round((score / totalQuestions) * 100);
         
         // 백분율 카운트업 애니메이션
         animatePercentage(percentage);
@@ -413,7 +754,25 @@ function typeMessage(message) {
     }, 80);
 }
 
-// 해설 표시 함수 (이미지 지원)
+// API에서 받은 해설 표시 함수 (마크다운 지원)
+function displayExplanationFromAPI(explanationText) {
+    const explanationContent = document.getElementById('explanationContent');
+    
+    // 마크다운 텍스트를 HTML로 변환
+    const htmlContent = parseMarkdownToHtml(explanationText);
+    
+    explanationContent.innerHTML = htmlContent;
+    
+    // 이미지 클릭 시 확대 기능
+    const images = explanationContent.querySelectorAll('.question-image');
+    images.forEach(img => {
+        img.addEventListener('click', () => {
+            openImageModal(img.src, img.alt);
+        });
+    });
+}
+
+// 해설 표시 함수 (이미지 지원) - 기존 버전 (호환성을 위해 유지)
 function displayExplanation(question) {
     const explanationContent = document.getElementById('explanationContent');
     
@@ -588,14 +947,13 @@ document.addEventListener('keydown', (e) => {
     const keyMap = { 'KeyA': 0, 'KeyB': 1, 'KeyC': 2, 'KeyD': 3 };
     if (keyMap.hasOwnProperty(e.code)) {
         const optionIndex = keyMap[e.code];
-        const currentQuestion = quizData1[currentQuestionIndex];
-        if (optionIndex < currentQuestion.options.length) {
+        if (currentQuestion && optionIndex < currentQuestion.options.length) {
             selectOption(optionIndex);
         }
     }
     
     // Enter 키로 답 제출
-    if (e.code === 'Enter' && selectedAnswer !== null && !isAnswered) {
+    if (e.code === 'Enter' && selectedAnswers.length > 0 && !isAnswered) {
         submitAnswer();
     }
 });
