@@ -12,6 +12,6 @@ public interface QuestionWithOptionsMapper {
     @Mapping(source = "question.id", target = "id")
     @Mapping(source = "question.type", target = "type")
     @Mapping(source = "question.content", target = "content")
-    @Mapping(source = "options.questionOptions", target = "options")
+    @Mapping(source = "options", target = "options")
     GetQuestionResponse mapToGetQuestionResponse(QuestionWithOptions questionWithOptions);
 }
