@@ -4,8 +4,11 @@ import com.example.indexquiz.question.application.port.out.GetQuestionPort;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
 import com.example.indexquiz.useranswer.application.port.in.UserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.mapper.UserAnswerDtoMapper;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
+import com.example.indexquiz.useranswer.domain.UserAnswers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +20,13 @@ public class UserAnswerService implements UserAnswerUseCase {
 
     private final GetQuestionPort getQuestionPort;
 
+    private final UserAnswerDtoMapper userAnswerDtoMapper;
+
     @Override
-    public void saveUserAnswers(long questionId, SaveUserAnswerRequest request) {
-        QuestionWithOptions questionWithOptions = getQuestionPort.getQuestionWithOptions(questionId);
+    public SaveUserAnswerResponse saveUserAnswers(SaveUserAnswerRequest request) {
+        QuestionWithOptions questionWithOptions = getQuestionPort.getQuestionWithOptions(request.questionId());
         SaveUserAnswersCommand command = new SaveUserAnswersCommand(questionWithOptions, request.options());
-        saveUserAnswerPort.saveUserAnswers(command);
+        UserAnswers userAnswers = saveUserAnswerPort.saveUserAnswers(command);
+        return userAnswerDtoMapper.mapToSaveUserAnswerResponse(userAnswers);
     }
 }
