@@ -4,12 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 
 import com.example.indexquiz.BaseControllerTest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
-import com.example.indexquiz.useranswer.application.port.in.UserAnswerUseCase;
+import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
 import io.restassured.RestAssured;
@@ -22,7 +21,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 public class UserAnswerControllerTest extends BaseControllerTest {
 
     @MockitoBean
-    private UserAnswerUseCase userAnswerUseCase;
+    private SaveUserAnswerUseCase saveUserAnswerUseCase;
 
     @Nested
     class SaveUserAnswer {
@@ -31,7 +30,7 @@ public class UserAnswerControllerTest extends BaseControllerTest {
         void 사용자의_답변을_저장한다() {
             // given
             SaveUserAnswerResponse response = new SaveUserAnswerResponse("submitId");
-            given(userAnswerUseCase.saveUserAnswers(any(SaveUserAnswerRequest.class))).willReturn(response);
+            given(saveUserAnswerUseCase.saveUserAnswers(any(SaveUserAnswerRequest.class))).willReturn(response);
 
             // when
             SaveUserAnswerWebRequest request = new SaveUserAnswerWebRequest(1L, List.of(1L, 2L));
