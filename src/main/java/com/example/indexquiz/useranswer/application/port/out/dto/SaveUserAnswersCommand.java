@@ -8,6 +8,7 @@ import com.example.indexquiz.useranswer.domain.UserAnswer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,8 +22,9 @@ public class SaveUserAnswersCommand {
 
     public SaveUserAnswersCommand(QuestionWithOptions questionWithOptions, List<Long> userOptionIds) {
         validateQuestionOptionsValid(questionWithOptions.getOptions(), userOptionIds);
+        String submitId = UUID.randomUUID().toString();
         this.userAnswers = userOptionIds.stream()
-                .map(userOptionId -> new UserAnswer(questionWithOptions.getQuestionId(), userOptionId))
+                .map(userOptionId -> new UserAnswer(questionWithOptions.getQuestionId(), userOptionId, submitId))
                 .toList();
     }
 
