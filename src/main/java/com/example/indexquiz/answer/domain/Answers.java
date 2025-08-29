@@ -1,8 +1,10 @@
 package com.example.indexquiz.answer.domain;
 
 import java.util.List;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public class Answers {
 
