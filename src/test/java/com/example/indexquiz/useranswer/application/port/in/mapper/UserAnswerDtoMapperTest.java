@@ -1,7 +1,6 @@
 package com.example.indexquiz.useranswer.application.port.in.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.domain.UserAnswer;
