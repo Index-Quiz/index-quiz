@@ -49,8 +49,8 @@ class UserAnswerServiceTest extends BaseServiceTest {
             willDoNothing().given(saveUserAnswerPort).saveUserAnswers(any());
 
             // when
-            SaveUserAnswerRequest request = new SaveUserAnswerRequest(List.of(1L, 2L, 3L));
-            userAnswerService.saveUserAnswers(1L, request);
+            SaveUserAnswerRequest request = new SaveUserAnswerRequest(1L, List.of(1L, 2L, 3L));
+            userAnswerService.saveUserAnswers(request);
 
             // then
             ArgumentCaptor<SaveUserAnswersCommand> captor = ArgumentCaptor.captor();

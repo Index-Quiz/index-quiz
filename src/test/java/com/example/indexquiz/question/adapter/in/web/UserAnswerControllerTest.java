@@ -26,10 +26,10 @@ public class UserAnswerControllerTest extends BaseControllerTest {
         @Test
         void 사용자의_답변을_저장한다() {
             // given
-            willDoNothing().given(userAnswerUseCase).saveUserAnswers(anyLong(), any());
+            willDoNothing().given(userAnswerUseCase).saveUserAnswers(any(SaveUserAnswerRequest.class));
 
             // when
-            SaveUserAnswerRequest request = new SaveUserAnswerRequest(List.of(1L, 2L));
+            SaveUserAnswerRequest request = new SaveUserAnswerRequest(1L, List.of(1L, 2L));
 
             RestAssured.given().log().all()
                     .pathParam("questionId", 1)
@@ -40,7 +40,7 @@ public class UserAnswerControllerTest extends BaseControllerTest {
                     .statusCode(200);
 
             // then
-            then(userAnswerUseCase).should().saveUserAnswers(1, request);
+            then(userAnswerUseCase).should().saveUserAnswers(request);
         }
     }
 }

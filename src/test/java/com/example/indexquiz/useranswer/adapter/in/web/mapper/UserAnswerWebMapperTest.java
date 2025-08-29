@@ -1,13 +1,13 @@
 package com.example.indexquiz.useranswer.adapter.in.web.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.example.indexquiz.solution.adapter.out.mapper.SolutionMapper;
-import com.example.indexquiz.solution.adapter.out.persistence.SolutionEntity;
-import com.example.indexquiz.solution.domain.Solution;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,10 +23,26 @@ class UserAnswerWebMapperTest {
     }
 
     @Nested
+    class MapToSaveUserAnswerRequest {
+
+        @Test
+        void web_dto에서_어플리케이션_dto로_매핑할_수_있다() {
+            SaveUserAnswerWebRequest origin = new SaveUserAnswerWebRequest(1L, List.of(1L, 2L));
+
+            SaveUserAnswerRequest target = userAnswerWebMapper.mapToSaveUserAnswerRequest(origin);
+
+            assertAll(
+                    () -> assertThat(target.questionId()).isEqualTo(origin.questionId()),
+                    () -> assertThat(target.options()).containsExactlyElementsOf(origin.options())
+            );
+        }
+    }
+
+    @Nested
     class MapToSaveUserAnswerWebResponse {
 
         @Test
-        void 어플리메이션_dto에서_web_dto로_매핑할_수_있다() {
+        void 어플리케이션_dto에서_web_dto로_매핑할_수_있다() {
             SaveUserAnswerResponse origin = new SaveUserAnswerResponse("example");
 
             SaveUserAnswerWebResponse target = userAnswerWebMapper.mapToSaveUserAnswerWebResponse(origin);
