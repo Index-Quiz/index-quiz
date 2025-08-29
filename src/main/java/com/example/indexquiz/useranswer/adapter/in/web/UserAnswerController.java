@@ -4,8 +4,11 @@ import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswe
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.mapper.UserAnswerWebMapper;
+import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
+import com.example.indexquiz.useranswer.application.port.in.dto.request.GetUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +26,18 @@ public class UserAnswerController {
 
     private final SaveUserAnswerUseCase saveUserAnswerUseCase;
 
+    private final GetUserAnswerUseCase getUserAnswerUseCase;
+
     private final UserAnswerWebMapper userAnswerWebMapper;
 
     @GetMapping("/{submitId}")
     public ResponseEntity<GetUserAnswerWebResponse> getUserAnswers(
             @PathVariable(name = "submitId") String submitId
     ) {
-
-        return null;
+        GetUserAnswerResponse userAnswers = getUserAnswerUseCase.getUserAnswer(new GetUserAnswerRequest(submitId));
+        GetUserAnswerWebResponse webResponse = userAnswerWebMapper.mapToGetUserAnswerWebResponse(userAnswers);
+        return ResponseEntity.ok(webResponse);
     }
-
 
     @PostMapping
     public ResponseEntity<SaveUserAnswerWebResponse> saveUserAnswer(
