@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerRequest;
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

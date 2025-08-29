@@ -5,8 +5,8 @@ import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswe
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.mapper.UserAnswerWebMapper;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerRequest;
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +29,7 @@ public class UserAnswerController {
     public ResponseEntity<GetUserAnswerWebResponse> getUserAnswers(
             @PathVariable(name = "submitId") String submitId
     ) {
+
         return null;
     }
 

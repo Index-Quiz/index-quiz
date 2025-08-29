@@ -1,7 +1,6 @@
 package com.example.indexquiz.question.adapter.in.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
@@ -9,8 +8,8 @@ import com.example.indexquiz.BaseControllerTest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerRequest;
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.List;

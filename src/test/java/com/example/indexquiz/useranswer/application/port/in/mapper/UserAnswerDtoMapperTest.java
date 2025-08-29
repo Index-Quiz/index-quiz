@@ -2,7 +2,7 @@ package com.example.indexquiz.useranswer.application.port.in.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.domain.UserAnswer;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
 import java.util.List;

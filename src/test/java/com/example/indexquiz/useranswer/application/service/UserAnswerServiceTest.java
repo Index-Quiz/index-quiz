@@ -13,8 +13,8 @@ import com.example.indexquiz.question.application.port.out.GetQuestionPort;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerRequest;
-import com.example.indexquiz.useranswer.application.port.in.dto.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.mapper.UserAnswerDtoMapper;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class UserAnswerServiceTest extends BaseServiceTest {
 

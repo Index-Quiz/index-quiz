@@ -1,4 +1,4 @@
-package com.example.indexquiz.useranswer.application.port.in.dto;
+package com.example.indexquiz.useranswer.application.port.in.dto.request;
 
 import java.util.List;
 
