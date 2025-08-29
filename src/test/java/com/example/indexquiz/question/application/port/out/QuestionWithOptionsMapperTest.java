@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.example.indexquiz.BaseMapperTest;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionOptionResponse;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
+import com.example.indexquiz.question.application.port.in.mapper.QuestionWithOptionsMapper;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;
 import com.example.indexquiz.question.domain.QuestionType;

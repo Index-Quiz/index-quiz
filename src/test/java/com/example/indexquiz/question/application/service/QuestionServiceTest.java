@@ -9,7 +9,7 @@ import com.example.indexquiz.common.DomainFixture;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionOptionResponse;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
 import com.example.indexquiz.question.application.port.out.GetQuestionPort;
-import com.example.indexquiz.question.application.port.out.QuestionWithOptionsMapper;
+import com.example.indexquiz.question.application.port.in.mapper.QuestionWithOptionsMapper;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;
 import com.example.indexquiz.question.domain.QuestionType;
