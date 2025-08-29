@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    USER_ANSWER_EMPTY(HttpStatus.BAD_REQUEST, "유저 답변을 찾을 수 없습니다"),
-
     FIELD_ERROR(HttpStatus.BAD_REQUEST, "입력이 잘못되었습니다."),
     URL_PARAMETER_ERROR(HttpStatus.BAD_REQUEST, "입력이 잘못되었습니다."),
     METHOD_ARGUMENT_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "입력한 값의 타입이 잘못되었습니다."),
@@ -22,6 +20,7 @@ public enum ErrorCode {
     QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 질문입니다."),
     QUESTION_OPTION_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 선택지입니다."),
 
+    INVALID_USER_ANSWERS(HttpStatus.INTERNAL_SERVER_ERROR, "잘못된 유저 답변 목록입니다"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다. 관리자에게 문의하세요."),
     ;
 
