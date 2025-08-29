@@ -3,7 +3,9 @@ package com.example.indexquiz.useranswer.adapter.out.persistence;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapper;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
+import com.example.indexquiz.useranswer.domain.UserAnswers;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +18,13 @@ public class UserAnswerPersistenceAdapter implements SaveUserAnswerPort {
     private final UserAnswerMapper userAnswerMapper;
 
     @Override
-    public void saveUserAnswers(SaveUserAnswersCommand command) {
+    public UserAnswers saveUserAnswers(SaveUserAnswersCommand command) {
         List<UserAnswerEntity> userAnswers = command.getUserAnswers().stream()
                 .map(userAnswerMapper::mapToUserAnswerEntity)
                 .toList();
-        userAnswerJpaRepository.saveAll(userAnswers);
+        return userAnswerJpaRepository.saveAll(userAnswers)
+                .stream()
+                .map(userAnswerMapper::mapToUserAnswer)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), UserAnswers::new));
     }
 }
