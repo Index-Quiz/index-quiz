@@ -111,15 +111,15 @@ jobs:
             echo "[3] 이미지 Pull: ${IMAGE_NAME}:${IMAGE_TAG}"
             docker pull ${IMAGE_NAME}:${IMAGE_TAG}
 
-      - name : container run
+      - name: container run
         run: |
-            echo "[4] 컨테이너 실행 및 3초 대기"
-            docker run -d --name $CONTAINER_NAME \
-              -p 8080:8080 \
-              --restart unless-stopped \
-              -e SPRING_PROFILES_ACTIVE=dev \          
+          echo "[4] 컨테이너 실행 및 3초 대기"
+          docker run -d --name $CONTAINER_NAME \
+            -p 8080:8080 \
+            --restart unless-stopped \
+            -e SPRING_PROFILES_ACTIVE=dev \
             $IMAGE_NAME:$IMAGE_TAG
-            sleep 3
+          sleep 3
 
       - name: check container run
         run : |
