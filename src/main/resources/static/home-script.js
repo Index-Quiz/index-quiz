@@ -108,12 +108,19 @@ function createRippleEffect(event, element) {
 function parallaxEffect() {
     const scrolled = window.pageYOffset;
     const parallaxElements = document.querySelectorAll('.topic-icon');
-    
+    // const featureElements = document.querySelectorAll('.feature-icon');
+
     parallaxElements.forEach((element, index) => {
         const speed = 0.5 + (index * 0.1);
         const transform = `translateY(${scrolled * speed}px)`;
         element.style.transform = transform;
     });
+
+    // featureElements.forEach((element, index) => {
+    //     const speed = 0.5 + (index * 0.1);
+    //     const transform = `translateY(${scrolled * speed}px)`;
+    //     element.style.transform = transform;
+    // });
 }
 
 // 쓰로틀 함수
