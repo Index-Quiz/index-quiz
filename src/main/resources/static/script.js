@@ -1,5 +1,5 @@
 // 목데이터 사용 여부 (개발 중에는 true, 프로덕션에서는 false)
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 // API를 통한 퀴즈 데이터 관리
 let totalQuestions = USE_MOCK_DATA ? 2 : 15; // 목데이터 사용 시 2문제, 실제 API는 10문제
@@ -116,7 +116,7 @@ async function submitAnswerToAPI(questionId, selectedAnswers) {
             },
             body: JSON.stringify({
                 questionId: questionId,
-                choices: choices
+                options: choices
             })
         });
 
@@ -266,6 +266,11 @@ function parseMarkdownToHtml(content) {
     html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,
         '<div class="image-container"><img src="$2" alt="$1" class="question-image" onclick="openImageModal(\'$2\', \'$1\')" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="this.style.opacity=\'1\';" style="opacity: 0; transition: opacity 0.5s ease;"><div class="image-placeholder" style="display: none;">📷 이미지를 불러올 수 없습니다</div></div>'
     );
+
+    // 마크다운 링크 변환 (공백 허용)
+    html = html.replace(/\[([^\]]+)\]\(\s*([^\)]+)\s*\)/g, (match, text, url) => {
+        return `<a href="${url}" class="markdown-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    });
 
     // 인라인 코드 변환 (`코드` 형식)
     html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
@@ -792,40 +797,6 @@ function displayExplanationFromAPI(explanationText) {
 
     // 이미지 클릭 시 확대 기능
     const images = explanationContent.querySelectorAll('.question-image');
-    images.forEach(img => {
-        img.addEventListener('click', () => {
-            openImageModal(img.src, img.alt);
-        });
-    });
-}
-
-// 해설 표시 함수 (이미지 지원) - 기존 버전 (호환성을 위해 유지)
-function displayExplanation(question) {
-    const explanationContent = document.getElementById('explanationContent');
-
-    let htmlContent = `<p>${question.explanation}</p>`;
-
-    // 이미지가 있는 경우 추가
-    if (question.explanationImage) {
-        htmlContent += `
-            <div class="explanation-image-container">
-                <img src="${question.explanationImage}" 
-                     alt="해설 이미지" 
-                     class="explanation-image"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                     onload="this.style.opacity='1';"
-                     style="opacity: 0; transition: opacity 0.5s ease;">
-                <div class="image-placeholder" style="display: none;">
-                    📷 이미지를 불러올 수 없습니다
-                </div>
-            </div>
-        `;
-    }
-
-    explanationContent.innerHTML = htmlContent;
-
-    // 이미지 클릭 시 확대 기능
-    const images = explanationContent.querySelectorAll('.explanation-image');
     images.forEach(img => {
         img.addEventListener('click', () => {
             openImageModal(img.src, img.alt);
