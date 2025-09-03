@@ -122,7 +122,7 @@ jobs:
             -e RDS_HOST=${{ secrets.RDS_HOST }} \
             -e RDS_PORT=${{ secrets.RDS_PORT }} \
             -e RDS_DB=${{ secrets.RDS_DB }} \
-            -e RDS_USER=${{ secrets.RDS_USER }} \
+            -e RDS_USERNAME=${{ secrets.RDS_USERNAME }} \
             -e RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
             $IMAGE_NAME:$IMAGE_TAG
           sleep 3
