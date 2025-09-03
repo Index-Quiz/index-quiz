@@ -117,7 +117,8 @@ jobs:
             docker run -d --name $CONTAINER_NAME \
               -p 8080:8080 \
               --restart unless-stopped \
-              $IMAGE_NAME:$IMAGE_TAG
+              -e SPRING_PROFILES_ACTIVE=dev \          
+            $IMAGE_NAME:$IMAGE_TAG
             sleep 3
 
       - name: check container run
