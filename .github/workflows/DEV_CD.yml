@@ -30,6 +30,8 @@ jobs:
         with:
           arguments: clean build
           cache-read-only: false
+        env:
+          SPRING_PROFILES_ACTIVE: dev
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
