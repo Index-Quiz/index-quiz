@@ -28,7 +28,8 @@ public class UserAnswers {
         Set<Long> userAnswerOptions = values.stream()
                 .map(UserAnswer::getOptionId)
                 .collect(Collectors.toSet());
-        return userAnswerOptions.equals(new HashSet<>(answerOptions));
+        return userAnswerOptions.size() == answerOptions.size()
+                && userAnswerOptions.containsAll(answerOptions);
     }
 
     public List<Long> getUserOptions() {
