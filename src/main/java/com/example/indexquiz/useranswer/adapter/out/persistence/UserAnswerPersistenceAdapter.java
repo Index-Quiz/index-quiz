@@ -26,7 +26,7 @@ public class UserAnswerPersistenceAdapter implements SaveUserAnswerPort, GetUser
         return userAnswerJpaRepository.saveAll(userAnswers)
                 .stream()
                 .map(userAnswerMapper::mapToUserAnswer)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), UserAnswers::new));
+                .collect(Collectors.collectingAndThen(Collectors.toUnmodifiableList(), UserAnswers::new));
     }
 
     @Override
@@ -34,6 +34,6 @@ public class UserAnswerPersistenceAdapter implements SaveUserAnswerPort, GetUser
         return userAnswerJpaRepository.findAllBySubmitId(submitId)
                 .stream()
                 .map(userAnswerMapper::mapToUserAnswer)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), UserAnswers::new));
+                .collect(Collectors.collectingAndThen(Collectors.toUnmodifiableList(), UserAnswers::new));
     }
 }

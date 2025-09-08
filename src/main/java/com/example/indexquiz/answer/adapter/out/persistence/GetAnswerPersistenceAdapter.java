@@ -20,6 +20,6 @@ public class GetAnswerPersistenceAdapter implements GetAnswerPort {
         return answerJpaRepository.findAllByQuestionId(questionId)
                 .stream()
                 .map(answerMapper::mapToAnswer)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), Answers::new));
+                .collect(Collectors.collectingAndThen(Collectors.toUnmodifiableList(), Answers::new));
     }
 }
