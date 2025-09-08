@@ -10,10 +10,10 @@ public class QuestionOptions {
     private static final Comparator<QuestionOption> DEFAULT_COMPARATOR = Comparator
             .comparingLong(QuestionOption::getOptionOrder);
 
-    private final List<QuestionOption> questionOptions;
+    private final List<QuestionOption> values;
 
-    public QuestionOptions(List<QuestionOption> questionOptions) {
-        this.questionOptions = questionOptions.stream()
+    public QuestionOptions(List<QuestionOption> values) {
+        this.values = values.stream()
                 .sorted(DEFAULT_COMPARATOR)
                 .toList();
     }

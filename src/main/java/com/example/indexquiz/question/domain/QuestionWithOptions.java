@@ -18,7 +18,7 @@ public class QuestionWithOptions {
     }
 
     public List<QuestionOption> getOptions() {
-        return options.getQuestionOptions();
+        return options.getValues();
     }
 
     public long getQuestionId() {
