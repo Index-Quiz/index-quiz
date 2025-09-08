@@ -390,6 +390,15 @@ header p {
     border-bottom: none;
 }
 
+.markdown-link {
+    color: #FFD700;   /* 밝은 노랑 */
+    text-decoration: underline; /* 밑줄 유지 (선택사항) */
+}
+
+.markdown-link:hover {
+    color: #FFFF66;   /* 마우스 오버 시 더 밝게 */
+}
+
 /* 이미지 컨테이너 스타일 */
 .image-container {
     text-align: center;

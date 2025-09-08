@@ -1,61 +1,72 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PVP7YB17ET"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-PVP7YB17ET');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DB 인덱스 퀴즈 사이트</title>
+    <title>인덱스 퀴즈</title>
     <link rel="stylesheet" href="home-style.css">
+    <link rel="icon" type="image/png" href="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
+    <link rel="apple-touch-icon" href="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🗃️ DB 인덱스 학습 플랫폼</h1>
-            <p>데이터베이스 인덱스에 대한 지식을 테스트하고 향상시켜보세요!</p>
+            <h1>🗃️ Index Quiz</h1>
+            <p>MySQL 인덱스에 대한 지식을 테스트하고 향상시켜보세요!</p>
         </header>
 
         <div class="main-content">
             <div class="hero-section">
                 <div class="hero-card">
                     <div class="icon">📚</div>
-                    <h2>인덱스 마스터가 되어보세요</h2>
-                    <p>10개의 엄선된 문제를 통해 DB 인덱스의 핵심 개념을 학습하고 실력을 테스트해보세요.</p>
+                    <h2>A-SET</h2>
+                    <p>인덱스 기초부터 B-Tree까지 핵심을 빠르게!</p>
                     
                     <div class="features">
                         <div class="feature">
+                            <span class="feature-icon">📖</span>
+                            <span>인덱스 기초</span>
+                        </div>
+                        <div class="feature">
                             <span class="feature-icon">⚡</span>
-                            <span>실시간 채점</span>
+                            <span>해쉬 인덱스</span>
                         </div>
                         <div class="feature">
-                            <span class="feature-icon">💡</span>
-                            <span>상세한 해설</span>
+                            <span class="feature-icon">🌳</span>
+                            <span>B-Tree 구조</span>
                         </div>
                         <div class="feature">
-                            <span class="feature-icon">📊</span>
-                            <span>진도율 추적</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">🎯</span>
-                            <span>개인별 점수</span>
+                            <span class="feature-icon">🚩</span>
+                            <span>클러스터링 인덱스</span>
                         </div>
                     </div>
 
                     <div class="quiz-info">
                         <div class="info-item">
-                            <strong th:text="${totalQuestions ?: 10}">10</strong>
+                            <strong th:text="${totalQuestions ?: 15}">15</strong>
                             <span>문제</span>
                         </div>
                         <div class="info-item">
-                            <strong>15</strong>
+                            <strong>20</strong>
                             <span>분 소요</span>
                         </div>
                         <div class="info-item">
-                            <strong>중급</strong>
+                            <strong>초급</strong>
                             <span>난이도</span>
                         </div>
                     </div>
 
                     <a href="quiz.html" class="start-quiz-btn">
-                        <span>인덱스 퀴즈 풀러가기</span>
+                        <span>A SET 풀러가기</span>
                         <span class="btn-arrow">→</span>
                     </a>
                 </div>
