@@ -1,4 +1,4 @@
-package com.example.indexquiz.question.application.port.out;
+package com.example.indexquiz.question.application.port.in.mapper;
 
 import com.example.indexquiz.common.mapper.MapperConfiguration;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;

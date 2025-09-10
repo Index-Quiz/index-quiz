@@ -5,9 +5,11 @@ import com.example.indexquiz.common.exception.errorcode.ErrorCode;
 import com.example.indexquiz.question.domain.QuestionOption;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
 import com.example.indexquiz.useranswer.domain.UserAnswer;
+import com.example.indexquiz.useranswer.domain.UserAnswers;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,13 +19,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class SaveUserAnswersCommand {
 
-    private final List<UserAnswer> userAnswers;
+    private final UserAnswers userAnswers;
 
     public SaveUserAnswersCommand(QuestionWithOptions questionWithOptions, List<Long> userOptionIds) {
         validateQuestionOptionsValid(questionWithOptions.getOptions(), userOptionIds);
-        this.userAnswers = userOptionIds.stream()
-                .map(userOptionId -> new UserAnswer(questionWithOptions.getQuestionId(), userOptionId))
-                .toList();
+        this.userAnswers = new UserAnswers(questionWithOptions.getQuestionId(), userOptionIds);
     }
 
     private void validateQuestionOptionsValid(List<QuestionOption> options, List<Long> userOptionIds) {
@@ -36,6 +36,6 @@ public class SaveUserAnswersCommand {
     }
 
     public List<UserAnswer> getUserAnswers() {
-        return Collections.unmodifiableList(userAnswers);
+        return Collections.unmodifiableList(userAnswers.getValues());
     }
 }

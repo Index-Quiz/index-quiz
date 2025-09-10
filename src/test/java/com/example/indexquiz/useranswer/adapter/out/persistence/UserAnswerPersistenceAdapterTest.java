@@ -8,9 +8,13 @@ import com.example.indexquiz.common.DomainFixture;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
+import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapper;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapperImpl;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
+import com.example.indexquiz.useranswer.domain.UserAnswer;
+import com.example.indexquiz.useranswer.domain.UserAnswers;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,9 @@ class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
 
     @Autowired
     private UserAnswerJpaRepository userAnswerJpaRepository;
+
+    @Autowired
+    private UserAnswerMapper userAnswerMapper;
 
     @Nested
     class SaveUserAnswers {
@@ -51,6 +58,35 @@ class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
                     () -> assertThat(savedUserAnswers.stream().map(UserAnswerEntity::getOptionId))
                             .containsExactly(1L, 2L)
 
+            );
+        }
+    }
+
+    @Nested
+    class GetUserAnswers {
+
+        @Test
+        void 사용자의_답변을_가져올_수_있다() {
+            // given
+            String submitId = UUID.randomUUID().toString();
+            UserAnswers userAnswers = new UserAnswers(List.of(
+                    new UserAnswer(1L, 1L, submitId),
+                    new UserAnswer(1L, 2L, submitId)
+            ));
+
+            List<UserAnswerEntity> userAnswerEntities = userAnswers.getValues()
+                    .stream()
+                    .map(userAnswerMapper::mapToUserAnswerEntity)
+                    .toList();
+            userAnswerJpaRepository.saveAll(userAnswerEntities);
+
+            // when
+            UserAnswers foundUserAnswers = userAnswerPersistenceAdapter.getBySubmitId(submitId);
+
+            // then
+            assertAll(
+                    () -> assertThat(foundUserAnswers.getQuestionId()).isEqualTo(userAnswers.getQuestionId()),
+                    () -> assertThat(foundUserAnswers.getUserOptions()).isEqualTo(userAnswers.getUserOptions())
             );
         }
     }
