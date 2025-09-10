@@ -1,5 +1,10 @@
 name: Dev_CD
 
+on:
+  push:
+    branches:
+      - develop
+
 jobs:
   push:
     runs-on: ubuntu-latest
