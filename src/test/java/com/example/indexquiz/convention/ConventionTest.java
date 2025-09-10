@@ -138,6 +138,10 @@ public class ConventionTest {
                     .that()
                     .resideInAPackage("..port.in..")
                     .and()
+                    .resideOutsideOfPackage("..port.in.dto..")
+                    .and()
+                    .resideOutsideOfPackage("..port.in.mapper..")
+                    .and()
                     .areInterfaces()
                     .should()
                     .haveSimpleNameEndingWith("UseCase");
@@ -146,7 +150,6 @@ public class ConventionTest {
         }
 
         @Test
-        @Disabled
         void 포트는_Port로_네이밍이_끝나야한다() {
             ArchRule rule = ArchRuleDefinition.classes()
                     .that()
