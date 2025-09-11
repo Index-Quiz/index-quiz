@@ -141,8 +141,7 @@ class UserAnswerServiceTest extends BaseServiceTest {
             UserResult savedUserResult = new UserResult(
                     1L,
                     userResult.getQuestionSet(),
-                    userResult.getScore(),
-                    userResult.getSubmitId()
+                    userResult.getScore()
             );
             willReturn(savedUserResult).given(saveUserResultPort).saveUserResult(userResult);
 

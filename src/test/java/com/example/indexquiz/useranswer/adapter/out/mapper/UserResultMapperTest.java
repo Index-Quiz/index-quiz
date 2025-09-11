@@ -25,13 +25,12 @@ class UserResultMapperTest {
 
         @Test
         void 유저_성적_엔티티를_유저_성적_도메인으로_매핑할_수_있다() {
-            UserResultEntity userResultEntity = new UserResultEntity(1L, QuestionSet.A, 10, "submitId");
+            UserResultEntity userResultEntity = new UserResultEntity(1L, QuestionSet.A, 10);
 
             UserResult userResult = userResultMapper.mapToUserResult(userResultEntity);
 
             assertAll(
                     () -> assertThat(userResult.getId()).isEqualTo(userResultEntity.getId()),
-                    () -> assertThat(userResult.getSubmitId()).isEqualTo(userResultEntity.getSubmitId()),
                     () -> assertThat(userResult.getQuestionSet()).isEqualTo(userResultEntity.getQuestionSet()),
                     () -> assertThat(userResult.getScore()).isEqualTo(userResultEntity.getScore())
             );
@@ -49,7 +48,6 @@ class UserResultMapperTest {
 
             assertAll(
                     () -> assertThat(userResultEntity.getId()).isEqualTo(userResult.getId()),
-                    () -> assertThat(userResultEntity.getSubmitId()).isEqualTo(userResult.getSubmitId()),
                     () -> assertThat(userResultEntity.getQuestionSet()).isEqualTo(userResult.getQuestionSet()),
                     () -> assertThat(userResultEntity.getScore()).isEqualTo(userResult.getScore())
             );

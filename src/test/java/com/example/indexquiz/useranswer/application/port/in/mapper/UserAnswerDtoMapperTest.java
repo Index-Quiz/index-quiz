@@ -77,7 +77,7 @@ class UserAnswerDtoMapperTest {
 
         @Test
         void 도메인을_saveUserResultResponse_dto로_매핑할_수_있다() {
-            UserResult userResult = new UserResult(1L, QuestionSet.A, 10, UUID.randomUUID().toString());
+            UserResult userResult = new UserResult(1L, QuestionSet.A, 10);
 
             SaveUserResultResponse applicationDto = userAnswerDtoMapper.mapToSaveUserResultResponse(userResult);
 

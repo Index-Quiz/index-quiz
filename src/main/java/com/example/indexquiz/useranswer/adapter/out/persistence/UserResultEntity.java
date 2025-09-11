@@ -32,8 +32,4 @@ public class UserResultEntity extends BaseTimeEntity {
     private QuestionSet questionSet;
 
     private int score;
-
-    @NotNull
-    @Column(name = "submit_id", unique = true)
-    private String submitId;
 }

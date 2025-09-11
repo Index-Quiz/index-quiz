@@ -113,7 +113,6 @@ class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
             UserResultEntity userResultEntity = userResultJpaRepository.findById(saveUserResult.getId()).get();
             assertAll(
                     () -> assertThat(userResultEntity.getId()).isEqualTo(saveUserResult.getId()),
-                    () -> assertThat(userResultEntity.getSubmitId()).isEqualTo(saveUserResult.getSubmitId()),
                     () -> assertThat(userResultEntity.getQuestionSet()).isEqualTo(saveUserResult.getQuestionSet()),
                     () -> assertThat(userResultEntity.getScore()).isEqualTo(saveUserResult.getScore())
             );
