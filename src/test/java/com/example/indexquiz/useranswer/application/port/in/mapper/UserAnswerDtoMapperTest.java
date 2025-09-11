@@ -6,13 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.example.indexquiz.answer.domain.Answers;
 import com.example.indexquiz.common.DomainFixture;
 import com.example.indexquiz.question.domain.Question;
+import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.solution.domain.Solution;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
 import com.example.indexquiz.useranswer.domain.UserAnswer;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
+import com.example.indexquiz.useranswer.domain.UserResult;
 import java.util.List;
 import java.util.UUID;
+import org.apache.catalina.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -65,6 +69,23 @@ class UserAnswerDtoMapperTest {
                     () -> assertThat(applicationDto.answerOptions()).containsExactlyElementsOf(
                             answers.getAnswerOptions()),
                     () -> assertThat(applicationDto.solution()).isEqualTo(solution.getDescription())
+            );
+        }
+    }
+
+    @Nested
+    class MapToSaveUserResultResponse {
+
+        @Test
+        void 도메인을_saveUserResultResponse_dto로_매핑할_수_있다() {
+            UserResult userResult = new UserResult(1L, QuestionSet.A, 10, UUID.randomUUID().toString());
+
+            SaveUserResultResponse applicationDto = userAnswerDtoMapper.mapToSaveUserResultResponse(userResult);
+
+            assertAll(
+                    () -> assertThat(applicationDto.id()).isEqualTo(userResult.getId()),
+                    () -> assertThat(applicationDto.questionSetName()).isEqualTo(userResult.getQuestionSet()),
+                    () -> assertThat(applicationDto.score()).isEqualTo(userResult.getScore())
             );
         }
     }
