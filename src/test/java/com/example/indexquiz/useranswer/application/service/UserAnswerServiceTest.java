@@ -15,20 +15,27 @@ import com.example.indexquiz.common.DomainFixture;
 import com.example.indexquiz.question.application.port.out.GetQuestionPort;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;
+import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
 import com.example.indexquiz.solution.application.port.out.GetSolutionPort;
 import com.example.indexquiz.solution.domain.Solution;
+import com.example.indexquiz.useranswer.adapter.out.persistence.UserResultEntity;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.GetUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserResultRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
 import com.example.indexquiz.useranswer.application.port.in.mapper.UserAnswerDtoMapper;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
+import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
 import com.example.indexquiz.useranswer.application.port.out.dto.GetUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
 import com.example.indexquiz.useranswer.domain.UserAnswer;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
+import com.example.indexquiz.useranswer.domain.UserResult;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -44,6 +51,9 @@ class UserAnswerServiceTest extends BaseServiceTest {
 
     @MockitoSpyBean
     private SaveUserAnswerPort saveUserAnswerPort;
+
+    @MockitoSpyBean
+    private SaveUserResultPort saveUserResultPort;
 
     @MockitoSpyBean
     private GetQuestionPort getQuestionPort;
@@ -117,6 +127,34 @@ class UserAnswerServiceTest extends BaseServiceTest {
                     () -> assertThat(userAnswerResponse.userOptions()).containsExactlyElementsOf(userAnswers.getUserOptions()),
                     () -> assertThat(userAnswerResponse.answerOptions()).containsExactlyElementsOf(answers.getAnswerOptions()),
                     () -> assertThat(userAnswerResponse.solution()).isEqualTo(solution.getDescription())
+            );
+        }
+    }
+
+    @Nested
+    class SaveUserResult {
+
+        @Test
+        void 사용자의_성적을_저장한다() {
+            // given
+            UserResult userResult = new UserResult(QuestionSet.A, 10);
+            UserResult savedUserResult = new UserResult(
+                    1L,
+                    userResult.getQuestionSet(),
+                    userResult.getScore(),
+                    userResult.getSubmitId()
+            );
+            willReturn(savedUserResult).given(saveUserResultPort).saveUserResult(userResult);
+
+            // when
+            SaveUserResultRequest request = new SaveUserResultRequest(userResult.getQuestionSet(), userResult.getScore());
+            SaveUserResultResponse saveUserResultResponse = userAnswerService.saveUserResult(request);
+
+            // then
+            assertAll(
+                    () -> assertThat(saveUserResultResponse.id()).isEqualTo(savedUserResult.getId()),
+                    () -> assertThat(saveUserResultResponse.score()).isEqualTo(savedUserResult.getScore()),
+                    () -> assertThat(saveUserResultResponse.questionSetName()).isEqualTo(savedUserResult.getQuestionSet())
             );
         }
     }
