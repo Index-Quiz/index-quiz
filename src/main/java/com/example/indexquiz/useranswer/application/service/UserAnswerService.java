@@ -18,6 +18,7 @@ import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUse
 import com.example.indexquiz.useranswer.application.port.in.mapper.UserAnswerDtoMapper;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
+import com.example.indexquiz.useranswer.application.port.out.SendUserResultMessagePort;
 import com.example.indexquiz.useranswer.application.port.out.dto.GetUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
@@ -44,6 +45,8 @@ public class UserAnswerService implements
 
     private final GetQuestionPort getQuestionPort;
 
+    private final SendUserResultMessagePort sendUserResultMessagePort;
+
     private final UserAnswerDtoMapper userAnswerDtoMapper;
 
     @Override
@@ -67,6 +70,7 @@ public class UserAnswerService implements
     public SaveUserResultResponse saveUserResult(SaveUserResultRequest request) {
         UserResult userResult = new UserResult(request.questionSetName(), request.score());
         UserResult savedUserResult = saveUserResultPort.saveUserResult(userResult);
+        sendUserResultMessagePort.sendUserResultMessage(savedUserResult);
         return userAnswerDtoMapper.mapToSaveUserResultResponse(savedUserResult);
     }
 }
