@@ -4,5 +4,5 @@ import com.example.indexquiz.useranswer.domain.UserResult;
 
 public interface SaveUserResultPort {
 
-    UserResult save(UserResult userResult);
+    UserResult saveUserResult(UserResult userResult);
 }

@@ -66,7 +66,7 @@ public class UserAnswerService implements
     @Override
     public SaveUserResultResponse save(SaveUserResultRequest request) {
         UserResult userResult = new UserResult(request.questionSetName(), request.score());
-        UserResult savedUserResult = saveUserResultPort.save(userResult);
+        UserResult savedUserResult = saveUserResultPort.saveUserResult(userResult);
         return userAnswerDtoMapper.mapToSaveUserResultResponse(savedUserResult);
     }
 }
