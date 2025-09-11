@@ -1,8 +1,10 @@
 package com.example.indexquiz.useranswer.adapter.in.web;
 
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserResultWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.mapper.UserAnswerWebMapper;
 import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
@@ -48,5 +50,13 @@ public class UserAnswerController {
         SaveUserAnswerWebResponse webResponse = userAnswerWebMapper.mapToSaveUserAnswerWebResponse(
                 saveUserAnswerResponse);
         return ResponseEntity.ok(webResponse);
+    }
+
+    @PostMapping("/results")
+    public ResponseEntity<SaveUserResultWebResponse> saveUserAnswerResults(
+            @RequestBody SaveUserResultWebRequest request
+    ) {
+
+        return ResponseEntity.ok().build();
     }
 }
