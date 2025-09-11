@@ -12,3 +12,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
+discord:
+  token: ${DISCORD_TOKEN}
+  channel-id: ${DEV_DISCORD_CHANNEL_ID}
