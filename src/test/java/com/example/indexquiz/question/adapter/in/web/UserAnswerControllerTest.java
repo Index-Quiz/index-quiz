@@ -6,15 +6,20 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
 import com.example.indexquiz.BaseControllerTest;
+import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
 import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
+import com.example.indexquiz.useranswer.application.port.in.SaveUserResultUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.GetUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserResultRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.List;
@@ -29,7 +34,11 @@ public class UserAnswerControllerTest extends BaseControllerTest {
     private SaveUserAnswerUseCase saveUserAnswerUseCase;
 
     @MockitoBean
+    private SaveUserResultUseCase saveUserResultUseCase;
+
+    @MockitoBean
     private GetUserAnswerUseCase getUserAnswerUseCase;
+
 
     @Nested
     class SaveUserAnswer {
@@ -78,9 +87,40 @@ public class UserAnswerControllerTest extends BaseControllerTest {
             // then
             assertAll(
                     () -> assertThat(getUserAnswerWebResponse.isCorrect()).isEqualTo(response.isCorrect()),
-                    () -> assertThat(getUserAnswerWebResponse.userOptions()).containsExactlyElementsOf(response.userOptions()),
-                    () -> assertThat(getUserAnswerWebResponse.answerOptions()).containsExactlyElementsOf(response.answerOptions()),
+                    () -> assertThat(getUserAnswerWebResponse.userOptions()).containsExactlyElementsOf(
+                            response.userOptions()),
+                    () -> assertThat(getUserAnswerWebResponse.answerOptions()).containsExactlyElementsOf(
+                            response.answerOptions()),
                     () -> assertThat(getUserAnswerWebResponse.solution()).isEqualTo(response.solution())
+            );
+        }
+    }
+
+    @Nested
+    class SaveUserResult {
+
+        @Test
+        void 사용자의_성적을_저장한다() {
+            // given
+            SaveUserResultResponse response = new SaveUserResultResponse(1L, QuestionSet.A, 15);
+            given(saveUserResultUseCase.saveUserResult(any(SaveUserResultRequest.class))).willReturn(response);
+
+            // when
+            SaveUserResultRequest request = new SaveUserResultRequest(response.questionSetName(), response.score());
+
+            SaveUserResultWebResponse saveUserResultWebResponse = RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .body(request)
+                    .when().post("/api/user-answers/results")
+                    .then().log().all()
+                    .statusCode(201)
+                    .extract().as(SaveUserResultWebResponse.class);
+
+            // then
+            assertAll(
+                    () -> assertThat(saveUserResultWebResponse.id()).isEqualTo(response.id()),
+                    () -> assertThat(saveUserResultWebResponse.score()).isEqualTo(response.score()),
+                    () -> assertThat(saveUserResultWebResponse.questionSetName()).isEqualTo(response.questionSetName().name())
             );
         }
     }
