@@ -63,7 +63,7 @@ public class UserAnswerController {
             @RequestBody SaveUserResultWebRequest request
     ) {
         SaveUserResultRequest saveUserResultRequest = userAnswerWebMapper.mapToSaveUserResultRequest(request);
-        SaveUserResultResponse saveUserResultResponse = saveUserResultUseCase.save(saveUserResultRequest);
+        SaveUserResultResponse saveUserResultResponse = saveUserResultUseCase.saveUserResult(saveUserResultRequest);
         SaveUserResultWebResponse webResponse = userAnswerWebMapper.mapToSaveUserResultWebResponse(saveUserResultResponse);
         return ResponseEntity.created(URI.create("user-answers/" + webResponse.id()))
                 .body(webResponse);

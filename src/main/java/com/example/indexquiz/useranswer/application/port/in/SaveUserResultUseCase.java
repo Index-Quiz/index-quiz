@@ -5,5 +5,5 @@ import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUse
 
 public interface SaveUserResultUseCase {
 
-    SaveUserResultResponse save(SaveUserResultRequest saveUserResultRequest);
+    SaveUserResultResponse saveUserResult(SaveUserResultRequest saveUserResultRequest);
 }
