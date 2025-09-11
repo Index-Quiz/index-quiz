@@ -11,5 +11,4 @@ public interface UserResultMapper {
     UserResult mapToUserResult(UserResultEntity userResultEntity);
 
     UserResultEntity mapToUserResultEntity(UserResult userResult);
-
 }

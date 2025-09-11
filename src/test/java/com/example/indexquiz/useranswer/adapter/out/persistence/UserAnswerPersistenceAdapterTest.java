@@ -7,12 +7,15 @@ import com.example.indexquiz.BaseRepositoryTest;
 import com.example.indexquiz.common.DomainFixture;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;
+import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapper;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapperImpl;
+import com.example.indexquiz.useranswer.adapter.out.mapper.UserResultMapperImpl;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
 import com.example.indexquiz.useranswer.domain.UserAnswer;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
+import com.example.indexquiz.useranswer.domain.UserResult;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +25,8 @@ import org.springframework.context.annotation.Import;
 
 @Import({
         UserAnswerPersistenceAdapter.class,
-        UserAnswerMapperImpl.class
+        UserAnswerMapperImpl.class,
+        UserResultMapperImpl.class
 })
 class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
 
@@ -31,6 +35,9 @@ class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
 
     @Autowired
     private UserAnswerJpaRepository userAnswerJpaRepository;
+
+    @Autowired
+    private UserResultJpaRepository userResultJpaRepository;
 
     @Autowired
     private UserAnswerMapper userAnswerMapper;
@@ -87,6 +94,28 @@ class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
             assertAll(
                     () -> assertThat(foundUserAnswers.getQuestionId()).isEqualTo(userAnswers.getQuestionId()),
                     () -> assertThat(foundUserAnswers.getUserOptions()).isEqualTo(userAnswers.getUserOptions())
+            );
+        }
+    }
+
+    @Nested
+    class SaveUserResult {
+
+        @Test
+        void 사용자의_성적을_저장할_수_있다() {
+            // given
+            UserResult userResult = new UserResult(QuestionSet.A, 10);
+
+            // when
+            UserResult saveUserResult = userAnswerPersistenceAdapter.saveUserResult(userResult);
+
+            // then
+            UserResultEntity userResultEntity = userResultJpaRepository.findById(saveUserResult.getId()).get();
+            assertAll(
+                    () -> assertThat(userResultEntity.getId()).isEqualTo(saveUserResult.getId()),
+                    () -> assertThat(userResultEntity.getSubmitId()).isEqualTo(saveUserResult.getSubmitId()),
+                    () -> assertThat(userResultEntity.getQuestionSet()).isEqualTo(saveUserResult.getQuestionSet()),
+                    () -> assertThat(userResultEntity.getScore()).isEqualTo(saveUserResult.getScore())
             );
         }
     }
