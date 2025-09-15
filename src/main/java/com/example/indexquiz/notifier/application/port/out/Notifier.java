@@ -1,4 +1,4 @@
-package com.example.indexquiz.common.util.noti;
+package com.example.indexquiz.notifier.application.port.out;
 
 public interface Notifier {
 

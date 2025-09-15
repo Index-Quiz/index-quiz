@@ -1,6 +1,6 @@
 package com.example.indexquiz.useranswer.adapter.out.noti;
 
-import com.example.indexquiz.common.util.noti.Notifier;
+import com.example.indexquiz.notifier.application.port.out.Notifier;
 import com.example.indexquiz.useranswer.application.port.out.SendUserResultMessagePort;
 import com.example.indexquiz.useranswer.domain.UserResult;
 import lombok.RequiredArgsConstructor;

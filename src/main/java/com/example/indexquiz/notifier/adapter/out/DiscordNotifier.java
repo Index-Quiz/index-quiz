@@ -1,7 +1,9 @@
-package com.example.indexquiz.common.util.noti;
+package com.example.indexquiz.notifier.adapter.out;
 
 import com.example.indexquiz.common.exception.custom.IndexQuizException;
 import com.example.indexquiz.common.exception.errorcode.ErrorCode;
+import com.example.indexquiz.notifier.config.DiscordProperties;
+import com.example.indexquiz.notifier.application.port.out.Notifier;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;

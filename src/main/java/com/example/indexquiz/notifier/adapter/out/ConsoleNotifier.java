@@ -1,4 +1,6 @@
-package com.example.indexquiz.common.util.noti;
+package com.example.indexquiz.notifier.adapter.out;
+
+import com.example.indexquiz.notifier.application.port.out.Notifier;
 
 public class ConsoleNotifier implements Notifier {
 

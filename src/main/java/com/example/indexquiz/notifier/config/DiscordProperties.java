@@ -1,4 +1,4 @@
-package com.example.indexquiz.common.util.noti;
+package com.example.indexquiz.notifier.config;
 
 import com.example.indexquiz.common.exception.custom.IndexQuizException;
 import com.example.indexquiz.common.exception.errorcode.ErrorCode;
