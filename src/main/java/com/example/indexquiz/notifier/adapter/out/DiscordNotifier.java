@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 public class DiscordNotifier implements Notifier {
 
     private final DiscordProperties properties;
+
     private final JDA jda;
 
     public DiscordNotifier(DiscordProperties discordProperties) {
