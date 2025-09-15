@@ -30,12 +30,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserAnswerService implements
         SaveUserAnswerUseCase,
-        GetUserAnswerUseCase,
-        SaveUserResultUseCase {
+        GetUserAnswerUseCase {
 
     private final SaveUserAnswerPort saveUserAnswerPort;
-
-    private final SaveUserResultPort saveUserResultPort;
 
     private final GetUserAnswerPort getUserAnswerPort;
 
@@ -44,8 +41,6 @@ public class UserAnswerService implements
     private final GetSolutionPort getSolutionPort;
 
     private final GetQuestionPort getQuestionPort;
-
-    private final SendUserResultMessagePort sendUserResultMessagePort;
 
     private final UserAnswerDtoMapper userAnswerDtoMapper;
 
@@ -64,13 +59,5 @@ public class UserAnswerService implements
         SaveUserAnswersCommand command = new SaveUserAnswersCommand(questionWithOptions, request.options());
         UserAnswers userAnswers = saveUserAnswerPort.saveUserAnswers(command);
         return userAnswerDtoMapper.mapToSaveUserAnswerResponse(userAnswers);
-    }
-
-    @Override
-    public SaveUserResultResponse saveUserResult(SaveUserResultRequest request) {
-        UserResult userResult = new UserResult(request.questionSetName(), request.score());
-        UserResult savedUserResult = saveUserResultPort.saveUserResult(userResult);
-        sendUserResultMessagePort.sendUserResultMessage(savedUserResult);
-        return userAnswerDtoMapper.mapToSaveUserResultResponse(savedUserResult);
     }
 }

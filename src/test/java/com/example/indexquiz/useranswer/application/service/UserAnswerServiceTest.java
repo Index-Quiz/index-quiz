@@ -53,9 +53,6 @@ class UserAnswerServiceTest extends BaseServiceTest {
     private SaveUserAnswerPort saveUserAnswerPort;
 
     @MockitoSpyBean
-    private SaveUserResultPort saveUserResultPort;
-
-    @MockitoSpyBean
     private GetQuestionPort getQuestionPort;
 
     @MockitoSpyBean
@@ -127,33 +124,6 @@ class UserAnswerServiceTest extends BaseServiceTest {
                     () -> assertThat(userAnswerResponse.userOptions()).containsExactlyElementsOf(userAnswers.getUserOptions()),
                     () -> assertThat(userAnswerResponse.answerOptions()).containsExactlyElementsOf(answers.getAnswerOptions()),
                     () -> assertThat(userAnswerResponse.solution()).isEqualTo(solution.getDescription())
-            );
-        }
-    }
-
-    @Nested
-    class SaveUserResult {
-
-        @Test
-        void 사용자의_성적을_저장한다() {
-            // given
-            UserResult userResult = new UserResult(QuestionSet.A, 10);
-            UserResult savedUserResult = new UserResult(
-                    1L,
-                    userResult.getQuestionSet(),
-                    userResult.getScore()
-            );
-            willReturn(savedUserResult).given(saveUserResultPort).saveUserResult(userResult);
-
-            // when
-            SaveUserResultRequest request = new SaveUserResultRequest(userResult.getQuestionSet(), userResult.getScore());
-            SaveUserResultResponse saveUserResultResponse = userAnswerService.saveUserResult(request);
-
-            // then
-            assertAll(
-                    () -> assertThat(saveUserResultResponse.id()).isEqualTo(savedUserResult.getId()),
-                    () -> assertThat(saveUserResultResponse.score()).isEqualTo(savedUserResult.getScore()),
-                    () -> assertThat(saveUserResultResponse.questionSetName()).isEqualTo(savedUserResult.getQuestionSet())
             );
         }
     }

@@ -17,9 +17,6 @@ public interface UserAnswerDtoMapper {
 
     SaveUserAnswerResponse mapToSaveUserAnswerResponse(UserAnswers userAnswers);
 
-    @Mapping(source = "questionSet", target = "questionSetName")
-    SaveUserResultResponse mapToSaveUserResultResponse(UserResult userResult);
-
     default GetUserAnswerResponse mapToGetUserAnswerResponse(
             UserAnswers userAnswers,
             Answers answers,
