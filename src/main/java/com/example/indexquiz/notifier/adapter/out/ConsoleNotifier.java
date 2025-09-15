@@ -1,8 +1,8 @@
 package com.example.indexquiz.notifier.adapter.out;
 
-import com.example.indexquiz.notifier.application.port.out.Notifier;
+import com.example.indexquiz.notifier.application.port.out.NotifyPort;
 
-public class ConsoleNotifier implements Notifier {
+public class ConsoleNotifier implements NotifyPort {
 
     @Override
     public void sendMessage(String message) {

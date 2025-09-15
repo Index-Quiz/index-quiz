@@ -3,12 +3,12 @@ package com.example.indexquiz.notifier.adapter.out;
 import com.example.indexquiz.common.exception.custom.IndexQuizException;
 import com.example.indexquiz.common.exception.errorcode.ErrorCode;
 import com.example.indexquiz.notifier.config.DiscordProperties;
-import com.example.indexquiz.notifier.application.port.out.Notifier;
+import com.example.indexquiz.notifier.application.port.out.NotifyPort;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-public class DiscordNotifier implements Notifier {
+public class DiscordNotifier implements NotifyPort {
 
     private final DiscordProperties properties;
 

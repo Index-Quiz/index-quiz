@@ -2,7 +2,7 @@ package com.example.indexquiz.notifier.config;
 
 import com.example.indexquiz.notifier.adapter.out.ConsoleNotifier;
 import com.example.indexquiz.notifier.adapter.out.DiscordNotifier;
-import com.example.indexquiz.notifier.application.port.out.Notifier;
+import com.example.indexquiz.notifier.application.port.out.NotifyPort;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,7 +22,7 @@ public class NotifierConfig {
         private final DiscordProperties discordProperties;
 
         @Bean
-        public Notifier discordNotifier() {
+        public NotifyPort discordNotifier() {
             return new DiscordNotifier(discordProperties);
         }
     }
@@ -32,7 +32,7 @@ public class NotifierConfig {
     public static class ConsoleNotifierConfig {
 
         @Bean
-        public Notifier consoleNotifier() {
+        public NotifyPort consoleNotifier() {
             return new ConsoleNotifier();
         }
     }
