@@ -29,8 +29,6 @@ public class NotifierConfig {
 
     @Profile({"test", "local"})
     @Configuration
-    @RequiredArgsConstructor
-    @EnableConfigurationProperties(DiscordProperties.class)
     public static class ConsoleNotifierConfig {
 
         @Bean
