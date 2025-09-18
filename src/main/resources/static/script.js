@@ -4,6 +4,7 @@ const USE_MOCK_DATA = false;
 // API를 통한 퀴즈 데이터 관리
 let totalQuestions = USE_MOCK_DATA ? 2 : 15; // 목데이터 사용 시 2문제, 실제 API는 10문제
 let currentQuestion = null;
+let currentQuestionNumber = null;
 
 // 목데이터 (백엔드 개발 완료 전까지 사용)
 const MOCK_DATA = {
@@ -49,22 +50,6 @@ const MOCK_DATA = {
 
 // API 호출 함수
 async function fetchQuestion(questionId) {
-    // 목데이터 사용 시
-    if (USE_MOCK_DATA) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const mockQuestion = MOCK_DATA.questions[questionId];
-                if (mockQuestion) {
-                    console.log(`[MOCK] 문제 ${questionId} 조회:`, mockQuestion);
-                    resolve(mockQuestion);
-                } else {
-                    console.warn(`⚠️ [MOCK] 문제 ${questionId}에 대한 목데이터가 없습니다. 사용 가능한 문제: ${Object.keys(MOCK_DATA.questions).join(', ')}`);
-                    reject(new Error(`Mock data not found for question ${questionId}`));
-                }
-            }, 500); // 실제 API 호출처럼 지연 시뮬레이션
-        });
-    }
-
     // 실제 API 호출
     try {
         const response = await fetch(`/api/questions/${questionId}`);
@@ -83,27 +68,6 @@ async function fetchQuestion(questionId) {
 async function submitAnswerToAPI(questionId, selectedAnswers) {
     // selectedAnswers 배열을 1부터 시작하는 인덱스로 변환
     const choices = selectedAnswers.map(optionId => optionId);
-
-    // 목데이터 사용 시
-    if (USE_MOCK_DATA) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const mockAnswer = MOCK_DATA.answers[questionId];
-                if (mockAnswer) {
-                    // 실제 사용자의 답안으로 업데이트
-                    const result = {
-                        ...mockAnswer,
-                        userOptions: choices,
-                        isCorrect: arraysEqual(choices.sort(), mockAnswer.answerOptions.sort())
-                    };
-                    console.log(`[MOCK] 문제 ${questionId} 채점:`, result);
-                    resolve(result);
-                } else {
-                    reject(new Error(`Mock answer not found for question ${questionId}`));
-                }
-            }, 800); // 실제 API 호출처럼 지연 시뮬레이션
-        });
-    }
 
     // 실제 API 호출
     try {
@@ -297,7 +261,9 @@ function parseMarkdownToHtml(content) {
 }
 
 // 퀴즈 상태 변수들
+let quizStartId = 0;
 let currentQuestionIndex = 0;
+let quizSet = "A";
 let score = 0;
 let selectedAnswers = []; // 다중 선택 지원을 위해 배열로 변경
 let isAnswered = false;
@@ -355,11 +321,12 @@ function hideLoading() {
 // 퀴즈 초기화
 async function initQuiz() {
     console.log('initQuiz() 실행됨');
-    if (USE_MOCK_DATA) {
-        console.log('🧪 [MOCK MODE] 목데이터를 사용하여 퀴즈를 진행합니다.');
-        console.log('📝 총 문제 수:', totalQuestions);
-    }
-    currentQuestionIndex = 0;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    quizSet = urlParams.get("set") || "A"; // 기본 A
+
+    quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 15;
+    currentQuestionIndex = quizStartId;
     score = 0;
     selectedAnswers = [];
     isAnswered = false;
@@ -406,7 +373,7 @@ async function loadQuestion() {
             questionText.style.transform = 'translateY(0)';
         }, 100);
 
-        currentQuestionSpan.textContent = currentQuestionIndex + 1;
+        currentQuestionSpan.textContent = currentQuestionIndex + 1 -quizStartId;
 
         // 진행률 업데이트 애니메이션
         const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
@@ -675,7 +642,7 @@ async function submitAnswer() {
 
 // 다음 문제 또는 결과 표시
 async function nextQuestion() {
-    if (currentQuestionIndex === totalQuestions - 1) {
+    if (currentQuestionIndex - quizStartId === totalQuestions - 1) {
         showFinalResult();
     } else {
         currentQuestionIndex++;

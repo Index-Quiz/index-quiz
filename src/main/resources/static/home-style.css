@@ -107,6 +107,16 @@ header p {
     margin-bottom: 40px;
 }
 
+.hero-section .quiz-sets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px; /* 카드 사이 간격 */
+    width: 100%;
+    justify-items: center; /* 카드 가운데 정렬 */
+    margin-top: 20px;
+}
+
+
 .features {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
