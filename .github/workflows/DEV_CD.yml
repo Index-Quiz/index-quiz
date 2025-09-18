@@ -123,6 +123,8 @@ jobs:
             -e RDS_DB=${{ secrets.RDS_DB }} \
             -e RDS_USERNAME=${{ secrets.RDS_USERNAME }} \
             -e RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
+            -e DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
+            -e DEV_DISCORD_CHANNEL_ID=${{ secrets.DEV_DISCORD_CHANNEL_ID }} \
             $IMAGE_NAME:$IMAGE_TAG
           sleep 3
 

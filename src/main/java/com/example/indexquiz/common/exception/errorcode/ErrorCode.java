@@ -27,6 +27,8 @@ public enum ErrorCode {
     // 500
     INVALID_USER_ANSWERS(HttpStatus.INTERNAL_SERVER_ERROR, "잘못된 유저 답변 목록입니다"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다. 관리자에게 문의하세요."),
+    INITIALIZE_JDA_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "Discord JDA 초기화에 실패하였습니다"),
+    DISCORD_PROPERTIES_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "Discord 설정 정보 초기화에 실패하였습니다"),
     ;
 
     private final HttpStatus status;

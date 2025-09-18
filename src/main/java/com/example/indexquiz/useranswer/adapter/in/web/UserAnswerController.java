@@ -1,15 +1,21 @@
 package com.example.indexquiz.useranswer.adapter.in.web;
 
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserResultWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.mapper.UserAnswerWebMapper;
 import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
+import com.example.indexquiz.useranswer.application.port.in.SaveUserResultUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.GetUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserResultRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserAnswerController {
 
     private final SaveUserAnswerUseCase saveUserAnswerUseCase;
+
+    private final SaveUserResultUseCase saveUserResultUseCase;
 
     private final GetUserAnswerUseCase getUserAnswerUseCase;
 
@@ -48,5 +56,16 @@ public class UserAnswerController {
         SaveUserAnswerWebResponse webResponse = userAnswerWebMapper.mapToSaveUserAnswerWebResponse(
                 saveUserAnswerResponse);
         return ResponseEntity.ok(webResponse);
+    }
+
+    @PostMapping("/results")
+    public ResponseEntity<SaveUserResultWebResponse> saveUserAnswerResults(
+            @RequestBody SaveUserResultWebRequest request
+    ) {
+        SaveUserResultRequest saveUserResultRequest = userAnswerWebMapper.mapToSaveUserResultRequest(request);
+        SaveUserResultResponse saveUserResultResponse = saveUserResultUseCase.saveUserResult(saveUserResultRequest);
+        SaveUserResultWebResponse webResponse = userAnswerWebMapper.mapToSaveUserResultWebResponse(saveUserResultResponse);
+        return ResponseEntity.created(URI.create("user-answers/" + webResponse.id()))
+                .body(webResponse);
     }
 }

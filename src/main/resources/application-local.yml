@@ -19,3 +19,6 @@ spring:
   flyway:
     enabled: false
     baseline-on-migrate: true
+discord:
+  token: testToken
+  channel-id: testChannelId

@@ -1,14 +1,12 @@
 package com.example.indexquiz.answer.adapter.out.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.indexquiz.BaseRepositoryTest;
 import com.example.indexquiz.answer.adapter.out.mapper.AnswerMapper;
 import com.example.indexquiz.answer.adapter.out.mapper.AnswerMapperImpl;
 import com.example.indexquiz.answer.domain.Answer;
 import com.example.indexquiz.answer.domain.Answers;
-import com.example.indexquiz.solution.domain.Solution;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,7 @@ import org.springframework.context.annotation.Import;
 
 @Import({
         GetAnswerPersistenceAdapter.class,
-        AnswerMapperImpl.class,
+        AnswerMapperImpl.class
 })
 class GetAnswerPersistenceAdapterTest extends BaseRepositoryTest {
 
@@ -39,7 +37,7 @@ class GetAnswerPersistenceAdapterTest extends BaseRepositoryTest {
             Answers answers = new Answers(List.of(
                     new Answer(null, questionId, 1L),
                     new Answer(null, questionId, 2L)
-                    ));
+            ));
             List<AnswerEntity> answerEntities = answers.getValues()
                     .stream()
                     .map(answerMapper::mapToAnswerEntity)

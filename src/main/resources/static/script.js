@@ -689,6 +689,17 @@ function showFinalResult() {
     quizContainer.style.opacity = '0';
     quizContainer.style.transform = 'translateX(-100px)';
 
+    const response = fetch(`/api/user-answers/results`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            questionSetName: 'A',
+            score: score
+        })
+    });
+
     setTimeout(() => {
         quizContainer.style.display = 'none';
         finalResult.style.display = 'block';
