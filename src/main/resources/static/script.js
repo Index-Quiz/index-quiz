@@ -662,7 +662,7 @@ function showFinalResult() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            questionSetName: 'A',
+            questionSetName: quizSet,
             score: score
         })
     });
