@@ -618,7 +618,7 @@ async function submitAnswer() {
         displayExplanationFromAPI(result.solution);
 
         // 다음 버튼 텍스트 설정
-        if (currentQuestionIndex === totalQuestions - 1) {
+        if (currentQuestionIndex - quizStartId === totalQuestions - 1) {
             nextBtn.textContent = '결과 보기';
         } else {
             nextBtn.textContent = '다음 문제';
