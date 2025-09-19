@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum QuestionSet {
 
     A(15),
+    B(15),
     ;
 
     private final int questionCount;
