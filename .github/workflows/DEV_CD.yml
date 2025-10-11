@@ -175,5 +175,5 @@ jobs:
             docker tag ${IMAGE_NAME}:${PREV_TAG} ${IMAGE_NAME}:${IMAGE_TAG}
             docker push ${IMAGE_NAME}:${IMAGE_TAG}
 
-      - name: Clean dangling images and containers
-        run: docker system prune -af
+#      - name: Clean dangling images and containers
+#        run: docker system prune -af
