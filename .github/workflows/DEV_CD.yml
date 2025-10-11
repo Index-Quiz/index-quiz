@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - chore/#51-infra
 
 jobs:
   push:
@@ -111,23 +112,36 @@ jobs:
             echo "[3] 이미지 Pull: ${IMAGE_NAME}:${IMAGE_TAG}"
             docker pull ${IMAGE_NAME}:${IMAGE_TAG}
 
-      - name: container run
-        run: |
-          echo "[4] 컨테이너 실행 및 3초 대기"
-          docker run -d --name $CONTAINER_NAME \
-            -p 8080:8080 \
-            --restart unless-stopped \
-            -e SPRING_PROFILES_ACTIVE=dev \
-            -e RDS_HOST=${{ secrets.RDS_HOST }} \
-            -e RDS_PORT=${{ secrets.RDS_PORT }} \
-            -e RDS_DB=${{ secrets.RDS_DB }} \
-            -e RDS_USERNAME=${{ secrets.RDS_USERNAME }} \
-            -e RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
-            -e DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
-            -e DEV_DISCORD_CHANNEL_ID=${{ secrets.DEV_DISCORD_CHANNEL_ID }} \
-            $IMAGE_NAME:$IMAGE_TAG
-          sleep 3
 
+      - name : Run docker compose
+        run: |
+            echo "[4] docker compose up 실행"
+            docker compose -f docker-compose.dev.yml up -d --build
+            sleep 3
+        env:
+            MYSQL_USER: ${{ secrets.DEV_MYSQL_USER }}
+            MYSQL_PASSWORD: ${{ secrets.DEV_MYSQL_PASSWORD }}
+            MYSQL_ROOT_PASSWORD: ${{ secrets.DEV_MYSQL_ROOT_PASSWORD }}
+            DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+            DEV_DISCORD_CHANNEL_ID: ${{ secrets.DEV_DISCORD_CHANNEL_ID }}
+
+#      - name: container run
+#        run: |
+#          echo "[4] 컨테이너 실행 및 3초 대기"
+#          docker run -d --name $CONTAINER_NAME \
+#            -p 8080:8080 \
+#            --restart unless-stopped \
+#            -e SPRING_PROFILES_ACTIVE=dev \
+#            -e RDS_HOST=${{ secrets.RDS_HOST }} \
+#            -e RDS_PORT=${{ secrets.RDS_PORT }} \
+#            -e RDS_DB=${{ secrets.RDS_DB }} \
+#            -e RDS_USERNAME=${{ secrets.RDS_USERNAME }} \
+#            -e RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
+#            -e DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
+#            -e DEV_DISCORD_CHANNEL_ID=${{ secrets.DEV_DISCORD_CHANNEL_ID }} \
+#            $IMAGE_NAME:$IMAGE_TAG
+#          sleep 3
+#
       - name: check container run
         run : |
           echo "[5] 컨테이너 실행 확인"
