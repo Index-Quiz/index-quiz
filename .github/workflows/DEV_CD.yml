@@ -116,14 +116,14 @@ jobs:
       - name : Run docker compose
         run: |
             echo "[4] docker compose up 실행"
+            export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            export MYSQL_USER=${{ secrets.DEV_MYSQL_USER }}
+            export MYSQL_PASSWORD=${{ secrets.DEV_MYSQL_PASSWORD }}
+            export MYSQL_ROOT_PASSWORD=${{ secrets.DEV_MYSQL_ROOT_PASSWORD }}
+            export DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
+            export DEV_DISCORD_CHANNEL_ID=${{ secrets.DEV_DISCORD_CHANNEL_ID }}
             docker compose -f docker-compose.dev.yml up -d --build
             sleep 3
-        env:
-            MYSQL_USER: ${{ secrets.DEV_MYSQL_USER }}
-            MYSQL_PASSWORD: ${{ secrets.DEV_MYSQL_PASSWORD }}
-            MYSQL_ROOT_PASSWORD: ${{ secrets.DEV_MYSQL_ROOT_PASSWORD }}
-            DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-            DEV_DISCORD_CHANNEL_ID: ${{ secrets.DEV_DISCORD_CHANNEL_ID }}
 
 #      - name: container run
 #        run: |
