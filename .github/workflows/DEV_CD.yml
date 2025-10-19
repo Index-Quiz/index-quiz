@@ -111,22 +111,17 @@ jobs:
             echo "[3] 이미지 Pull: ${IMAGE_NAME}:${IMAGE_TAG}"
             docker pull ${IMAGE_NAME}:${IMAGE_TAG}
 
-      - name: container run
+      - name: Run docker compose
         run: |
-          echo "[4] 컨테이너 실행 및 3초 대기"
-          docker run -d --name $CONTAINER_NAME \
-            -p 8080:8080 \
-            --restart unless-stopped \
-            -e SPRING_PROFILES_ACTIVE=dev \
-            -e RDS_HOST=${{ secrets.RDS_HOST }} \
-            -e RDS_PORT=${{ secrets.RDS_PORT }} \
-            -e RDS_DB=${{ secrets.RDS_DB }} \
-            -e RDS_USERNAME=${{ secrets.RDS_USERNAME }} \
-            -e RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
-            -e DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} \
-            -e DEV_DISCORD_CHANNEL_ID=${{ secrets.DEV_DISCORD_CHANNEL_ID }} \
-            $IMAGE_NAME:$IMAGE_TAG
-          sleep 3
+          echo "[4] docker compose up 실행"
+          docker compose -f docker-compose.dev.yml up -d --build
+          sleep 5
+        env:
+          MYSQL_USER: ${{ secrets.DEV_MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.DEV_MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DEV_MYSQL_ROOT_PASSWORD }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DEV_DISCORD_CHANNEL_ID: ${{ secrets.DEV_DISCORD_CHANNEL_ID }}
 
       - name: check container run
         run : |
@@ -149,15 +144,15 @@ jobs:
         if: failure()
         run: |
             echo "Rollback triggered: dev container failed"
-                
+
             echo "[1] 기존 dev 컨테이너 중지 및 삭제"
             docker stop ${CONTAINER_NAME} 2>/dev/null || true
             docker rm ${CONTAINER_NAME} 2>/dev/null || true
-                
+
             echo "[2] previous 이미지 pull 및 실행"
             docker pull ${IMAGE_NAME}:${PREV_TAG}
             docker run -d --name ${CONTAINER_NAME} -p 8080:8080 --restart unless-stopped ${IMAGE_NAME}:${PREV_TAG}
-                
+
             echo "[3] previous 이미지를 dev로 retag 및 push"
             docker tag ${IMAGE_NAME}:${PREV_TAG} ${IMAGE_NAME}:${IMAGE_TAG}
             docker push ${IMAGE_NAME}:${IMAGE_TAG}
