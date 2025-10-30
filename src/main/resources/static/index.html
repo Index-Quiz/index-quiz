@@ -1,165 +1,118 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PVP7YB17ET"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-PVP7YB17ET');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>인덱스 퀴즈</title>
-    <link rel="stylesheet" href="home-style.css">
+    <title>Index Quiz</title>
     <link rel="icon" type="image/png" href="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
-    <link rel="apple-touch-icon" href="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
+    <link rel="stylesheet" href="home-style.css">
 </head>
 <body>
 <div class="container">
-    <header>
-        <h1>🗃️ Index Quiz</h1>
-        <p>MySQL 인덱스에 대한 지식을 테스트하고 향상시켜보세요!</p>
-    </header>
-
-    <div class="main-content">
-        <div class="hero-section">
-            <div class="quiz-sets">
-                <!-- A-SET 카드 -->
-                <div class="hero-card">
-                    <div class="icon">📚</div>
-                    <h2>A-SET</h2>
-                    <p>인덱스 기초부터 B-Tree까지 핵심을 빠르게!</p>
-
-                    <div class="features">
-                        <div class="feature">
-                            <span class="feature-icon">📖</span>
-                            <span>인덱스 기초</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">⚡</span>
-                            <span>해쉬 인덱스</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">🌳</span>
-                            <span>B-Tree 구조</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">🚩</span>
-                            <span>클러스터링 인덱스</span>
-                        </div>
-                    </div>
-
-                    <div class="quiz-info">
-                        <div class="info-item">
-                            <strong th:text="${totalQuestions ?: 15}">15</strong>
-                            <span>문제</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>20</strong>
-                            <span>분 소요</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>초급</strong>
-                            <span>난이도</span>
-                        </div>
-                    </div>
-
-                    <a href="quiz.html?set=A" class="start-quiz-btn">
-                        <span>A SET 풀러가기</span>
-                        <span class="btn-arrow">→</span>
-                    </a>
-                </div>
-
-                <!-- B-SET 카드 -->
-                <div class="hero-card">
-                    <div class="icon">🎯</div>
-                    <h2>B-SET</h2>
-                    <p>이 조건은 인덱스를 활용할까? 활용하지 못할까?</p>
-
-                    <div class="features">
-                        <div class="feature">
-                            <span class="feature-icon">↪️</span>
-                            <span>레인지 스캔</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">👥</span>
-                            <span>동등 조건</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">🔫️</span>
-                            <span>and 조건</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-icon">🚀</span>
-                            <span>in 조건</span>
-                        </div>
-                    </div>
-
-                    <div class="quiz-info">
-                        <div class="info-item">
-                            <strong>15</strong>
-                            <span>문제</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>20</strong>
-                            <span>분 소요</span>
-                        </div>
-                        <div class="info-item">
-                            <strong>초·중급</strong>
-                            <span>난이도</span>
-                        </div>
-                    </div>
-
-                    <a href="quiz.html?set=B" class="start-quiz-btn">
-                        <span>B SET 풀러가기</span>
-                        <span class="btn-arrow">→</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="topics-section">
-            <h3>다루는 주제들</h3>
-            <div class="topics-grid">
-                <div class="topic-card">
-                    <div class="topic-icon">🌳</div>
-                    <h4>B-Tree 인덱스</h4>
-                    <p>균형 트리 구조의 특징과 활용법</p>
-                </div>
-                <div class="topic-card">
-                    <div class="topic-icon">🔗</div>
-                    <h4>클러스터드 인덱스</h4>
-                    <p>물리적 데이터 순서와 인덱스</p>
-                </div>
-                <div class="topic-card">
-                    <div class="topic-icon">⚡</div>
-                    <h4>해시 인덱스</h4>
-                    <p>빠른 등등 비교 검색 최적화</p>
-                </div>
-                <div class="topic-card">
-                    <div class="topic-icon">🎯</div>
-                    <h4>성능 최적화</h4>
-                    <p>쿼리 성능 향상 전략</p>
-                </div>
-                <div class="topic-card">
-                    <div class="topic-icon">📊</div>
-                    <h4>복합 인덱스</h4>
-                    <p>다중 컬럼 인덱스 설계와 활용</p>
-                </div>
-                <div class="topic-card">
-                    <div class="topic-icon">🚀</div>
-                    <h4>고급 튜닝</h4>
-                    <p>실행 계획 분석과 최적화 기법</p>
-                </div>
-            </div>
-        </div>
+    <!-- 배경 애니메이션 -->
+    <div class="background-animation">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
     </div>
 
+    <!-- 헤더 섹션 -->
+    <header>
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <div class="logo-icon">🗃️</div>
+                <h1>Index Quiz</h1>
+            </div>
+            <p class="subtitle">MySQL 인덱스에 대한 지식을 테스트하고 향상시켜보세요!</p>
+        </div>
+    </header>
+
+    <!-- 퀴즈 섹션 -->
+    <main class="main-content">
+        <section class="quiz-section">
+            <div class="section-header">
+                <h2>퀴즈 세트를 선택하세요</h2>
+                <p>각 세트는 7문제로 구성되어 있습니다</p>
+            </div>
+
+            <!-- 책갈피 스타일 탭 -->
+            <div class="bookmark-container">
+                <div class="bookmark-tab" data-set="A">
+                    <div class="bookmark-content">
+                        <div class="bookmark-icon">📚</div>
+                        <div class="bookmark-info">
+                            <div class="bookmark-title">A-SET</div>
+                            <div class="bookmark-subtitle">인덱스 기초</div>
+                        </div>
+                        <div class="bookmark-badge">
+                            <span class="badge-level">초급</span>
+                            <span class="badge-count">7문제</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-tab" data-set="B">
+                    <div class="bookmark-content">
+                        <div class="bookmark-icon">🎯</div>
+                        <div class="bookmark-info">
+                            <div class="bookmark-title">B-SET</div>
+                            <div class="bookmark-subtitle">인덱스 활용</div>
+                        </div>
+                        <div class="bookmark-badge">
+                            <span class="badge-level">초·중급</span>
+                            <span class="badge-count">7문제</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-tab" data-set="C">
+                    <div class="bookmark-content">
+                        <div class="bookmark-icon">📦</div>
+                        <div class="bookmark-info">
+                            <div class="bookmark-title">C-SET</div>
+                            <div class="bookmark-subtitle">복합 인덱스</div>
+                        </div>
+                        <div class="bookmark-badge">
+                            <span class="badge-level">중급</span>
+                            <span class="badge-count">7문제</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-tab" data-set="D">
+                    <div class="bookmark-content">
+                        <div class="bookmark-icon">🧩</div>
+                        <div class="bookmark-info">
+                            <div class="bookmark-title">D-SET</div>
+                            <div class="bookmark-subtitle">성능 최적화</div>
+                        </div>
+                        <div class="bookmark-badge">
+                            <span class="badge-level">중·고급</span>
+                            <span class="badge-count">7문제</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bookmark-tab" data-set="E">
+                    <div class="bookmark-content">
+                        <div class="bookmark-icon">⚡</div>
+                        <div class="bookmark-info">
+                            <div class="bookmark-title">E-SET</div>
+                            <div class="bookmark-subtitle">고급 개념</div>
+                        </div>
+                        <div class="bookmark-badge">
+                            <span class="badge-level">고급</span>
+                            <span class="badge-count">7문제</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
     <footer>
-        <p>© 2024 DB 인덱스 학습 플랫폼. 모든 권리 보유.</p>
+        <p>&copy; 2024 Index Quiz. All rights reserved.</p>
     </footer>
 </div>
 

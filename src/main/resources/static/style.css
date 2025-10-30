@@ -320,6 +320,22 @@ header p {
     border-left: 4px solid #4ade80;
 }
 
+.explanation-summary {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #a8d8ff;
+    margin: 20px 0 15px 0;
+    padding-left: 10px;
+    border-left: 4px solid #4ade80;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.explanation-summary:hover {
+    color: #7fc8ff;
+    transform: translateX(3px);
+}
+
 .markdown-h3 {
     font-size: 1.3rem;
     font-weight: 600;
