@@ -612,6 +612,13 @@ async function nextQuestion() {
         submitBtn.style.display = 'block';
         await loadQuestion();
     }
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
 }
 
 // 최종 결과 표시
@@ -845,7 +852,8 @@ function restartQuiz() {
     finalResult.style.transform = 'translateY(-50px)';
 
     setTimeout(() => {
-        initQuiz();
+        // 현재 URL로 리다이렉트 (페이지 새로 로드)
+        window.location.href = window.location.href;
     }, 300);
 }
 
