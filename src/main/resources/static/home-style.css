@@ -105,6 +105,16 @@ header {
     opacity: 1;
 }
 
+header p,
+.subtitle {
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    color: #b8c5d6;
+    opacity: 0.9;
+    word-break: keep-all; /* 단어 단위로 줄바꿈 */
+    overflow-wrap: break-word; /* 너무 긴 단어는 강제로 줄바꿈 */
+    line-height: 1.5;
+}
+
 .logo-wrapper {
     display: flex;
     align-items: center;
