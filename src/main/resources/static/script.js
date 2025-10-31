@@ -1,5 +1,4 @@
 // 목데이터 사용 여부 (개발 중에는 true, 프로덕션에서는 false)
-const USE_MOCK_DATA = false;
 
 // API를 통한 퀴즈 데이터 관리
 let totalQuestions = 7; // 목데이터 사용 시 2문제, 실제 API는 10문제
@@ -288,7 +287,7 @@ async function initQuiz() {
     const urlParams = new URLSearchParams(window.location.search);
     quizSet = urlParams.get("set") || "A"; // 기본 A
 
-    quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 15;
+    quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
     currentQuestionIndex = quizStartId;
     score = 0;
     selectedAnswers = [];
