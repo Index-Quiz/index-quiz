@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - chore/#54-setting-prod
 
 jobs:
   push:
@@ -35,8 +36,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
       - name: Login to Amazon ECR
@@ -90,8 +91,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
       - name: login to ecr
@@ -117,11 +118,11 @@ jobs:
           docker compose -f docker-compose.dev.yml up -d --build
           sleep 5
         env:
-          MYSQL_USER: ${{ secrets.DEV_MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ secrets.DEV_MYSQL_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DEV_MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER: ${{ secrets.PROD_MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.PROD_MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.PROD_MYSQL_ROOT_PASSWORD }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          DEV_DISCORD_CHANNEL_ID: ${{ secrets.DEV_DISCORD_CHANNEL_ID }}
+          DEV_DISCORD_CHANNEL_ID: ${{ secrets.PROD_DISCORD_CHANNEL_ID }}
 
       - name: check container run
         run : |
