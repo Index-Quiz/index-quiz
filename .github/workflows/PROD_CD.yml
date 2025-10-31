@@ -144,17 +144,17 @@ jobs:
       - name: Rollback if dev container failed
         if: failure()
         run: |
-          echo "Rollback triggered: dev container failed"
+          echo "Rollback triggered: prod container failed"
           
-          echo "[1] 기존 dev 컨테이너 중지 및 삭제"
-          docker stop ${CONTAINER_NAME} 2>/dev/null || true
-          docker rm ${CONTAINER_NAME} 2>/dev/null || true
+          echo "[1] 기존 prod 컨테이너 중지 및 삭제"
+          docker stop ${CONTAINER_NAME} 2>/prod/null || true
+          docker rm ${CONTAINER_NAME} 2>/prod/null || true
           
           echo "[2] previous 이미지 pull 및 실행"
           docker pull ${IMAGE_NAME}:${PREV_TAG}
           docker run -d --name ${CONTAINER_NAME} -p 8080:8080 --restart unless-stopped ${IMAGE_NAME}:${PREV_TAG}
           
-          echo "[3] previous 이미지를 dev로 retag 및 push"
+          echo "[3] previous 이미지를 prod로 retag 및 push"
           docker tag ${IMAGE_NAME}:${PREV_TAG} ${IMAGE_NAME}:${IMAGE_TAG}
           docker push ${IMAGE_NAME}:${IMAGE_TAG}
 
