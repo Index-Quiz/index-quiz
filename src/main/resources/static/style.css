@@ -70,7 +70,7 @@ header {
 }
 
 header h1 {
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
     margin-bottom: 10px;
     background: linear-gradient(45deg, #ffffff, #a8d8ff);
     -webkit-background-clip: text;
@@ -79,10 +79,14 @@ header h1 {
     text-shadow: 0 0 20px rgba(168, 216, 255, 0.3);
 }
 
-header p {
-    font-size: 1.2rem;
+header p,
+.subtitle {
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
     color: #b8c5d6;
     opacity: 0.9;
+    word-break: keep-all; /* 단어 단위로 줄바꿈 */
+    overflow-wrap: break-word; /* 너무 긴 단어는 강제로 줄바꿈 */
+    line-height: 1.5;
 }
 
 .quiz-container {
