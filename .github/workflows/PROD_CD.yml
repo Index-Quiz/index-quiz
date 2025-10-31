@@ -3,7 +3,7 @@ name: PROD_CD
 on:
   push:
     branches:
-      - develop
+      - main
       - chore/#54-setting-prod
 
 jobs:
@@ -115,7 +115,7 @@ jobs:
       - name: Run docker compose
         run: |
           echo "[4] docker compose up 실행"
-          docker compose -f docker-compose.dev.yml up -d --build
+          docker compose -f docker-compose.yml up -d --build
           sleep 5
         env:
           MYSQL_USER: ${{ secrets.PROD_MYSQL_USER }}
