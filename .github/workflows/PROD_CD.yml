@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - chore/#54-setting-prod
 
 jobs:
   push:
