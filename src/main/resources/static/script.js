@@ -668,7 +668,7 @@ function showFinalResult() {
 
         // 메시지 타이핑 효과
         setTimeout(() => {
-            typeMessage(emoji + ' ' + message);
+            showSoftMessage(emoji + ' ' + message);
         }, 1500);
 
     }, 300);
@@ -712,26 +712,17 @@ function animatePercentage(targetPercentage) {
     }, 800);
 }
 
-// 타이핑 효과
-function typeMessage(message) {
+// ✅ 페이드 인만 적용 (확대효과 없음)
+function showSoftMessage(message) {
     const messageElement = document.querySelector('.final-result h2');
-    messageElement.textContent = '';
-    let i = 0;
+    messageElement.textContent = message;
 
-    const typeTimer = setInterval(() => {
-        if (i < message.length) {
-            messageElement.textContent += message.charAt(i);
-            i++;
-        } else {
-            clearInterval(typeTimer);
+    messageElement.style.opacity = '0';
+    messageElement.style.transition = 'opacity 0.8s ease';
 
-            // 메시지 완성 후 효과
-            messageElement.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                messageElement.style.transform = 'scale(1)';
-            }, 300);
-        }
-    }, 80);
+    requestAnimationFrame(() => {
+        messageElement.style.opacity = '1';
+    });
 }
 
 // API에서 받은 해설 표시 함수 (마크다운 지원)
