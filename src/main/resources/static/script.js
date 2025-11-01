@@ -338,7 +338,7 @@ async function loadQuestion() {
         currentQuestionSpan.textContent = currentQuestionIndex + 1 -quizStartId;
 
         // 진행률 업데이트 애니메이션
-        const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+        const progressPercent = ((currentQuestionIndex + 1 - quizStartId) / totalQuestions) * 100;
         setTimeout(() => {
             progress.style.width = progressPercent + '%';
         }, 300);
