@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1875212521362490"
+            crossorigin="anonymous"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PVP7YB17ET"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-PVP7YB17ET');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DB 인덱스 퀴즈</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 홈으로 돌아가기 버튼 -->
+        <div class="home-button-container">
+            <a href="index.html" class="home-btn">
+                <span class="home-icon">🏠</span>
+                <span>홈으로</span>
+            </a>
+        </div>
+
+        <!-- 헤더 섹션 -->
+        <header>
+            <div class="header-content">
+                <div class="logo-wrapper">
+                    <h1>Index Quiz</h1>
+                </div>
+                <p class="subtitle">MySQL 인덱스에 대한 지식을 테스트하고 향상시켜보세요!</p>
+            </div>
+        </header>
+
+        <div class="quiz-container" id="quizContainer">
+            <div class="quiz-header">
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <p class="question-number">
+                    문제 <span id="currentQuestion">1</span> / <span id="totalQuestions" th:text="${#lists.size(quizData)}">7</span>
+                </p>
+            </div>
+
+            <div class="question-container">
+                <h2 id="questionText">질문이 여기에 표시됩니다...</h2>
+                
+                <div class="options" id="optionsContainer">
+                    <!-- 선택지들이 동적으로 추가됩니다 -->
+                </div>
+                
+                <button class="submit-btn" id="submitBtn" onclick="submitAnswer()">답 제출하기</button>
+            </div>
+
+            <div class="result-container" id="resultContainer" style="display: none;">
+                <div class="result-message" id="resultMessage"></div>
+                <div class="explanation" id="explanation">
+                    <h3>💡 해설</h3>
+                    <div class="explanation-content" id="explanationContent">
+                        <!-- 해설 내용과 이미지가 여기에 표시됩니다 -->
+                    </div>
+                </div>
+                <button class="next-btn" id="nextBtn" onclick="nextQuestion()">다음 문제</button>
+            </div>
+        </div>
+
+        <div class="final-result" id="finalResult" style="display: none;">
+            <h2>🎉 퀴즈 완료!</h2>
+            <div class="score">
+                <p>총 점수: <span id="finalScore">0</span> / <span id="finalTotal" th:text="${#lists.size(quizData)}">10</span></p>
+                <p class="score-percentage" id="scorePercentage">0%</p>
+            </div>
+            <div class="final-buttons">
+                <button class="restart-btn" onclick="restartQuiz()">다시 시작</button>
+                <a href="index.html" class="home-return-btn">홈으로 돌아가기</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thymeleaf로 퀴즈 데이터 전달 (fallback 데이터 포함) -->
+    <script th:inline="javascript">
+        // 서버에서 전달받은 퀴즈 데이터 (없으면 기본 데이터 사용)
+        const serverQuizData = /*[[${quizData}]]*/ null;
+
+        // 실제 사용할 퀴즈 데이터 결정 (서버 데이터 우선, 없으면 기본 데이터)
+        const quizData = serverQuizData;
+        
+        // 개발자 도구에서 데이터 소스 확인 가능
+        console.log('퀴즈 데이터 소스:', serverQuizData ? '서버에서 전달받음' : '기본 예시 데이터 사용');
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
