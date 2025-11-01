@@ -360,14 +360,86 @@ header p,
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
-.bookmark-tab:hover .badge-level,
-.bookmark-tab:hover .badge-count {
+.bookmark-tab:hover .badge-level {
     transform: scale(1.05);
 }
 
+/* ========== 반응형 ========== */
+@media (max-width: 768px) {
+    .bookmark-badge {
+        gap: 5px;
+    }
 
+    .badge-level {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+    }
+
+    .badge-count {
+        font-size: 0.6rem;
+        padding: 2px 7px;
+        border-radius: 3px;
+    }
+
+    .badge-count-wrapper {
+        gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .bookmark-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    .bookmark-badge {
+        align-self: stretch;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .badge-level {
+        font-size: 0.65rem;
+        padding: 3px 8px;
+        align-self: flex-start;
+    }
+
+    .badge-count {
+        font-size: 0.55rem;
+        padding: 2px 5px;
+        border-radius: 2px;
+        letter-spacing: 0.2px;
+    }
+
+    .badge-count-wrapper {
+        gap: 4px;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 360px) {
+    .badge-level {
+        font-size: 0.6rem;
+        padding: 3px 7px;
+    }
+
+    .badge-count {
+        font-size: 0.5rem;
+        padding: 2px 4px;
+        border-radius: 2px;
+        letter-spacing: 0.1px;
+    }
+
+    .badge-count-wrapper {
+        gap: 3px;
+    }
+}
 /* ========== 푸터 ========== */
 footer {
     text-align: center;
