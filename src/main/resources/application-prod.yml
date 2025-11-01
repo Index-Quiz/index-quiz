@@ -14,5 +14,5 @@ spring:
 
 discord:
   token: ${DISCORD_TOKEN}
-  channel-id: ${DEV_DISCORD_CHANNEL_ID}
+  channel-id: ${PROD_DISCORD_CHANNEL_ID}
 
