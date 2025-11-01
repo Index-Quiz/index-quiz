@@ -344,15 +344,29 @@ header p,
 }
 
 .badge-count {
-    background: rgba(134, 239, 172, 0.15);
-    color: #86efac;
-    border: 1px solid rgba(134, 239, 172, 0.3);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    background: rgba(134, 239, 172, 0.08);
+    color: rgba(134, 239, 172, 0.7);
+    border: 1px solid rgba(134, 239, 172, 0.15);
+    letter-spacing: 0.3px;
+    transition: none;
+}
+
+/* badge-count들을 가로로 나열하기 위한 래퍼 */
+.badge-count-wrapper {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
 .bookmark-tab:hover .badge-level,
 .bookmark-tab:hover .badge-count {
     transform: scale(1.05);
 }
+
 
 /* ========== 푸터 ========== */
 footer {
