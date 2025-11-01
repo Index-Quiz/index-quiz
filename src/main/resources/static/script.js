@@ -1,52 +1,9 @@
 // 목데이터 사용 여부 (개발 중에는 true, 프로덕션에서는 false)
-const USE_MOCK_DATA = false;
 
 // API를 통한 퀴즈 데이터 관리
-let totalQuestions = USE_MOCK_DATA ? 2 : 15; // 목데이터 사용 시 2문제, 실제 API는 10문제
+let totalQuestions = 7; // 목데이터 사용 시 2문제, 실제 API는 10문제
 let currentQuestion = null;
 let currentQuestionNumber = null;
-
-// 목데이터 (백엔드 개발 완료 전까지 사용)
-const MOCK_DATA = {
-    questions: {
-        1: {
-            questionId: 1,
-            type: "SINGLE_CHOICE",
-            content: "데이터베이스 인덱스의 주요 목적은 무엇입니까?\n\n인덱스는 데이터베이스에서 **검색 성능을 향상**시키는 중요한 자료구조입니다.\n\n다음 중 인덱스의 **주요 목적**으로 가장 적절한 것은?",
-            options: [
-                {"id": 1, "content": "데이터의 저장 공간을 줄이기 위해서"},
-                {"id": 2, "content": "쿼리의 검색 속도를 향상시키기 위해서"},
-                {"id": 3, "content": "데이터의 보안을 강화하기 위해서"},
-                {"id": 4, "content": "데이터베이스의 백업을 용이하게 하기 위해서"}
-            ]
-        },
-        2: {
-            questionId: 2,
-            type: "SINGLE_CHOICE",
-            content: "다음과 같이 인덱스가 없는 `table_a`와 인덱스가 설정된 `table_b`가 있습니다.\n\n```sql\nCREATE TABLE table_a (\n    id BIGINT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(255),\n    age INT,\n    city VARCHAR(255)\n);\n\nCREATE TABLE table_b(\n    id BIGINT AUTO_INCREMENT PRIMARY KEY,\n    name VARCHAR(255),\n    age INT,\n    city VARCHAR(255),\n    INDEX idx_name (name),\n    INDEX idx_age_city (age, city)\n);\n```\n\n다음 두 쿼리를 실행했을 때 각각 **어느 테이블에서 더 빠른 성능을 보이는지** 고르세요.\n\n```sql\n-- A쿼리: 10만 건의 더미 데이터를 삽입\nINSERT INTO 테이블 (name, age, city)\nSELECT \n    CONCAT('NewName', FLOOR(RAND() * 1000000)),\n    FLOOR(RAND() * 100),\n    CONCAT('NewCity', FLOOR(RAND() * 1000))\nFROM\n    (SELECT 1 FROM information_schema.tables LIMIT 100000) a;\n\n-- B쿼리: 특정 name 값 검색\nSELECT * FROM 테이블 WHERE name = 'Name12345';\n```",
-            options: [
-                {"id": 5, "content": "A(insert) : table_a - B(select) : table_a"},
-                {"id": 6, "content": "A(insert) : table_a - B(select) : table_b"},
-                {"id": 7, "content": "A(insert) : table_b - B(select) : table_a"},
-                {"id": 8, "content": "A(insert) : table_b - B(select) : table_b"}
-            ]
-        }
-    },
-    answers: {
-        1: {
-            isCorrect: true,
-            userOptions: [2],
-            answerOptions: [2],
-            solution: "정답은 **2번**입니다.\n\n인덱스의 주요 목적은 **쿼리의 검색 속도를 향상**시키는 것입니다.\n\n인덱스는 테이블의 특정 컬럼에 대한 빠른 접근 경로를 제공하여 데이터 검색 시간을 단축시킵니다.\n\n다른 선택지들은 다음과 같은 이유로 부적절합니다:\n- **1번**: 인덱스는 오히려 추가적인 저장 공간을 필요로 합니다\n- **3번**: 보안은 인덱스의 주요 목적이 아닙니다\n- **4번**: 백업과는 직접적인 관련이 없습니다"
-        },
-        2: {
-            isCorrect: true,
-            userOptions: [6],
-            answerOptions: [6],
-            solution: "## **정답**\n\n1) A(insert) : table_a - B(select) : table_a  \n**2) A(insert) : table_a - B(select) : table_b**  \n3) A(insert) : table_b - B(select) : table_a  \n4) A(insert) : table_b - B(select) : table_b  \n\n---\n\n## **해설**\n\n인덱스는 `WHERE` 절의 조건 탐색, `ORDER BY` 의 정렬, `JOIN`, **조회 성능을 빠르게 수행**할 수 있도록 도와줍니다.  \n하지만 **데이터가 추가·수정·삭제될 때마다 인덱스도 갱신**되어야 하므로, 삽입·수정·삭제 연산은 느려질 수 있습니다.\n\n따라서:\n\n- **삽입 쿼리(A)** → 인덱스가 없는 **`table_a`**가 더 빠름  \n- **조회 쿼리(B)** → 인덱스를 활용할 수 있는 **`table_b`**가 더 빠름  \n\n---\n\n## **DB 인덱스란?**\n\nDB 인덱스는 **책의 색인과 같은 역할**을 합니다.\n\n예를 들어, 두꺼운 책에서 **'가위', '나비', '두꺼비'**를 찾으려면?  \n인덱스가 없다면 책을 **한 장씩 넘기며 찾는** 시간이 필요합니다.\n\n![책에서 원하는 데이터를 찾기 힘든 경우의 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-1.png)\n\n하지만 인덱스(색인)가 있다면?\n\n![책에 인덱스가 있을 때 데이터를 쉽게 찾는 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-2.png)\n\n- ㄱ 인덱스 → 가위 찾기  \n- ㄴ 인덱스 → 나비 찾기  \n- ㄷ 인덱스 → 두꺼비 찾기  \n\n즉, **인덱스는 원하는 데이터를 빠르게 찾고 조회**할 수 있게 도와줍니다.\n\n---\n\n## **인덱스가 삽입·수정·삭제에 미치는 영향**\n\n새로운 단어 **'라면'**을 삽입하면?  \n\n![새로운 데이터를 삽입할 때 인덱스까지 갱신해야 하는 예시](https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/1-3.png)\n\n단순히 데이터를 추가하는 것이 아니라,  \n**해당 데이터에 맞는 인덱스도 새로 만들어야 합니다.**\n\n- 데이터 **삭제** → 데이터 + 인덱스도 삭제  \n- 데이터 **수정** → 데이터 + 인덱스도 갱신  \n\n즉, 인덱스는 **생성·갱신·삭제 시 추가 시간이 필요**합니다.\n\n---\n\n## **실습으로 확인하기**\n\n### 1) 인덱스가 있는 경우 삽입 속도는 느려진다\n10만 건은 차이가 미미했지만, **1천만 건** 더미 데이터를 넣어보니:\n\n| 테이블 | 삽입 쿼리 속도 |\n| :---: | :---: |\n| **table_a (인덱스 X)** | **268ms** |\n| table_b (인덱스 O) | 626ms |\n\n→ **인덱스 없는 `table_a`**가 더 빠름.\n\n---\n\n### 2) 인덱스가 있는 경우 조회 속도는 빨라진다\n\n이름으로 조회하는 쿼리:\n\n```sql\nSELECT * FROM 테이블 WHERE name = 'Name12345';\n```\n\n결과:\n\n| 테이블 | 조회 쿼리 속도 |\n| :---: | :---: |\n| table_a (인덱스 X) | 36ms |\n| **table_b (인덱스 O)** | **9ms** |\n\n→ **인덱스 있는 `table_b`**가 4배 빠름.\n\n---\n\n즉, 인덱스는 **빠른 조회**를 도와주지만,  \n**삽입·삭제·갱신이 잦은 경우에는 오히려 성능 병목이 될 수 있음**도 알 수 있습니다."
-        }
-    }
-};
 
 // API 호출 함수
 async function fetchQuestion(questionId) {
@@ -226,9 +183,9 @@ function parseMarkdownToHtml(content) {
     // 구분선 변환 (---)
     html = html.replace(/^---$/gm, '<hr class="markdown-divider">');
 
-    // 이미지 변환
+    // 이미지 변환 (onclick 제거 - 이벤트 리스너에서 처리)
     html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,
-        '<div class="image-container"><img src="$2" alt="$1" class="question-image" onclick="openImageModal(\'$2\', \'$1\')" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="this.style.opacity=\'1\';" style="opacity: 0; transition: opacity 0.5s ease;"><div class="image-placeholder" style="display: none;">📷 이미지를 불러올 수 없습니다</div></div>'
+        '<div class="image-container"><img src="$2" alt="$1" class="question-image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="this.style.opacity=\'1\';" style="opacity: 0; transition: opacity 0.5s ease; cursor: pointer;"><div class="image-placeholder" style="display: none;">📷 이미지를 불러올 수 없습니다</div></div>'
     );
 
     // 마크다운 링크 변환 (공백 허용)
@@ -241,6 +198,11 @@ function parseMarkdownToHtml(content) {
 
     // 볼드 텍스트 변환
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>');
+
+    // details/summary 변환 (마우스 인터랙션 있는 summary 적용)
+    html = html.replace(/<details>\s*<summary>(.*?)<\/summary>/g, (match, summaryText) => {
+        return `<details><summary class="explanation-summary">${summaryText}</summary>`;
+    });
 
     // 줄바꿈을 단락으로 변환
     html = html.split('\n\n').map(paragraph => {
@@ -325,7 +287,7 @@ async function initQuiz() {
     const urlParams = new URLSearchParams(window.location.search);
     quizSet = urlParams.get("set") || "A"; // 기본 A
 
-    quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 15;
+    quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
     currentQuestionIndex = quizStartId;
     score = 0;
     selectedAnswers = [];
@@ -376,7 +338,7 @@ async function loadQuestion() {
         currentQuestionSpan.textContent = currentQuestionIndex + 1 -quizStartId;
 
         // 진행률 업데이트 애니메이션
-        const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+        const progressPercent = ((currentQuestionIndex + 1 - quizStartId) / totalQuestions) * 100;
         setTimeout(() => {
             progress.style.width = progressPercent + '%';
         }, 300);
@@ -649,6 +611,13 @@ async function nextQuestion() {
         submitBtn.style.display = 'block';
         await loadQuestion();
     }
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
 }
 
 // 최종 결과 표시
@@ -698,7 +667,7 @@ function showFinalResult() {
 
         // 메시지 타이핑 효과
         setTimeout(() => {
-            typeMessage(emoji + ' ' + message);
+            showSoftMessage(emoji + ' ' + message);
         }, 1500);
 
     }, 300);
@@ -742,26 +711,17 @@ function animatePercentage(targetPercentage) {
     }, 800);
 }
 
-// 타이핑 효과
-function typeMessage(message) {
+// ✅ 페이드 인만 적용 (확대효과 없음)
+function showSoftMessage(message) {
     const messageElement = document.querySelector('.final-result h2');
-    messageElement.textContent = '';
-    let i = 0;
+    messageElement.textContent = message;
 
-    const typeTimer = setInterval(() => {
-        if (i < message.length) {
-            messageElement.textContent += message.charAt(i);
-            i++;
-        } else {
-            clearInterval(typeTimer);
+    messageElement.style.opacity = '0';
+    messageElement.style.transition = 'opacity 0.8s ease';
 
-            // 메시지 완성 후 효과
-            messageElement.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                messageElement.style.transform = 'scale(1)';
-            }, 300);
-        }
-    }, 80);
+    requestAnimationFrame(() => {
+        messageElement.style.opacity = '1';
+    });
 }
 
 // API에서 받은 해설 표시 함수 (마크다운 지원)
@@ -882,7 +842,8 @@ function restartQuiz() {
     finalResult.style.transform = 'translateY(-50px)';
 
     setTimeout(() => {
-        initQuiz();
+        // 현재 URL로 리다이렉트 (페이지 새로 로드)
+        window.location.href = window.location.href;
     }, 300);
 }
 

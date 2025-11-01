@@ -70,7 +70,7 @@ header {
 }
 
 header h1 {
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
     margin-bottom: 10px;
     background: linear-gradient(45deg, #ffffff, #a8d8ff);
     -webkit-background-clip: text;
@@ -79,10 +79,14 @@ header h1 {
     text-shadow: 0 0 20px rgba(168, 216, 255, 0.3);
 }
 
-header p {
-    font-size: 1.2rem;
+header p,
+.subtitle {
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
     color: #b8c5d6;
     opacity: 0.9;
+    word-break: keep-all; /* 단어 단위로 줄바꿈 */
+    overflow-wrap: break-word; /* 너무 긴 단어는 강제로 줄바꿈 */
+    line-height: 1.5;
 }
 
 .quiz-container {
@@ -172,8 +176,9 @@ header p {
     margin-bottom: 25px;
 }
 
+
 .question-container h2 {
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
     margin-bottom: 30px;
     color: #ffffff;
     text-align: left;
@@ -199,19 +204,6 @@ header p {
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.code-header {
-    background: linear-gradient(90deg, rgba(168, 216, 255, 0.15), rgba(74, 222, 128, 0.15));
-    padding: 10px 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #a8d8ff;
-    border-bottom: 1px solid rgba(168, 216, 255, 0.2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-}
-
 .code-header::before {
     content: '◉ ◉ ◉';
     color: rgba(255, 255, 255, 0.3);
@@ -219,14 +211,29 @@ header p {
     font-size: 0.6rem;
 }
 
+/* 코드 블록 - 반응형 (더 작게 조정) */
 .code-block pre {
     margin: 0;
-    padding: 20px;
+    padding: clamp(12px, 3vw, 20px);
     background: transparent;
     overflow-x: auto;
     font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 0.85rem;
-    line-height: 1.6;
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+    line-height: 1.5;
+}
+
+/* 코드 블록 헤더도 반응형으로 */
+.code-header {
+    background: linear-gradient(90deg, rgba(168, 216, 255, 0.15), rgba(74, 222, 128, 0.15));
+    padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px);
+    font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+    font-weight: 600;
+    color: #a8d8ff;
+    border-bottom: 1px solid rgba(168, 216, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
 }
 
 .code-block code {
@@ -266,14 +273,13 @@ header p {
     color: #bd93f9;
 }
 
-/* 인라인 코드 스타일 */
 .inline-code {
     background: rgba(255, 255, 255, 0.1);
     color: #a8d8ff;
     padding: 2px 6px;
     border-radius: 4px;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 0.85em;
+    font-size: clamp(0.75rem, 1.8vw, 0.85em);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -301,9 +307,26 @@ header p {
     background: rgba(255, 255, 255, 0.5);
 }
 
-/* 마크다운 스타일 */
+.explanation-summary {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #a8d8ff;
+    margin: 20px 0 15px 0;
+    padding-left: 10px;
+    border-left: 4px solid #4ade80;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.explanation-summary:hover {
+    color: #7fc8ff;
+    transform: translateX(3px);
+}
+
+
+/* 마크다운 헤딩 - 반응형 */
 .markdown-h1 {
-    font-size: 1.8rem;
+    font-size: clamp(1.4rem, 3.5vw, 1.8rem);
     font-weight: 700;
     color: #ffffff;
     margin: 25px 0 20px 0;
@@ -312,7 +335,7 @@ header p {
 }
 
 .markdown-h2 {
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
     font-weight: 600;
     color: #a8d8ff;
     margin: 20px 0 15px 0;
@@ -321,18 +344,22 @@ header p {
 }
 
 .markdown-h3 {
-    font-size: 1.3rem;
+    font-size: clamp(1.05rem, 2.5vw, 1.3rem);
     font-weight: 600;
     color: #d1d9e6;
     margin: 18px 0 12px 0;
 }
 
+
+/* 마크다운 문단 - 반응형 */
 .markdown-paragraph {
+    font-size: clamp(0.875rem, 2vw, 1rem);
     line-height: 1.7;
     margin-bottom: 15px;
     color: #e8f4fd;
 }
 
+/* 볼드 텍스트 */
 .markdown-bold {
     font-weight: 700;
     color: #ffffff;
@@ -364,6 +391,7 @@ header p {
     overflow: hidden;
 }
 
+/* 테이블 텍스트 - 반응형 */
 .markdown-table th {
     background: linear-gradient(90deg, rgba(168, 216, 255, 0.2), rgba(74, 222, 128, 0.2));
     color: #ffffff;
@@ -371,16 +399,17 @@ header p {
     padding: 15px 20px;
     text-align: left;
     border-bottom: 2px solid rgba(168, 216, 255, 0.3);
-    font-size: 0.95rem;
+    font-size: clamp(0.8rem, 2vw, 0.95rem);
 }
 
 .markdown-table td {
     padding: 12px 20px;
     color: #e8f4fd;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.9rem;
+    font-size: clamp(0.75rem, 1.8vw, 0.9rem);
     line-height: 1.5;
 }
+
 
 .markdown-table tr:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -432,6 +461,7 @@ header p {
     border: 2px dashed rgba(255, 255, 255, 0.2);
 }
 
+/* 선택지 텍스트 - 반응형 */
 .option {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
@@ -442,13 +472,11 @@ header p {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(10px);
-
     padding-right: 40px;
-
 }
 
 .option:hover {
@@ -526,8 +554,8 @@ header p {
     min-width: 25px;
     text-align: center;
     box-shadow: 0 2px 6px rgba(2, 2, 89, 0.3);
-    font-size: 0.9rem;
-    flex-shrink: 0; /* ✅ 라벨이 줄어들지 않도록 */
+    font-size: clamp(0.75rem, 1.8vw, 0.9rem);
+    flex-shrink: 0;
 }
 
 /* ✅ 텍스트가 길면 줄바꿈 */
@@ -662,19 +690,25 @@ header p {
     backdrop-filter: blur(10px);
 }
 
+
+/* 해설 제목 - 반응형 */
 .explanation h3 {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
     color: #a8d8ff;
     margin-bottom: 15px;
-    font-size: 1.2rem;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
+
+/* 해설 내용 - 반응형 */
 .explanation-content {
+    font-size: clamp(0.875rem, 2vw, 1rem);
     color: #ffffff;
     line-height: 1.7;
 }
+
 
 .explanation-image {
     max-width: 100%;
