@@ -1,5 +1,12 @@
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
+    // ✅ 저장된 진행 상황이 있으면 quiz.html로 리다이렉션
+    const savedProgress = localStorage.getItem('quizProgress');
+    if (savedProgress) {
+        const data = JSON.parse(savedProgress);
+        window.location.href = `quiz.html?set=${data.quizSet}`;
+        return; // 나머지 초기화 중단
+    }
     initAnimations();
     setupBookmarkTabs();
     setupParallaxEffect();

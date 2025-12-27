@@ -15,6 +15,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DB 인덱스 퀴즈</title>
+    <link rel="icon" type="image/png"
+          href="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
+    <link rel="stylesheet" href="home-style.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -72,7 +75,7 @@
         <div class="final-result" id="finalResult" style="display: none;">
             <h2>🎉 퀴즈 완료!</h2>
             <div class="score">
-                <p>총 점수: <span id="finalScore">0</span> / <span id="finalTotal" th:text="${#lists.size(quizData)}">10</span></p>
+                <p>총 점수: <span id="finalScore">0</span> / <span id="finalTotal" th:text="${#lists.size(quizData)}">7</span></p>
                 <p class="score-percentage" id="scorePercentage">0%</p>
             </div>
             <div class="final-buttons">
