@@ -5,6 +5,42 @@ let totalQuestions = 7; // 목데이터 사용 시 2문제, 실제 API는 10문�
 let currentQuestion = null;
 let currentQuestionNumber = null;
 
+// script.js 상단에 추가
+const QuizStorage = {
+    KEY: 'quizProgress',
+
+    save(data) {
+        localStorage.setItem(this.KEY, JSON.stringify(data));
+    },
+
+    load() {
+        const data = localStorage.getItem(this.KEY);
+        return data ? JSON.parse(data) : null;
+    },
+
+    clear() {
+        localStorage.removeItem(this.KEY);
+    }
+};
+// 저장할 데이터 구조: { quizSet, currentQuestionIndex, total, score }
+
+// quiz.html의 홈 버튼에 이벤트 리스너 추가
+document.querySelector('.home-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const savedProgress = QuizStorage.load();
+
+    if (savedProgress) {
+        const confirmed = confirm('풀던 기록이 모두 삭제됩니다. 홈으로 이동하시겠습니까?');
+        if (confirmed) {
+            QuizStorage.clear();
+            window.location.href = 'index.html';
+        }
+    } else {
+        window.location.href = 'index.html';
+    }
+});
+
 // API 호출 함수
 async function fetchQuestion(questionId) {
     // 실제 API 호출
@@ -284,12 +320,30 @@ function hideLoading() {
 async function initQuiz() {
     console.log('initQuiz() 실행됨');
 
-    const urlParams = new URLSearchParams(window.location.search);
-    quizSet = urlParams.get("set") || "A"; // 기본 A
+    // ✅ 로컬 스토리지 체크 추가
+    const savedProgress = QuizStorage.load();
 
-    quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
-    currentQuestionIndex = quizStartId;
-    score = 0;
+    if (savedProgress) {
+        // 저장된 진행 상황 복원
+        quizSet = savedProgress.quizSet;
+        quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
+        currentQuestionIndex = savedProgress.currentQuestionIndex ?? 0;
+        totalQuestions = savedProgress.total ?? 7;
+        score = savedProgress.score;
+
+        if (currentQuestionIndex - quizStartId >= totalQuestions) {
+            showFinalResult();
+            return; // 더 이상 진행하지 않음
+        }
+    } else {
+        // 새로 시작 - URL 파라미터에서 세트 읽기
+        const urlParams = new URLSearchParams(window.location.search);
+        quizSet = urlParams.get("set") || "A";
+        quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
+        currentQuestionIndex = quizStartId;
+        score = 0;
+    }
+
     selectedAnswers = [];
     isAnswered = false;
 
@@ -541,6 +595,14 @@ async function submitAnswer() {
         if (isCorrect) {
             score++;
         }
+        console.log("currentQuestionIndex : " + currentQuestionIndex);
+
+        QuizStorage.save({
+            quizSet: quizSet,
+            currentQuestionIndex: currentQuestionIndex +1,
+            total : totalQuestions,
+            score: score
+        });
 
         // 모든 선택지에 결과 표시
         const options = document.querySelectorAll('.option');
@@ -622,6 +684,9 @@ async function nextQuestion() {
 
 // 최종 결과 표시
 function showFinalResult() {
+    // ✅ 퀴즈 완료 시 진행 상황 삭제
+    QuizStorage.clear();
+
     quizContainer.style.opacity = '0';
     quizContainer.style.transform = 'translateX(-100px)';
 
