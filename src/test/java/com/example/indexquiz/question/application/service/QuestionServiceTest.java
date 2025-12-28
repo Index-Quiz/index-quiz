@@ -2,7 +2,6 @@ package com.example.indexquiz.question.application.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -21,8 +20,8 @@ import com.example.indexquiz.question.domain.QuestionOption;
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.question.domain.QuestionType;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
-import com.example.indexquiz.useranswer.application.port.out.GetDifficultQuestionPort;
-import com.example.indexquiz.useranswer.application.port.out.dto.DifficultQuestionResponses;
+import com.example.indexquiz.question.application.port.out.GetDifficultQuestionPort;
+import com.example.indexquiz.question.application.port.out.dto.DifficultQuestionResponses;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

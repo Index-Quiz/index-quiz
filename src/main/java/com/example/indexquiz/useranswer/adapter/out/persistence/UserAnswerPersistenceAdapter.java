@@ -2,11 +2,11 @@ package com.example.indexquiz.useranswer.adapter.out.persistence;
 
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapper;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserResultMapper;
-import com.example.indexquiz.useranswer.application.port.out.GetDifficultQuestionPort;
+import com.example.indexquiz.question.application.port.out.GetDifficultQuestionPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
 import com.example.indexquiz.useranswer.application.port.out.GetUserAnswerPort;
-import com.example.indexquiz.useranswer.application.port.out.dto.DifficultQuestionResponses;
+import com.example.indexquiz.question.application.port.out.dto.DifficultQuestionResponses;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
 import com.example.indexquiz.useranswer.domain.UserResult;
