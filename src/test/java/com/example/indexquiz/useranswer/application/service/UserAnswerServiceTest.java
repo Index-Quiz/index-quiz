@@ -62,7 +62,7 @@ class UserAnswerServiceTest extends BaseServiceTest {
             List<QuestionOption> options = DomainFixture.getQuestionOptions(question.getId(), 3);
 
             QuestionWithOptions questionWithOptions = new QuestionWithOptions(question, options);
-            willReturn(questionWithOptions).given(getQuestionPort).getQuestionWithOptionsByOrder(anyLong());
+            willReturn(questionWithOptions).given(getQuestionPort).getQuestionWithOptionsById(anyLong());
 
             UserAnswers userAnswers = new UserAnswers(question.getId(), List.of(1L, 2L, 3L));
             willReturn(userAnswers).given(saveUserAnswerPort).saveUserAnswers(any());
