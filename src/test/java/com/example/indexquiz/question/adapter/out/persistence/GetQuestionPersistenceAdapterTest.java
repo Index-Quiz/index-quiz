@@ -47,7 +47,7 @@ class GetQuestionPersistenceAdapterTest extends BaseRepositoryTest {
                     EntityFixture.getQuestionOptionEntities(savedQuestion.getId(), 3));
 
             // when
-            QuestionWithOptions actual = getQuestionPersistenceAdapter.getQuestionWithOptions(1L);
+            QuestionWithOptions actual = getQuestionPersistenceAdapter.getQuestionWithOptionsByOrder(1L);
 
             // then
             Question actualQuestion = actual.getQuestion();
@@ -65,7 +65,7 @@ class GetQuestionPersistenceAdapterTest extends BaseRepositoryTest {
         @Test
         void 존재하지_않는_질문의_경우_예외를_반환한다() {
             // when & then
-            assertThatThrownBy(() -> getQuestionPersistenceAdapter.getQuestionWithOptions(1L))
+            assertThatThrownBy(() -> getQuestionPersistenceAdapter.getQuestionWithOptionsByOrder(1L))
                     .isInstanceOf(IndexQuizException.class)
                     .hasMessage(ErrorCode.QUESTION_NOT_FOUND.getMessage());
         }

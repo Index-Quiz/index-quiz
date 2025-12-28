@@ -44,7 +44,7 @@ class QuestionServiceTest extends BaseServiceTest {
                     List.of(new GetQuestionOptionResponse(1L, "선택지 내용1"),
                             new GetQuestionOptionResponse(2L, "선택지 내용2"),
                             new GetQuestionOptionResponse(3L, "선택지 내용3")));
-            given(getQuestionPort.getQuestionWithOptions(anyLong())).willReturn(questionWithOptions);
+            given(getQuestionPort.getQuestionWithOptionsByOrder(anyLong())).willReturn(questionWithOptions);
             given(questionWithOptionsMapper.mapToGetQuestionResponse(questionWithOptions)).willReturn(response);
 
             // when

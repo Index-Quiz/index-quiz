@@ -5,7 +5,6 @@ import com.example.indexquiz.common.exception.errorcode.ErrorCode;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponses;
-import com.example.indexquiz.question.domain.QuestionOptions;
 import com.example.indexquiz.useranswer.application.port.out.GetDifficultQuestionPort;
 import com.example.indexquiz.question.application.port.out.GetQuestionPort;
 import com.example.indexquiz.question.application.port.in.mapper.QuestionWithOptionsMapper;
@@ -29,8 +28,8 @@ public class QuestionService implements QuestionUseCase {
     private final QuestionWithOptionsMapper questionWithOptionsMapper;
 
     @Override
-    public GetQuestionResponse getQuestion(long questionId) {
-        QuestionWithOptions questionWithOptions = getQuestionPort.getQuestionWithOptions(questionId);
+    public GetQuestionResponse getQuestion(long questionOrder) {
+        QuestionWithOptions questionWithOptions = getQuestionPort.getQuestionWithOptionsByOrder(questionOrder);
         return questionWithOptionsMapper.mapToGetQuestionResponse(questionWithOptions);
     }
 

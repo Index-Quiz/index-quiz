@@ -6,7 +6,7 @@ import com.example.indexquiz.question.domain.QuestionSet;
 
 public interface QuestionUseCase {
 
-    GetQuestionResponse getQuestion(long questionId);
+    GetQuestionResponse getQuestion(long questionOrder);
 
     GetQuestionResponses getAllQuestions(QuestionSet type);
 }

@@ -27,8 +27,20 @@ public class GetQuestionPersistenceAdapter implements GetQuestionPort {
     private final QuestionOptionMapper questionOptionMapper;
 
     @Override
-    public QuestionWithOptions getQuestionWithOptions(long questionOrder) {
+    public QuestionWithOptions getQuestionWithOptionsByOrder(long questionOrder) {
         Question question = questionJpaRepository.findByQuestionOrder(questionOrder)
+                .map(questionMapper::mapToQuestion)
+                .orElseThrow(() -> new IndexQuizException(ErrorCode.QUESTION_NOT_FOUND));
+        List<QuestionOption> options = questionOptionJpaRepository.findAllByQuestionId(question.getId())
+                .stream()
+                .map(questionOptionMapper::mapToQuestionOption)
+                .toList();
+        return new QuestionWithOptions(question, options);
+    }
+
+    @Override
+    public QuestionWithOptions getQuestionWithOptionsById(long questionId) {
+        Question question = questionJpaRepository.findById(questionId)
                 .map(questionMapper::mapToQuestion)
                 .orElseThrow(() -> new IndexQuizException(ErrorCode.QUESTION_NOT_FOUND));
         List<QuestionOption> options = questionOptionJpaRepository.findAllByQuestionId(question.getId())

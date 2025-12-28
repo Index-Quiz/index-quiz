@@ -49,7 +49,7 @@ public class UserAnswerService implements
 
     @Override
     public SaveUserAnswerResponse saveUserAnswers(SaveUserAnswerRequest request) {
-        QuestionWithOptions questionWithOptions = getQuestionPort.getQuestionWithOptions(request.questionId());
+        QuestionWithOptions questionWithOptions = getQuestionPort.getQuestionWithOptionsById(request.questionId());
         SaveUserAnswersCommand command = new SaveUserAnswersCommand(questionWithOptions, request.options());
         UserAnswers userAnswers = saveUserAnswerPort.saveUserAnswers(command);
         return userAnswerDtoMapper.mapToSaveUserAnswerResponse(userAnswers);

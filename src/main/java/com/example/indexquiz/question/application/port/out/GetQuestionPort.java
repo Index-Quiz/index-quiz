@@ -5,7 +5,9 @@ import java.util.List;
 
 public interface GetQuestionPort {
 
-    QuestionWithOptions getQuestionWithOptions(long questionId);
+    QuestionWithOptions getQuestionWithOptionsByOrder(long questionOrder);
+
+    QuestionWithOptions getQuestionWithOptionsById(long questionId);
 
     List<QuestionWithOptions> getAllQuestionWithOptions(List<Long> questionIds);
 }
