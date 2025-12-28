@@ -35,4 +35,11 @@ public class GetQuestionPersistenceAdapter implements GetQuestionPort {
                 .toList();
         return new QuestionWithOptions(question, options);
     }
+
+    @Override
+    public List<QuestionWithOptions> getAllQuestionWithOptions(List<Long> questionIds) {
+        return questionIds.stream()
+                .map(this::getQuestionWithOptions)
+                .toList();
+    }
 }
