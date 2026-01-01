@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CacheConfig {
 
-    private static final String CACHE_NAME = "difficultQuestionCache";
+    private static final String CACHE_NAME = "questionCache";
 
     @Bean
-    public CacheManager difficultQuestionCacheManager() {
+    public CacheManager difficultquestioncachemanager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(CACHE_NAME);
         cacheManager.setCaffeine(
                 Caffeine.newBuilder()

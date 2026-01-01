@@ -2,6 +2,7 @@ package com.example.indexquiz.question.application.service;
 
 import com.example.indexquiz.common.exception.custom.IndexQuizException;
 import com.example.indexquiz.common.exception.errorcode.ErrorCode;
+import com.example.indexquiz.question.application.port.in.RefreshDifficultQuestionCacheUseCase;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponses;
@@ -13,11 +14,12 @@ import com.example.indexquiz.question.domain.QuestionWithOptions;
 import com.example.indexquiz.question.application.port.out.dto.DifficultQuestionResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionService implements QuestionUseCase {
+public class QuestionService implements QuestionUseCase, RefreshDifficultQuestionCacheUseCase {
 
     private static final long DIFFICULT_PROBLEM_COUNT = 7;
 
@@ -34,10 +36,19 @@ public class QuestionService implements QuestionUseCase {
     }
 
     @Override
+    @Cacheable(
+            value = "questionCache",
+            key = "'question:' + #type.name()"
+    )
     public GetQuestionResponses getAllQuestions(QuestionSet type) {
         if (!type.isDifficult(type)) {
             throw new IndexQuizException(ErrorCode.QUESTION_SET_BAD_REQUEST);
         }
+        return getDifficultQuestion();
+    }
+
+    @Override
+    public GetQuestionResponses getDifficultQuestion() {
         DifficultQuestionResponses difficultQuestions = getDifficultQuestionPort.findDifficultQuestions(DIFFICULT_PROBLEM_COUNT);
         List<QuestionWithOptions> allQuestionWithOptions = getQuestionPort.getAllQuestionWithOptions(difficultQuestions.questionIds());
         return questionWithOptionsMapper.mapToGetQuestionResponses(allQuestionWithOptions);
