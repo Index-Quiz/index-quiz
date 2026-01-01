@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.then;
 
 import com.example.indexquiz.BaseControllerTest;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
+import com.example.indexquiz.question.application.port.in.RefreshDifficultQuestionCacheUseCase;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionOptionResponse;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponses;
@@ -23,6 +24,9 @@ class QuestionControllerTest extends BaseControllerTest {
 
     @MockitoBean
     private QuestionUseCase questionUseCase;
+
+    @MockitoBean
+    private RefreshDifficultQuestionCacheUseCase refreshDifficultQuestionCacheUseCase;
 
     @Nested
     class GetQuestion {
