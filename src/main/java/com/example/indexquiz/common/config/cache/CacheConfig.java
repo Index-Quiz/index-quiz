@@ -16,9 +16,13 @@ public class CacheConfig {
     @Bean
     public CacheManager difficultquestioncachemanager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(CACHE_NAME);
+
+        long maxWeight = (long) (Runtime.getRuntime().maxMemory() * 0.10); //JVM 최대 힙 메모리 크기의 10%
+
         cacheManager.setCaffeine(
                 Caffeine.newBuilder()
-                        .maximumSize(10_000)
+                        .maximumWeight(maxWeight)
+                        .weigher((key, value) -> ((CacheWeighable) value).estimateSize()) //예상된 메모리 용량
                         .expireAfter(new MidNightExpiry<>()) // 다음날 자정까지
                         .recordStats()
         );
