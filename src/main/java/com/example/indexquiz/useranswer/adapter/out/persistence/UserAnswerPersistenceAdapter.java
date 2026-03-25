@@ -52,8 +52,8 @@ public class UserAnswerPersistenceAdapter implements
     }
 
     @Override
-    public DifficultQuestionResponses findDifficultQuestions(long problemCnt) {
-        List<Long> difficutQuestionIds = userAnswerJpaRepository.findDifficultQuestions(problemCnt);
+    public DifficultQuestionResponses findDifficultQuestions(long problemCount) {
+        List<Long> difficutQuestionIds = userAnswerJpaRepository.findDifficultQuestions(problemCount);
         return new DifficultQuestionResponses(difficutQuestionIds);
     }
 
