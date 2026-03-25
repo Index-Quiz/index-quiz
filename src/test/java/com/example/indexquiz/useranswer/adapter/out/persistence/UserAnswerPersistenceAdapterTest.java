@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.example.indexquiz.BaseRepositoryTest;
+import com.example.indexquiz.answer.adapter.out.persistence.AnswerEntity;
 import com.example.indexquiz.common.DomainFixture;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;

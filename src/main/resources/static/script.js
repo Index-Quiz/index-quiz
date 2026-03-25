@@ -3,9 +3,10 @@
 // API를 통한 퀴즈 데이터 관리
 let totalQuestions = 7; // 목데이터 사용 시 2문제, 실제 API는 10문제
 let currentQuestion = null;
-let currentQuestionNumber = null;
 
-// script.js 상단에 추가
+let bestDifficultQuestions = [];
+let isBestDifficultMode = false;
+
 const QuizStorage = {
     KEY: 'quizProgress',
 
@@ -57,6 +58,21 @@ async function fetchQuestion(questionId) {
     }
 }
 
+// BEST_DIFFICULT 문제 목록 가져오기 - 새로 추가
+async function fetchBestDifficultQuestions() {
+    try {
+        const response = await fetch('/api/questions?type=BEST_DIFFICULT');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.questions;
+    } catch (error) {
+        console.error('BEST_DIFFICULT 퀴즈 데이터를 불러오는 중 오류가 발생했습니다:', error);
+        throw error;
+    }
+}
+
 // 답 제출 API 호출 함수 (다중 선택 지원)
 async function submitAnswerToAPI(questionId, selectedAnswers) {
     // selectedAnswers 배열을 1부터 시작하는 인덱스로 변환
@@ -103,28 +119,6 @@ async function submitAnswerToAPI(questionId, selectedAnswers) {
         console.error('답 제출 중 오류가 발생했습니다:', error);
         throw error;
     }
-}
-
-// 배열 비교 헬퍼 함수
-function arraysEqual(a, b) {
-    if (a.length !== b.length) return false;
-    return a.every((val, index) => val === b[index]);
-}
-
-// 마크다운 이미지 파싱 함수
-function parseMarkdownImages(content) {
-    const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
-    const images = [];
-    let match;
-
-    while ((match = imageRegex.exec(content)) !== null) {
-        images.push({
-            alt: match[1],
-            src: match[2]
-        });
-    }
-
-    return images;
 }
 
 // SQL 키워드 하이라이팅 함수
@@ -317,41 +311,131 @@ function hideLoading() {
 }
 
 // 퀴즈 초기화
+// async function initQuiz() {
+//     console.log('initQuiz() 실행됨');
+//
+//     // ✅ 로컬 스토리지 체크 추가
+//     const urlParams = new URLSearchParams(window.location.search);
+//     quizSet = urlParams.get("set") || "A";
+//
+//     // BEST_DIFFICULT 모드인지 확인
+//     isBestDifficultMode = (quizSet === "BEST_DIFFICULT");
+//
+//     const savedProgress = QuizStorage.load();
+//
+//     if (savedProgress) {
+//         // 저장된 진행 상황 복원
+//         quizSet = savedProgress.quizSet;
+//         quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
+//         currentQuestionIndex = savedProgress.currentQuestionIndex ?? 0;
+//         totalQuestions = savedProgress.total ?? 7;
+//         score = savedProgress.score;
+//
+//         if (currentQuestionIndex - quizStartId >= totalQuestions) {
+//             showFinalResult();
+//             return; // 더 이상 진행하지 않음
+//         }
+//     } else {
+//         // 새로 시작 - URL 파라미터에서 세트 읽기
+//         const urlParams = new URLSearchParams(window.location.search);
+//         quizSet = urlParams.get("set") || "A";
+//         quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
+//         currentQuestionIndex = quizStartId;
+//         score = 0;
+//     }
+//
+//     selectedAnswers = [];
+//     isAnswered = false;
+//
+//     // 총 문제 수 업데이트
+//     totalQuestionsSpan.textContent = totalQuestions;
+//     finalTotal.textContent = totalQuestions;
+//
+//     // Thymeleaf가 설정하지 않은 경우를 위한 추가 업데이트
+//     const allTotalElements = document.querySelectorAll('[id*="totalQuestions"], [class*="total-questions"]');
+//     allTotalElements.forEach(el => {
+//         if (el.textContent === '10' || el.textContent === '') {
+//             el.textContent = totalQuestions;
+//         }
+//     });
+//
+//     quizContainer.style.display = 'block';
+//     finalResult.style.display = 'none';
+//     resultContainer.style.display = 'none';
+//
+//     await loadQuestion();
+// }
+
 async function initQuiz() {
     console.log('initQuiz() 실행됨');
 
-    // ✅ 로컬 스토리지 체크 추가
+    // URL 파라미터에서 세트 읽기
+    const urlParams = new URLSearchParams(window.location.search);
+    quizSet = urlParams.get("set") || "A";
+
+    // BEST_DIFFICULT 모드인지 확인
+    isBestDifficultMode = (quizSet === "BEST_DIFFICULT");
+
     const savedProgress = QuizStorage.load();
 
-    if (savedProgress) {
-        // 저장된 진행 상황 복원
-        quizSet = savedProgress.quizSet;
-        quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
-        currentQuestionIndex = savedProgress.currentQuestionIndex ?? 0;
-        totalQuestions = savedProgress.total ?? 7;
+    if (savedProgress && savedProgress.quizSet === quizSet) {
+        if (isBestDifficultMode) {
+            try {
+                bestDifficultQuestions = await fetchBestDifficultQuestions();
+                totalQuestions = bestDifficultQuestions.length;
+                quizStartId = 0;
+            } catch (error) {
+                console.error('BEST_DIFFICULT 문제를 불러오는 데 실패했습니다:', error);
+                alert('문제를 불러오는 데 실패했습니다. 홈으로 돌아갑니다.');
+                window.location.href = 'index.html';
+                return;
+            }
+        } else {
+            quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
+        }
+
+        currentQuestionIndex = savedProgress.currentQuestionIndex ?? (isBestDifficultMode ? 0 : quizStartId);
+        totalQuestions = savedProgress.total ?? (isBestDifficultMode ? bestDifficultQuestions.length : 7);
         score = savedProgress.score;
 
-        if (currentQuestionIndex - quizStartId >= totalQuestions) {
-            showFinalResult();
-            return; // 더 이상 진행하지 않음
+        if (isBestDifficultMode) {
+            if (currentQuestionIndex >= totalQuestions) {
+                showFinalResult();
+                return;
+            }
+        } else {
+            if (currentQuestionIndex - quizStartId >= totalQuestions) {
+                showFinalResult();
+                return;
+            }
         }
     } else {
-        // 새로 시작 - URL 파라미터에서 세트 읽기
-        const urlParams = new URLSearchParams(window.location.search);
-        quizSet = urlParams.get("set") || "A";
-        quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
-        currentQuestionIndex = quizStartId;
+        if (isBestDifficultMode) {
+            try {
+                bestDifficultQuestions = await fetchBestDifficultQuestions();
+                totalQuestions = bestDifficultQuestions.length;
+                quizStartId = 0;
+                currentQuestionIndex = 0;
+            } catch (error) {
+                console.error('BEST_DIFFICULT 문제를 불러오는 데 실패했습니다:', error);
+                alert('문제를 불러오는 데 실패했습니다. 홈으로 돌아갑니다.');
+                window.location.href = 'index.html';
+                return;
+            }
+        } else {
+            quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
+            currentQuestionIndex = quizStartId;
+            totalQuestions = 7;
+        }
         score = 0;
     }
 
     selectedAnswers = [];
     isAnswered = false;
 
-    // 총 문제 수 업데이트
     totalQuestionsSpan.textContent = totalQuestions;
     finalTotal.textContent = totalQuestions;
 
-    // Thymeleaf가 설정하지 않은 경우를 위한 추가 업데이트
     const allTotalElements = document.querySelectorAll('[id*="totalQuestions"], [class*="total-questions"]');
     allTotalElements.forEach(el => {
         if (el.textContent === '10' || el.textContent === '') {
@@ -370,10 +454,12 @@ async function initQuiz() {
 async function loadQuestion() {
     try {
         showLoading();
-
-        // API에서 현재 문제 번호(1부터 시작)로 데이터 가져오기
-        const questionId = currentQuestionIndex + 1;
-        currentQuestion = await fetchQuestion(questionId);
+        if (isBestDifficultMode) {
+            currentQuestion = bestDifficultQuestions[currentQuestionIndex];
+        } else {
+            const questionId = currentQuestionIndex + 1;
+            currentQuestion = await fetchQuestion(questionId);
+        }
 
         hideLoading();
 
@@ -389,10 +475,19 @@ async function loadQuestion() {
             questionText.style.transform = 'translateY(0)';
         }, 100);
 
-        currentQuestionSpan.textContent = currentQuestionIndex + 1 -quizStartId;
+        if (isBestDifficultMode) {
+            currentQuestionSpan.textContent = currentQuestionIndex + 1;
+        } else {
+            currentQuestionSpan.textContent = currentQuestionIndex + 1 - quizStartId;
+        }
 
         // 진행률 업데이트 애니메이션
-        const progressPercent = ((currentQuestionIndex + 1 - quizStartId) / totalQuestions) * 100;
+        let progressPercent;
+        if (isBestDifficultMode) {
+            progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+        } else {
+            progressPercent = ((currentQuestionIndex + 1 - quizStartId) / totalQuestions) * 100;
+        }
         setTimeout(() => {
             progress.style.width = progressPercent + '%';
         }, 300);
@@ -429,6 +524,7 @@ async function loadQuestion() {
             currentQuestion.options.forEach((option, index) => {
                 const optionElement = document.createElement('div');
                 optionElement.className = questionType === "SINGLE_CHOICE" ? 'option single-choice' : 'option';
+                optionElement.id = option.id;
                 optionElement.onclick = () => selectOption(index);
 
                 const optionLabel = document.createElement('span');
@@ -585,7 +681,7 @@ async function submitAnswer() {
 
     try {
         // API에 답 제출
-        const questionId = currentQuestionIndex + 1;
+        const questionId = currentQuestion.id;
         const result = await submitAnswerToAPI(questionId, selectedAnswers);
 
         const isCorrect = result.isCorrect;
@@ -642,7 +738,14 @@ async function submitAnswer() {
         displayExplanationFromAPI(result.solution);
 
         // 다음 버튼 텍스트 설정
-        if (currentQuestionIndex - quizStartId === totalQuestions - 1) {
+        let isLastQuestion;
+        if (isBestDifficultMode) {
+            isLastQuestion = currentQuestionIndex === totalQuestions - 1;
+        } else {
+            isLastQuestion = currentQuestionIndex - quizStartId === totalQuestions - 1;
+        }
+
+        if (isLastQuestion) {
             nextBtn.textContent = '결과 보기';
         } else {
             nextBtn.textContent = '다음 문제';
@@ -666,7 +769,14 @@ async function submitAnswer() {
 
 // 다음 문제 또는 결과 표시
 async function nextQuestion() {
-    if (currentQuestionIndex - quizStartId === totalQuestions - 1) {
+    let isLastQuestion;
+    if (isBestDifficultMode) {
+        isLastQuestion = currentQuestionIndex === totalQuestions - 1;
+    } else {
+        isLastQuestion = currentQuestionIndex - quizStartId === totalQuestions - 1;
+    }
+
+    if (isLastQuestion) {
         showFinalResult();
     } else {
         currentQuestionIndex++;
@@ -679,7 +789,6 @@ async function nextQuestion() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     });
-
 }
 
 // 최종 결과 표시
