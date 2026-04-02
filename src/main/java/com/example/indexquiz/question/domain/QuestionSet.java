@@ -12,6 +12,9 @@ public enum QuestionSet {
     C(7),
     D(7),
     E(7),
+    F(7),
+    G(7),
+    H(7),
     BEST_DIFFICULT(7),
     ;
 
