@@ -310,62 +310,6 @@ function hideLoading() {
     }
 }
 
-// 퀴즈 초기화
-// async function initQuiz() {
-//     console.log('initQuiz() 실행됨');
-//
-//     // ✅ 로컬 스토리지 체크 추가
-//     const urlParams = new URLSearchParams(window.location.search);
-//     quizSet = urlParams.get("set") || "A";
-//
-//     // BEST_DIFFICULT 모드인지 확인
-//     isBestDifficultMode = (quizSet === "BEST_DIFFICULT");
-//
-//     const savedProgress = QuizStorage.load();
-//
-//     if (savedProgress) {
-//         // 저장된 진행 상황 복원
-//         quizSet = savedProgress.quizSet;
-//         quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
-//         currentQuestionIndex = savedProgress.currentQuestionIndex ?? 0;
-//         totalQuestions = savedProgress.total ?? 7;
-//         score = savedProgress.score;
-//
-//         if (currentQuestionIndex - quizStartId >= totalQuestions) {
-//             showFinalResult();
-//             return; // 더 이상 진행하지 않음
-//         }
-//     } else {
-//         // 새로 시작 - URL 파라미터에서 세트 읽기
-//         const urlParams = new URLSearchParams(window.location.search);
-//         quizSet = urlParams.get("set") || "A";
-//         quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
-//         currentQuestionIndex = quizStartId;
-//         score = 0;
-//     }
-//
-//     selectedAnswers = [];
-//     isAnswered = false;
-//
-//     // 총 문제 수 업데이트
-//     totalQuestionsSpan.textContent = totalQuestions;
-//     finalTotal.textContent = totalQuestions;
-//
-//     // Thymeleaf가 설정하지 않은 경우를 위한 추가 업데이트
-//     const allTotalElements = document.querySelectorAll('[id*="totalQuestions"], [class*="total-questions"]');
-//     allTotalElements.forEach(el => {
-//         if (el.textContent === '10' || el.textContent === '') {
-//             el.textContent = totalQuestions;
-//         }
-//     });
-//
-//     quizContainer.style.display = 'block';
-//     finalResult.style.display = 'none';
-//     resultContainer.style.display = 'none';
-//
-//     await loadQuestion();
-// }
-
 async function initQuiz() {
     console.log('initQuiz() 실행됨');
 
