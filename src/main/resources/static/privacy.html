@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개인정보처리방침 - Index Quiz</title>
+    <link rel="icon" type="image/png"
+          href="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
+    <link rel="stylesheet" href="home-style.css">
+    <style>
+        /* ===== 개인정보처리방침 전용 스타일 ===== */
+
+        .privacy-header {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .privacy-header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            margin-bottom: 12px;
+        }
+
+        .privacy-header .subtitle {
+            font-size: 1rem;
+            color: #b8b8ff;
+        }
+
+        /* 요약 배너 */
+        .summary-banner {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-left: 4px solid rgba(134, 181, 217, 0.8);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 40px;
+            color: #b8c5d6;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .summary-banner strong {
+            color: #ffffff;
+        }
+
+        /* 섹션 카드 */
+        .privacy-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease both;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .privacy-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .privacy-card:nth-child(1) { animation-delay: 0.1s; }
+        .privacy-card:nth-child(2) { animation-delay: 0.15s; }
+        .privacy-card:nth-child(3) { animation-delay: 0.2s; }
+        .privacy-card:nth-child(4) { animation-delay: 0.25s; }
+        .privacy-card:nth-child(5) { animation-delay: 0.3s; }
+        .privacy-card:nth-child(6) { animation-delay: 0.35s; }
+
+        .privacy-card:nth-child(1)::before { background: linear-gradient(180deg, #86b5d9, #5a8fb8); }
+        .privacy-card:nth-child(2)::before { background: linear-gradient(180deg, #9db8cf, #7499b8); }
+        .privacy-card:nth-child(3)::before { background: linear-gradient(180deg, #b8a5c9, #9580a8); }
+        .privacy-card:nth-child(4)::before { background: linear-gradient(180deg, #c9b58a, #a89468); }
+        .privacy-card:nth-child(5)::before { background: linear-gradient(180deg, #b59bb8, #947998); }
+        .privacy-card:nth-child(6)::before { background: linear-gradient(180deg, #86b5d9, #5a8fb8); }
+
+        .privacy-card:hover {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateX(6px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .card-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffffff;
+            flex-shrink: 0;
+            font-family: monospace;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .card-body {
+            color: #b8c5d6;
+            font-size: 0.95rem;
+            line-height: 1.85;
+            padding-left: 50px;
+        }
+
+        .card-body p {
+            margin-bottom: 10px;
+        }
+
+        .card-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .card-body a {
+            color: #86b5d9;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(134, 181, 217, 0.3);
+            transition: all 0.2s;
+        }
+
+        .card-body a:hover {
+            color: #b8d9f0;
+            border-bottom-color: rgba(134, 181, 217, 0.7);
+        }
+
+        /* 태그 리스트 */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #b8b8ff;
+            font-weight: 500;
+        }
+
+        /* 서비스 아이템 */
+        .service-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .service-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .service-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .service-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .service-info h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .service-info p {
+            margin-bottom: 8px !important;
+        }
+
+        .service-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            color: #86b5d9 !important;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(134, 181, 217, 0.3) !important;
+            transition: all 0.2s;
+        }
+
+        .service-link:hover {
+            color: #b8d9f0 !important;
+            border-bottom-color: rgba(134, 181, 217, 0.7) !important;
+        }
+
+        /* 문의 그리드 */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            color: #ffffff;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-icon {
+            font-size: 1.4rem;
+        }
+
+        .contact-text strong {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .contact-text span {
+            font-size: 0.8rem;
+            color: #b8b8ff;
+        }
+
+        /* 메타 정보 */
+        .meta-info {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+            padding-left: 50px;
+        }
+
+        .meta-item {
+            font-size: 0.82rem;
+            color: #8888cc;
+        }
+
+        /* 반응형 */
+        @media (max-width: 560px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .privacy-card {
+                padding: 22px 20px;
+            }
+            .card-body {
+                padding-left: 0;
+            }
+            .meta-info {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 배경 애니메이션 -->
+    <div class="background-animation">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <!-- 홈으로 돌아가기 탭 (기존 header-links 스타일 재사용) -->
+    <div class="header-links" style="margin-bottom: 30px; position: relative; z-index: 10;">
+        <div class="top-links-left">
+            <a href="index.html" class="top-link-button">
+                <span class="link-icon">🏠</span>
+                <span class="link-text">홈으로</span>
+            </a>
+        </div>
+        <div class="top-links-right"></div>
+    </div>
+
+    <!-- 헤더 -->
+    <div class="privacy-header">
+        <h1>🔒 개인정보처리방침</h1>
+        <p class="subtitle">Privacy Policy · Index Quiz</p>
+    </div>
+
+    <!-- 요약 배너 -->
+    <div class="summary-banner">
+        <strong>Index Quiz</strong>는 별도의 회원가입 없이 이용 가능한 서비스입니다.
+        본 서비스는 사용자의 개인정보를 직접 수집·저장하지 않습니다. 다만, 서비스 품질 개선 및 광고 운영을 위해
+        Google의 제3자 서비스를 활용하고 있으며, 이 과정에서 일부 데이터가 자동 수집될 수 있습니다.
+    </div>
+
+    <!-- 섹션 카드들 -->
+    <div class="privacy-card">
+        <div class="card-header">
+            <div class="card-number">01</div>
+            <div class="card-title">수집되는 정보</div>
+        </div>
+        <div class="card-body">
+            <p>본 서비스는 이름, 이메일, 전화번호 등 개인 식별 정보를 직접 수집하지 않습니다.</p>
+            <p>다만 서비스 이용 과정에서 아래 데이터가 제3자 서비스(Google)에 의해 자동으로 수집될 수 있습니다.</p>
+            <div class="tag-list">
+                <span class="tag">방문 페이지</span>
+                <span class="tag">체류 시간</span>
+                <span class="tag">브라우저 정보</span>
+                <span class="tag">운영체제 정보</span>
+                <span class="tag">접속 IP (익명화)</span>
+                <span class="tag">광고 클릭 데이터</span>
+                <span class="tag">쿠키</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="privacy-card">
+        <div class="card-header">
+            <div class="card-number">02</div>
+            <div class="card-title">제3자 서비스 이용</div>
+        </div>
+        <div class="card-body">
+            <p>본 서비스는 아래 Google 제3자 서비스를 사용하며, 수집된 데이터는 각 서비스의 개인정보처리방침에 따라 처리됩니다.</p>
+            <br>
+            <div class="service-item">
+                <div class="service-icon">📊</div>
+                <div class="service-info">
+                    <h4>Google Analytics</h4>
+                    <p>사이트 이용 통계 분석 및 서비스 개선 목적으로 사용합니다. 수집된 데이터는 익명화되어 처리됩니다.</p>
+                    <a href="https://policies.google.com/privacy" target="_blank" class="service-link">Google 개인정보처리방침 →</a>
+                </div>
+            </div>
+            <div class="service-item">
+                <div class="service-icon">📢</div>
+                <div class="service-info">
+                    <h4>Google AdSense</h4>
+                    <p>관심사 기반 맞춤형 광고 제공 목적으로 사용합니다. 광고 쿠키를 통해 광고 노출 및 클릭 데이터가 수집될 수 있습니다.</p>
+                    <a href="https://policies.google.com/technologies/ads" target="_blank" class="service-link">Google 광고 정책 →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="privacy-card">
+        <div class="card-header">
+            <div class="card-number">03</div>
+            <div class="card-title">쿠키 사용</div>
+        </div>
+        <div class="card-body">
+            <p>본 서비스는 Google Analytics 및 AdSense 운영을 위해 쿠키(Cookie)를 사용합니다. 쿠키는 사이트 이용 통계 분석 및 광고 개인화에 활용되는 작은 텍스트 파일입니다.</p>
+            <p>브라우저 설정을 통해 쿠키를 비활성화하거나 삭제할 수 있습니다. 단, 쿠키 비활성화 시 일부 기능이 정상 작동하지 않을 수 있습니다.</p>
+            <p><a href="https://adssettings.google.com/" target="_blank">Google 광고 설정</a>에서 맞춤형 광고를 직접 거부하실 수 있습니다.</p>
+        </div>
+    </div>
+
+    <div class="privacy-card">
+        <div class="card-header">
+            <div class="card-number">04</div>
+            <div class="card-title">개인정보 보호</div>
+        </div>
+        <div class="card-body">
+            <p>본 서비스는 사용자의 개인정보를 제3자에게 직접 판매하거나 제공하지 않습니다.</p>
+            <p>Google이 수집하는 데이터는 Google의 정책에 따라 처리되며, Index Quiz 운영팀은 해당 데이터에 접근하거나 별도로 저장하지 않습니다.</p>
+        </div>
+    </div>
+
+    <div class="privacy-card">
+        <div class="card-header">
+            <div class="card-number">05</div>
+            <div class="card-title">방침 변경 안내</div>
+        </div>
+        <div class="card-body">
+            <p>본 개인정보처리방침은 서비스 변경 또는 법령 개정에 따라 업데이트될 수 있습니다. 변경 시 본 페이지를 통해 공지하며, 중요한 변경사항의 경우 GitHub 또는 피드백 폼을 통해 별도 안내할 수 있습니다.</p>
+        </div>
+        <div class="meta-info">
+            <span class="meta-item">📅 시행일: 2026년 1월 1일</span>
+            <span class="meta-item">✏️ 최종 수정: 2026년 1월 1일</span>
+        </div>
+    </div>
+
+    <div class="privacy-card">
+        <div class="card-header">
+            <div class="card-number">06</div>
+            <div class="card-title">문의</div>
+        </div>
+        <div class="card-body">
+            <p style="margin-bottom: 16px;">개인정보 관련 문의는 아래 채널을 이용해 주세요.</p>
+            <div class="contact-grid">
+                <a href="https://github.com/Index-Quiz/index-quiz/issues" target="_blank" class="contact-item">
+                    <div class="contact-icon">🔗</div>
+                    <div class="contact-text">
+                        <strong>GitHub Issues</strong>
+                        <span>Index-Quiz/index-quiz</span>
+                    </div>
+                </a>
+                <a href="https://forms.gle/FEWskbQnBbfbQXcP8" target="_blank" class="contact-item">
+                    <div class="contact-icon">💬</div>
+                    <div class="contact-text">
+                        <strong>피드백 폼</strong>
+                        <span>개발자 혼내러 가기</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Index Quiz. All rights reserved.</p>
+    </footer>
+</div>
+
+</body>
+</html>
