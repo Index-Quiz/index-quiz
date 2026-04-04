@@ -19,6 +19,7 @@ public enum ErrorCode {
     NO_COOKIE_FOUND(HttpStatus.BAD_REQUEST, "필수 쿠키 값이 존재하지 않습니다."),
     FILE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, "파일 업로드에 실패했습니다."),
 
+    QUESTION_SET_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 문제 세트 요청입니다"),
     QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 질문입니다."),
     QUESTION_OPTION_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 선택지입니다."),
 

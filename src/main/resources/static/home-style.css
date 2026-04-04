@@ -896,127 +896,66 @@ a.contributor-item {
     }
 }
 
-/* 상단 링크 버튼들 */
-/*.top-links-left {*/
-/*    position: fixed;*/
-/*    top: 20px;*/
-/*    left: 20px;*/
-/*    display: flex;*/
-/*    gap: 12px;*/
-/*    z-index: 1000;*/
-/*}*/
+/* 오답률 BEST 7 특별 스타일 - 기존 스타일 완전 유지 + glow 효과 */
+.bookmark-tab.special-tab .bookmark-content::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, #ffd93d, #ffaa3d);
+    border-radius: 4px 0 0 4px;
+}
 
-/*.top-links-right {*/
-/*    position: fixed;*/
-/*    top: 20px;*/
-/*    right: 20px;*/
-/*    display: flex;*/
-/*    gap: 12px;*/
-/*    z-index: 1000;*/
-/*}*/
+.bookmark-tab.special-tab {
+    animation: border-glow 3s ease-in-out infinite;
+}
 
-/*.top-link-button {*/
-/*    background: rgba(255, 255, 255, 0.15);*/
-/*    backdrop-filter: blur(10px);*/
-/*    color: white;*/
-/*    border: 2px solid rgba(255, 255, 255, 0.3);*/
-/*    padding: 12px 20px;*/
-/*    border-radius: 50px;*/
-/*    font-size: 14px;*/
-/*    font-weight: 600;*/
-/*    cursor: pointer;*/
-/*    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);*/
-/*    transition: all 0.3s ease;*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    gap: 8px;*/
-/*    text-decoration: none;*/
-/*    white-space: nowrap;*/
-/*}*/
+@keyframes border-glow {
+    0%, 100% {
+        box-shadow: -5px 0 15px -5px rgba(139, 92, 246, 0.3),
+        0 0 8px rgba(255, 217, 61, 0.2);
+    }
+    50% {
+        box-shadow: -5px 0 15px -5px rgba(139, 92, 246, 0.3),
+        0 0 12px rgba(255, 217, 61, 0.4);
+    }
+}
 
-/*.top-link-button:hover {*/
-/*    background: rgba(255, 255, 255, 0.25);*/
-/*    border-color: rgba(255, 255, 255, 0.5);*/
-/*    transform: translateY(-2px);*/
-/*    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);*/
-/*}*/
+.bookmark-tab.special-tab:hover {
+    box-shadow: -5px 0 20px -3px rgba(139, 92, 246, 0.4),
+    0 0 15px rgba(255, 217, 61, 0.5);
+}
 
-/*.top-link-button:active {*/
-/*    transform: translateY(0);*/
-/*}*/
+/* NEW! 뱃지 */
+.new-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(135deg, #ff6b6b, #ff8787);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+    animation: badge-bounce 1.5s ease-in-out infinite;
+    z-index: 10;
+}
 
-/*.link-icon {*/
-/*    font-size: 18px;*/
-/*}*/
+@keyframes badge-bounce {
+    0%, 100% {
+        transform: translateY(0) rotate(-5deg);
+    }
+    50% {
+        transform: translateY(-3px) rotate(-5deg);
+    }
+}
 
-/*.feedback-button .link-icon {*/
-/*    animation: pulse 2s infinite;*/
-/*}*/
-
-/*@keyframes pulse {*/
-/*    0%, 100% {*/
-/*        transform: scale(1);*/
-/*    }*/
-/*    50% {*/
-/*        transform: scale(1.1);*/
-/*    }*/
-/*}*/
-
-/*!* 반응형 *!*/
-/*@media (max-width: 1024px) {*/
-/*    .top-links-left,*/
-/*    .top-links-right {*/
-/*        gap: 8px;*/
-/*    }*/
-
-/*    .top-link-button {*/
-/*        padding: 10px 16px;*/
-/*        font-size: 13px;*/
-/*    }*/
-/*}*/
-
-/*@media (max-width: 768px) {*/
-/*    .header-links {*/
-/*        margin-bottom: 20px;*/
-/*    }*/
-
-/*    .top-links-left,*/
-/*    .top-links-right {*/
-/*        gap: 6px;*/
-/*    }*/
-
-/*    .top-link-button {*/
-/*        padding: 10px;*/
-/*        font-size: 12px;*/
-/*        width: 44px;*/
-/*        height: 44px;*/
-/*        justify-content: center;*/
-/*    }*/
-
-/*    .link-text {*/
-/*        display: none;*/
-/*    }*/
-
-/*    .link-icon {*/
-/*        font-size: 20px;*/
-/*        display: block;*/
-/*    }*/
-/*}*/
-
-/*@media (max-width: 480px) {*/
-/*    .top-links-left {*/
-/*        flex-direction: column;*/
-/*        gap: 8px;*/
-/*    }*/
-
-/*    .top-link-button {*/
-/*        padding: 10px;*/
-/*        width: 44px;*/
-/*        height: 44px;*/
-/*        justify-content: center;*/
-/*    }*/
-
-/*    .link-icon {*/
-/*        font-size: 20px;*/
-/*    }*/
-/*}*/
+/* SPECIAL 뱃지 스타일 */
+.badge-level.best-badge {
+    background: linear-gradient(135deg, #ffd93d, #ffaa3d);
+    color: #8b4513;
+    font-weight: bold;
+}

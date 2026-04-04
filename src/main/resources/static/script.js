@@ -3,7 +3,44 @@
 // API를 통한 퀴즈 데이터 관리
 let totalQuestions = 7; // 목데이터 사용 시 2문제, 실제 API는 10문제
 let currentQuestion = null;
-let currentQuestionNumber = null;
+
+let bestDifficultQuestions = [];
+let isBestDifficultMode = false;
+
+const QuizStorage = {
+    KEY: 'quizProgress',
+
+    save(data) {
+        localStorage.setItem(this.KEY, JSON.stringify(data));
+    },
+
+    load() {
+        const data = localStorage.getItem(this.KEY);
+        return data ? JSON.parse(data) : null;
+    },
+
+    clear() {
+        localStorage.removeItem(this.KEY);
+    }
+};
+// 저장할 데이터 구조: { quizSet, currentQuestionIndex, total, score }
+
+// quiz.html의 홈 버튼에 이벤트 리스너 추가
+document.querySelector('.home-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const savedProgress = QuizStorage.load();
+
+    if (savedProgress) {
+        const confirmed = confirm('풀던 기록이 모두 삭제됩니다. 홈으로 이동하시겠습니까?');
+        if (confirmed) {
+            QuizStorage.clear();
+            window.location.href = 'index.html';
+        }
+    } else {
+        window.location.href = 'index.html';
+    }
+});
 
 // API 호출 함수
 async function fetchQuestion(questionId) {
@@ -17,6 +54,21 @@ async function fetchQuestion(questionId) {
         return questionData;
     } catch (error) {
         console.error('퀴즈 데이터를 불러오는 중 오류가 발생했습니다:', error);
+        throw error;
+    }
+}
+
+// BEST_DIFFICULT 문제 목록 가져오기 - 새로 추가
+async function fetchBestDifficultQuestions() {
+    try {
+        const response = await fetch('/api/questions?type=BEST_DIFFICULT');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.questions;
+    } catch (error) {
+        console.error('BEST_DIFFICULT 퀴즈 데이터를 불러오는 중 오류가 발생했습니다:', error);
         throw error;
     }
 }
@@ -67,28 +119,6 @@ async function submitAnswerToAPI(questionId, selectedAnswers) {
         console.error('답 제출 중 오류가 발생했습니다:', error);
         throw error;
     }
-}
-
-// 배열 비교 헬퍼 함수
-function arraysEqual(a, b) {
-    if (a.length !== b.length) return false;
-    return a.every((val, index) => val === b[index]);
-}
-
-// 마크다운 이미지 파싱 함수
-function parseMarkdownImages(content) {
-    const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
-    const images = [];
-    let match;
-
-    while ((match = imageRegex.exec(content)) !== null) {
-        images.push({
-            alt: match[1],
-            src: match[2]
-        });
-    }
-
-    return images;
 }
 
 // SQL 키워드 하이라이팅 함수
@@ -280,24 +310,76 @@ function hideLoading() {
     }
 }
 
-// 퀴즈 초기화
 async function initQuiz() {
     console.log('initQuiz() 실행됨');
 
+    // URL 파라미터에서 세트 읽기
     const urlParams = new URLSearchParams(window.location.search);
-    quizSet = urlParams.get("set") || "A"; // 기본 A
+    quizSet = urlParams.get("set") || "A";
 
-    quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
-    currentQuestionIndex = quizStartId;
-    score = 0;
+    // BEST_DIFFICULT 모드인지 확인
+    isBestDifficultMode = (quizSet === "BEST_DIFFICULT");
+
+    const savedProgress = QuizStorage.load();
+
+    if (savedProgress && savedProgress.quizSet === quizSet) {
+        if (isBestDifficultMode) {
+            try {
+                bestDifficultQuestions = await fetchBestDifficultQuestions();
+                totalQuestions = bestDifficultQuestions.length;
+                quizStartId = 0;
+            } catch (error) {
+                console.error('BEST_DIFFICULT 문제를 불러오는 데 실패했습니다:', error);
+                alert('문제를 불러오는 데 실패했습니다. 홈으로 돌아갑니다.');
+                window.location.href = 'index.html';
+                return;
+            }
+        } else {
+            quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
+        }
+
+        currentQuestionIndex = savedProgress.currentQuestionIndex ?? (isBestDifficultMode ? 0 : quizStartId);
+        totalQuestions = savedProgress.total ?? (isBestDifficultMode ? bestDifficultQuestions.length : 7);
+        score = savedProgress.score;
+
+        if (isBestDifficultMode) {
+            if (currentQuestionIndex >= totalQuestions) {
+                showFinalResult();
+                return;
+            }
+        } else {
+            if (currentQuestionIndex - quizStartId >= totalQuestions) {
+                showFinalResult();
+                return;
+            }
+        }
+    } else {
+        if (isBestDifficultMode) {
+            try {
+                bestDifficultQuestions = await fetchBestDifficultQuestions();
+                totalQuestions = bestDifficultQuestions.length;
+                quizStartId = 0;
+                currentQuestionIndex = 0;
+            } catch (error) {
+                console.error('BEST_DIFFICULT 문제를 불러오는 데 실패했습니다:', error);
+                alert('문제를 불러오는 데 실패했습니다. 홈으로 돌아갑니다.');
+                window.location.href = 'index.html';
+                return;
+            }
+        } else {
+            quizStartId = (quizSet.charCodeAt(0) - "A".charCodeAt(0)) * 7;
+            currentQuestionIndex = quizStartId;
+            totalQuestions = 7;
+        }
+        score = 0;
+    }
+
     selectedAnswers = [];
     isAnswered = false;
 
-    // 총 문제 수 업데이트
     totalQuestionsSpan.textContent = totalQuestions;
     finalTotal.textContent = totalQuestions;
 
-    // Thymeleaf가 설정하지 않은 경우를 위한 추가 업데이트
     const allTotalElements = document.querySelectorAll('[id*="totalQuestions"], [class*="total-questions"]');
     allTotalElements.forEach(el => {
         if (el.textContent === '10' || el.textContent === '') {
@@ -316,10 +398,12 @@ async function initQuiz() {
 async function loadQuestion() {
     try {
         showLoading();
-
-        // API에서 현재 문제 번호(1부터 시작)로 데이터 가져오기
-        const questionId = currentQuestionIndex + 1;
-        currentQuestion = await fetchQuestion(questionId);
+        if (isBestDifficultMode) {
+            currentQuestion = bestDifficultQuestions[currentQuestionIndex];
+        } else {
+            const questionId = currentQuestionIndex + 1;
+            currentQuestion = await fetchQuestion(questionId);
+        }
 
         hideLoading();
 
@@ -335,10 +419,19 @@ async function loadQuestion() {
             questionText.style.transform = 'translateY(0)';
         }, 100);
 
-        currentQuestionSpan.textContent = currentQuestionIndex + 1 -quizStartId;
+        if (isBestDifficultMode) {
+            currentQuestionSpan.textContent = currentQuestionIndex + 1;
+        } else {
+            currentQuestionSpan.textContent = currentQuestionIndex + 1 - quizStartId;
+        }
 
         // 진행률 업데이트 애니메이션
-        const progressPercent = ((currentQuestionIndex + 1 - quizStartId) / totalQuestions) * 100;
+        let progressPercent;
+        if (isBestDifficultMode) {
+            progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+        } else {
+            progressPercent = ((currentQuestionIndex + 1 - quizStartId) / totalQuestions) * 100;
+        }
         setTimeout(() => {
             progress.style.width = progressPercent + '%';
         }, 300);
@@ -375,6 +468,7 @@ async function loadQuestion() {
             currentQuestion.options.forEach((option, index) => {
                 const optionElement = document.createElement('div');
                 optionElement.className = questionType === "SINGLE_CHOICE" ? 'option single-choice' : 'option';
+                optionElement.id = option.id;
                 optionElement.onclick = () => selectOption(index);
 
                 const optionLabel = document.createElement('span');
@@ -531,7 +625,7 @@ async function submitAnswer() {
 
     try {
         // API에 답 제출
-        const questionId = currentQuestionIndex + 1;
+        const questionId = currentQuestion.id;
         const result = await submitAnswerToAPI(questionId, selectedAnswers);
 
         const isCorrect = result.isCorrect;
@@ -541,6 +635,14 @@ async function submitAnswer() {
         if (isCorrect) {
             score++;
         }
+        console.log("currentQuestionIndex : " + currentQuestionIndex);
+
+        QuizStorage.save({
+            quizSet: quizSet,
+            currentQuestionIndex: currentQuestionIndex +1,
+            total : totalQuestions,
+            score: score
+        });
 
         // 모든 선택지에 결과 표시
         const options = document.querySelectorAll('.option');
@@ -580,7 +682,14 @@ async function submitAnswer() {
         displayExplanationFromAPI(result.solution);
 
         // 다음 버튼 텍스트 설정
-        if (currentQuestionIndex - quizStartId === totalQuestions - 1) {
+        let isLastQuestion;
+        if (isBestDifficultMode) {
+            isLastQuestion = currentQuestionIndex === totalQuestions - 1;
+        } else {
+            isLastQuestion = currentQuestionIndex - quizStartId === totalQuestions - 1;
+        }
+
+        if (isLastQuestion) {
             nextBtn.textContent = '결과 보기';
         } else {
             nextBtn.textContent = '다음 문제';
@@ -604,7 +713,14 @@ async function submitAnswer() {
 
 // 다음 문제 또는 결과 표시
 async function nextQuestion() {
-    if (currentQuestionIndex - quizStartId === totalQuestions - 1) {
+    let isLastQuestion;
+    if (isBestDifficultMode) {
+        isLastQuestion = currentQuestionIndex === totalQuestions - 1;
+    } else {
+        isLastQuestion = currentQuestionIndex - quizStartId === totalQuestions - 1;
+    }
+
+    if (isLastQuestion) {
         showFinalResult();
     } else {
         currentQuestionIndex++;
@@ -617,11 +733,13 @@ async function nextQuestion() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     });
-
 }
 
 // 최종 결과 표시
 function showFinalResult() {
+    // ✅ 퀴즈 완료 시 진행 상황 삭제
+    QuizStorage.clear();
+
     quizContainer.style.opacity = '0';
     quizContainer.style.transform = 'translateX(-100px)';
 

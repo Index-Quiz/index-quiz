@@ -9,4 +9,5 @@ public record GetQuestionResponse(
         String content,
         List<GetQuestionOptionResponse> options
 ) {
+
 }
