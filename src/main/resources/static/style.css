@@ -1039,3 +1039,32 @@ header p,
     min-height: 50px;
     width: 100%;
 }
+
+/* ========== 세로 사이드 배너 ========== */
+.side-ad {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 160px;
+    height: 600px;
+    z-index: 5;
+    display: none; /* 기본은 숨김, 화면 넓을 때만 표시 */
+    justify-content: center;
+    align-items: center;
+}
+
+.side-ad-left {
+    left: 20px;
+}
+
+.side-ad-right {
+    right: 20px;
+}
+
+/* container(최대 1000px) + 배너(160px × 2) + 여백(20px × 4)
+   = 1000 + 320 + 80 = 1400px 이상일 때만 표시 */
+@media (min-width: 1200px) {
+    .side-ad {
+        display: flex;
+    }
+}
