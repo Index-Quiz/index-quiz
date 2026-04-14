@@ -959,3 +959,12 @@ a.contributor-item {
     color: #8b4513;
     font-weight: bold;
 }
+
+.ad-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
+    min-height: 50px;
+    width: 100%;
+}
