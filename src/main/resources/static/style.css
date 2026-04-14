@@ -1040,30 +1040,34 @@ header p,
     width: 100%;
 }
 
-/* ========== 세로 사이드 배너 ========== */
-.side-ad {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 160px;
-    height: 600px;
-    z-index: 5;
-    display: none; /* 기본은 숨김, 화면 넓을 때만 표시 */
+/* ========== 페이지 레이아웃 (배너 - 본문 - 배너) ========== */
+.page-layout {
+    display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
 }
 
-.side-ad-left {
-    left: 20px;
+.page-layout .container {
+    flex-shrink: 0;
 }
 
-.side-ad-right {
-    right: 20px;
+/* 세로 사이드 배너 */
+.side-ad {
+    width: 160px;
+    min-height: 600px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+    display: none; /* 기본 숨김, 넓은 화면에서만 표시 */
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
 }
 
-/* container(최대 1000px) + 배너(160px × 2) + 여백(20px × 4)
-   = 1000 + 320 + 80 = 1400px 이상일 때만 표시 */
-@media (min-width: 1200px) {
+/* 화면이 충분히 넓을 때만 양옆 배너 표시 */
+@media (min-width: 1400px) {
     .side-ad {
         display: flex;
     }
