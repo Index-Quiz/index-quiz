@@ -21,23 +21,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- 좌측 세로 배너 -->
-<aside class="side-ad side-ad-left">
-    <ins class="kakao_ad_area" style="display:none;"
-         data-ad-unit="DAN-9BZPqNA3dY8ZyMWn"
-         data-ad-width="160"
-         data-ad-height="600"></ins>
-</aside>
 
-<!-- 우측 세로 배너 -->
-<aside class="side-ad side-ad-right">
-    <ins class="kakao_ad_area" style="display:none;"
-         data-ad-unit="DAN-ASH32CKGGQU02Dq1"
-         data-ad-width="160"
-         data-ad-height="600"></ins>
-</aside>
+<div class="page-layout">
 
-<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+    <!-- 좌측 세로 배너 -->
+    <aside class="side-ad side-ad-left">
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-9BZPqNA3dY8ZyMWn"
+             data-ad-width="160"
+             data-ad-height="600"></ins>
+    </aside>
 
     <div class="container">
         <!-- 홈으로 돌아가기 버튼 -->
@@ -112,17 +105,27 @@
         </div>
     </div>
 
-    <!-- Thymeleaf로 퀴즈 데이터 전달 (fallback 데이터 포함) -->
-    <script th:inline="javascript">
-        // 서버에서 전달받은 퀴즈 데이터 (없으면 기본 데이터 사용)
-        const serverQuizData = /*[[${quizData}]]*/ null;
+    <!-- 우측 세로 배너 -->
+    <aside class="side-ad side-ad-right">
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-ASH32CKGGQU02Dq1"
+             data-ad-width="160"
+             data-ad-height="600"></ins>
+    </aside>
 
-        // 실제 사용할 퀴즈 데이터 결정 (서버 데이터 우선, 없으면 기본 데이터)
-        const quizData = serverQuizData;
-        
-        // 개발자 도구에서 데이터 소스 확인 가능
-        console.log('퀴즈 데이터 소스:', serverQuizData ? '서버에서 전달받음' : '기본 예시 데이터 사용');
-    </script>
-    <script src="script.js"></script>
+</div>
+<!-- Thymeleaf로 퀴즈 데이터 전달 (fallback 데이터 포함) -->
+<script th:inline="javascript">
+    // 서버에서 전달받은 퀴즈 데이터 (없으면 기본 데이터 사용)
+    const serverQuizData = /*[[${quizData}]]*/ null;
+
+    // 실제 사용할 퀴즈 데이터 결정 (서버 데이터 우선, 없으면 기본 데이터)
+    const quizData = serverQuizData;
+
+    // 개발자 도구에서 데이터 소스 확인 가능
+    console.log('퀴즈 데이터 소스:', serverQuizData ? '서버에서 전달받음' : '기본 예시 데이터 사용');
+</script>
+<script src="script.js"></script>
+<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 </body>
 </html>
