@@ -8,8 +8,13 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #020259 0%, #1a0b6b 50%, #2d1b8a 100%);
     min-height: 100vh;
+    min-height: 100dvh;
     color: #ffffff;
     line-height: 1.6;
+}
+
+html {
+    overflow-x: hidden;
 }
 
 .container {
@@ -17,6 +22,7 @@ body {
     margin: 0 auto;
     padding: 20px;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -979,6 +985,10 @@ header p,
         padding: 15px;
         margin: 10px 0;
     }
+
+    .question-container {
+        padding: 0;
+    }
     
     .option {
         padding: 7px 8px;
@@ -1045,6 +1055,33 @@ header p,
     margin: 0 auto;
 }
 
+/* 기본(PC)에서는 모바일 광고 숨김 */
+.ad-container .ad-mobile { display: none !important; }
+
+@media (max-width: 767px) {
+    .page-layout {
+        padding: 0;
+        gap: 0;
+    }
+
+    .quiz-container {
+        margin: 0;
+    }
+
+    .question-container {
+        padding: 0;
+    }
+
+    .container {
+        padding: 15px;
+        padding-top: 70px;  /* 홈 버튼 공간 확보 */
+    }
+
+    .ad-container .ad-pc { display: none !important; }
+    .ad-container .ad-mobile { display: block !important; }
+    .ad-container { min-height: 100px; }
+}
+
 /* ========== 페이지 레이아웃 (배너 - 본문 - 배너) ========== */
 .page-layout {
     display: flex;
@@ -1055,7 +1092,7 @@ header p,
 }
 
 .page-layout .container {
-    flex-shrink: 0;
+    flex-shrink: 1;
 }
 
 /* 세로 사이드 배너 */
