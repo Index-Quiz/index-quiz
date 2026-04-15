@@ -4,10 +4,15 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: linear-gradient(135deg, #020259 0%, #0d0d7a 50%, #1a1a9e 100%);
     min-height: 100vh;
+    min-height: 100dvh;
     color: #ffffff;
     line-height: 1.6;
     position: relative;
@@ -440,6 +445,11 @@ header p,
 
 /* ========== 반응형 ========== */
 @media (max-width: 768px) {
+    .page-layout {
+        padding: 0;
+        gap: 0;
+    }
+
     .bookmark-badge {
         gap: 5px;
     }
@@ -880,8 +890,8 @@ a.contributor-item {
         max-width: 280px;
     }
     .top-links-left {
-        flex-direction: column;
-        gap: 8px;
+        flex-direction: row;
+        gap: 6px;
     }
 
     .top-link-button {
@@ -965,8 +975,22 @@ a.contributor-item {
     justify-content: center;
     align-items: center;
     margin: 30px auto;
-    min-height: 50px;
+    min-height: 90px;      /* 광고 height(90)에 맞춤 */
     width: 100%;
+    text-align: center;    /* 혹시 inline-block으로 바뀌어도 대비 */
+}
+
+.ad-container .kakao_ad_area {
+    margin: 0 auto;
+}
+
+/* 기본(PC)에서는 모바일 광고 숨김 */
+.ad-container .ad-mobile { display: none !important; }
+
+@media (max-width: 767px) {
+    .ad-container .ad-pc { display: none !important; }
+    .ad-container .ad-mobile { display: block !important; }
+    .ad-container { min-height: 100px; }
 }
 
 /* ========== 페이지 레이아웃 (배너 - 본문 - 배너) ========== */
@@ -981,7 +1005,7 @@ a.contributor-item {
 }
 
 .page-layout .container {
-    flex-shrink: 0;
+    flex-shrink: 1;
 }
 
 /* 세로 사이드 배너 */
