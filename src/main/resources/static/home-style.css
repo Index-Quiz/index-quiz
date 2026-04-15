@@ -965,8 +965,13 @@ a.contributor-item {
     justify-content: center;
     align-items: center;
     margin: 30px auto;
-    min-height: 50px;
+    min-height: 90px;      /* 광고 height(90)에 맞춤 */
     width: 100%;
+    text-align: center;    /* 혹시 inline-block으로 바뀌어도 대비 */
+}
+
+.ad-container .kakao_ad_area {
+    margin: 0 auto;
 }
 
 /* ========== 페이지 레이아웃 (배너 - 본문 - 배너) ========== */
