@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #020259 0%, #1a0b6b 50%, #2d1b8a 100%);
@@ -11,18 +17,18 @@ body {
     min-height: 100dvh;
     color: #ffffff;
     line-height: 1.6;
-}
-
-html {
-    overflow-x: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .container {
     max-width: 800px;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
     min-height: 100vh;
     min-height: 100dvh;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -90,8 +96,8 @@ header p,
     font-size: clamp(0.9rem, 2.5vw, 1.2rem);
     color: #b8c5d6;
     opacity: 0.9;
-    word-break: keep-all; /* 단어 단위로 줄바꿈 */
-    overflow-wrap: break-word; /* 너무 긴 단어는 강제로 줄바꿈 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
     line-height: 1.5;
 }
 
@@ -100,16 +106,27 @@ header p,
     backdrop-filter: blur(15px);
     border-radius: 25px;
     padding: 35px;
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow:
+            0 25px 50px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);
     flex: 1;
     position: relative;
     overflow: hidden;
     animation: slideInFromLeft 0.8s ease-out;
     margin: 0 10px;
+    min-width: 0;   /* flex 자식이 내부 콘텐츠로 인해 늘어나지 않도록 */
+}
+
+/* 퀴즈 내부 컨테이너들이 부모 너비를 넘지 않도록 강제 */
+.quiz-container .question-container,
+.quiz-container .options,
+.quiz-container .result-container,
+.quiz-container .explanation,
+.quiz-container .explanation-content {
+    min-width: 0;
+    max-width: 100%;
 }
 
 .quiz-container::before {
@@ -163,12 +180,8 @@ header p,
 }
 
 @keyframes progressShine {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 100%;
-    }
+    0% { left: -100%; }
+    100% { left: 100%; }
 }
 
 .question-number {
@@ -178,10 +191,11 @@ header p,
 }
 
 .question-container {
-    padding: 0 15px;
+    padding: 0;
     margin-bottom: 25px;
+    min-width: 0;
+    max-width: 100%;
 }
-
 
 .question-container h2 {
     font-size: clamp(1rem, 2.5vw, 1.3rem);
@@ -191,6 +205,8 @@ header p,
     line-height: 1.6;
     font-weight: 500;
     padding: 0 5px;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .options {
@@ -203,11 +219,14 @@ header p,
     border: 1px solid rgba(168, 216, 255, 0.2);
     border-radius: 12px;
     margin: 20px 0;
-    overflow: hidden;
-    box-shadow: 
-        0 8px 25px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(168, 216, 255, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;           /* 라운드 모서리 유지 */
+    box-shadow:
+            0 8px 25px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(168, 216, 255, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
 }
 
 .code-header::before {
@@ -217,18 +236,21 @@ header p,
     font-size: 0.6rem;
 }
 
-/* 코드 블록 - 반응형 (더 작게 조정) */
 .code-block pre {
     margin: 0;
     padding: clamp(12px, 3vw, 20px);
     background: transparent;
-    overflow-x: auto;
+    overflow-x: auto;            /* 긴 줄은 가로 스크롤로 */
+    -webkit-overflow-scrolling: touch;
     font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: clamp(0.65rem, 1.5vw, 0.8rem);
     line-height: 1.5;
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
-/* 코드 블록 헤더도 반응형으로 */
 .code-header {
     background: linear-gradient(90deg, rgba(168, 216, 255, 0.15), rgba(74, 222, 128, 0.15));
     padding: clamp(8px, 2vw, 10px) clamp(12px, 3vw, 20px);
@@ -251,12 +273,10 @@ header p,
     white-space: pre;
 }
 
-/* SQL 문법 하이라이팅 */
 .language-sql {
     color: #f8f8f2;
 }
 
-/* SQL 키워드 스타일링 */
 .code-block code {
     background: transparent;
 }
@@ -289,12 +309,10 @@ header p,
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 코드 블록 내 SQL 하이라이팅 */
 .language-sql {
     color: #e8f4fd;
 }
 
-/* 스크롤바 스타일링 (코드 블록용) */
 .code-block pre::-webkit-scrollbar {
     height: 8px;
 }
@@ -329,7 +347,6 @@ header p,
     transform: translateX(3px);
 }
 
-
 /* 마크다운 헤딩 - 반응형 */
 .markdown-h1 {
     font-size: clamp(1.4rem, 3.5vw, 1.8rem);
@@ -356,8 +373,6 @@ header p,
     margin: 18px 0 12px 0;
 }
 
-
-/* 마크다운 문단 - 반응형 */
 .markdown-paragraph {
     font-size: clamp(0.875rem, 2vw, 1rem);
     line-height: 1.7;
@@ -365,7 +380,6 @@ header p,
     color: #e8f4fd;
 }
 
-/* 볼드 텍스트 */
 .markdown-bold {
     font-weight: 700;
     color: #ffffff;
@@ -379,12 +393,12 @@ header p,
     margin: 25px 0;
 }
 
-/* 테이블 스타일 */
+/* ========== 테이블 스타일 ========== */
 .table-container {
     margin: 20px 0;
-    overflow-x: auto;
     border-radius: 12px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    max-width: 100%;
 }
 
 .markdown-table {
@@ -395,9 +409,9 @@ header p,
     border: 1px solid rgba(168, 216, 255, 0.2);
     border-radius: 12px;
     overflow: hidden;
+    table-layout: auto;
 }
 
-/* 테이블 텍스트 - 반응형 */
 .markdown-table th {
     background: linear-gradient(90deg, rgba(168, 216, 255, 0.2), rgba(74, 222, 128, 0.2));
     color: #ffffff;
@@ -414,8 +428,9 @@ header p,
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     font-size: clamp(0.75rem, 1.8vw, 0.9rem);
     line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
-
 
 .markdown-table tr:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -426,12 +441,12 @@ header p,
 }
 
 .markdown-link {
-    color: #FFD700;   /* 밝은 노랑 */
-    text-decoration: underline; /* 밑줄 유지 (선택사항) */
+    color: #FFD700;
+    text-decoration: underline;
 }
 
 .markdown-link:hover {
-    color: #FFFF66;   /* 마우스 오버 시 더 밝게 */
+    color: #FFFF66;
 }
 
 /* 이미지 컨테이너 스타일 */
@@ -483,6 +498,10 @@ header p,
     overflow: hidden;
     backdrop-filter: blur(10px);
     padding-right: 40px;
+    max-width: 100%;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .option:hover {
@@ -511,7 +530,6 @@ header p,
     text-shadow: 0 0 10px rgba(74, 222, 128, 0.8);
 }
 
-/* 단일 선택 문제용 라디오 버튼 스타일 */
 .option.single-choice.selected::after {
     content: '●';
     font-size: 1rem;
@@ -564,10 +582,11 @@ header p,
     flex-shrink: 0;
 }
 
-/* ✅ 텍스트가 길면 줄바꿈 */
 .option span:last-child {
     flex: 1;
+    min-width: 0;
     word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .submit-btn, .next-btn, .restart-btn {
@@ -696,8 +715,6 @@ header p,
     backdrop-filter: blur(10px);
 }
 
-
-/* 해설 제목 - 반응형 */
 .explanation h3 {
     font-size: clamp(1rem, 2.5vw, 1.2rem);
     color: #a8d8ff;
@@ -707,14 +724,11 @@ header p,
     gap: 8px;
 }
 
-
-/* 해설 내용 - 반응형 */
 .explanation-content {
     font-size: clamp(0.875rem, 2vw, 1rem);
     color: #ffffff;
     line-height: 1.7;
 }
-
 
 .explanation-image {
     max-width: 100%;
@@ -773,9 +787,9 @@ header p,
     margin-bottom: 30px;
     backdrop-filter: blur(15px);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow:
+            0 25px 50px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
     animation: slideInFromRight 0.8s ease-out;
     position: relative;
     overflow: hidden;
@@ -820,159 +834,211 @@ header p,
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInFromLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-100px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-100px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInFromRight {
-    from {
-        opacity: 0;
-        transform: translateX(100px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(100px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes bounceIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    70% {
-        transform: scale(0.9);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+    0% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 1; transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
-    }
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
 }
 
 @keyframes progressAnimation {
-    0% {
-        width: 0%;
-    }
+    0% { width: 0%; }
 }
 
 @keyframes correctAnswer {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-    }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 @keyframes incorrectShake {
-    0%, 100% {
-        transform: translateX(0);
-    }
-    10%, 30%, 50%, 70%, 90% {
-        transform: translateX(-5px);
-    }
-    20%, 40%, 60%, 80% {
-        transform: translateX(5px);
-    }
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
-/* 반응형 디자인 */
+/* ========== 반응형 디자인 ========== */
 @media (max-width: 768px) {
     .container {
-        padding: 15px;
+        padding: 15px 18px;
     }
-    
+
     header h1 {
         font-size: 2rem;
         animation: bounceIn 1s ease;
     }
-    
+
     header p {
         font-size: 1rem;
         animation: fadeIn 1.2s ease;
     }
-    
+
     .quiz-container {
-        padding: 20px;
+        margin: 0;
+        padding: 22px 18px;
         border-radius: 20px;
         animation: slideInFromLeft 0.6s ease-out;
     }
-    
+
     .option {
-        padding: 8px 10px;
+        padding: 10px 35px 10px 12px;
         font-size: 0.8rem;
         border-radius: 10px;
     }
-    
+
+    .option.selected::after,
+    .option.single-choice::before {
+        right: 10px;
+    }
+
     .option-label {
         padding: 3px 7px;
         min-width: 20px;
         font-size: 0.7rem;
     }
-    
+
     .submit-btn, .next-btn, .restart-btn, .home-return-btn {
         font-size: 1.1rem;
         padding: 12px;
         border-radius: 12px;
     }
-    
+
     .final-buttons {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .home-btn {
         font-size: 0.8rem;
         padding: 8px 12px;
     }
-    
+
     .score-percentage {
         font-size: 3rem !important;
     }
-    
+
     .final-result h2 {
         font-size: 1.8rem;
     }
-    
+
     .score {
         padding: 25px;
         border-radius: 20px;
+    }
+
+    /* ===== 테이블: 카드형 레이아웃으로 전환 ===== */
+    .table-container {
+        box-shadow: none;
+        background: transparent;
+        border-radius: 0;
+    }
+
+    .markdown-table {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        backdrop-filter: none;
+    }
+
+    .markdown-table,
+    .markdown-table thead,
+    .markdown-table tbody,
+    .markdown-table tr,
+    .markdown-table th,
+    .markdown-table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* 헤더는 시각적으로 숨기되 접근성은 유지 */
+    .markdown-table thead {
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+    }
+
+    .markdown-table tr {
+        margin-bottom: 14px;
+        border: 1px solid rgba(168, 216, 255, 0.25);
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(168, 216, 255, 0.04));
+        padding: 6px 12px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .markdown-table tr:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(168, 216, 255, 0.06));
+    }
+
+    .markdown-table td {
+        border: none;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+        padding: 10px 4px 10px 38%;
+        position: relative;
+        text-align: left;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+        min-height: 40px;
+    }
+
+    .markdown-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* 각 셀 앞에 헤더 라벨 표시 (data-label 속성 사용) */
+    .markdown-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 4px;
+        top: 10px;
+        width: 33%;
+        padding-right: 8px;
+        font-weight: 600;
+        color: #a8d8ff;
+        font-size: 0.78rem;
+        white-space: normal;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        line-height: 1.4;
+    }
+
+    /* data-label이 없을 때는 라벨 영역 제거 */
+    .markdown-table td:not([data-label])::before,
+    .markdown-table td[data-label=""]::before {
+        content: "";
+        display: none;
+    }
+
+    .markdown-table td:not([data-label]),
+    .markdown-table td[data-label=""] {
+        padding-left: 4px;
     }
 }
 
@@ -980,38 +1046,74 @@ header p,
     header h1 {
         font-size: 1.6rem;
     }
-    
+
     .quiz-container {
-        padding: 15px;
-        margin: 10px 0;
+        padding: 18px 14px;
+        margin: 0;
     }
 
     .question-container {
         padding: 0;
     }
-    
+
     .option {
-        padding: 7px 8px;
-        font-size: 0.7rem;
+        padding: 8px 30px 8px 10px;
+        font-size: 0.78rem;
         margin-bottom: 8px;
     }
-    
+
     .option-label {
         padding: 2px 6px;
         min-width: 18px;
-        font-size: 0.6rem;
+        font-size: 0.65rem;
     }
-    
+
+    /* 코드 블록: 작은 화면에서 폰트·패딩 축소 */
+    .code-block {
+        margin: 14px 0;
+        border-radius: 10px;
+    }
+
+    .code-block pre {
+        padding: 10px 12px;
+        font-size: 0.68rem;
+    }
+
+    .code-header {
+        padding: 6px 12px;
+        font-size: 0.65rem;
+    }
+
+    .inline-code {
+        font-size: 0.78em;
+        padding: 1px 4px;
+    }
+
     .score-percentage {
         font-size: 2.5rem !important;
     }
-    
+
     .final-result h2 {
         font-size: 1.5rem;
     }
-    
+
     .progress-bar {
         height: 6px;
+    }
+
+    .explanation {
+        padding: 18px 14px;
+    }
+
+    /* 테이블 카드: 480px 이하에서는 더 컴팩트하게 */
+    .markdown-table td {
+        padding: 8px 4px 8px 40%;
+        font-size: 0.78rem;
+    }
+
+    .markdown-table td::before {
+        font-size: 0.72rem;
+        width: 35%;
     }
 }
 
@@ -1029,12 +1131,12 @@ header p,
     body {
         background: linear-gradient(135deg, #020259 0%, #0a0628 50%, #1a0b3d 100%);
     }
-    
+
     .quiz-container {
         background: rgba(255, 255, 255, 0.05);
         border-color: rgba(255, 255, 255, 0.1);
     }
-    
+
     .option {
         background: rgba(255, 255, 255, 0.05);
         border-color: rgba(255, 255, 255, 0.1);
@@ -1046,16 +1148,15 @@ header p,
     justify-content: center;
     align-items: center;
     margin: 30px auto;
-    min-height: 90px;      /* 광고 height(90)에 맞춤 */
+    min-height: 90px;
     width: 100%;
-    text-align: center;    /* 혹시 inline-block으로 바뀌어도 대비 */
+    text-align: center;
 }
 
 .ad-container .kakao_ad_area {
     margin: 0 auto;
 }
 
-/* 기본(PC)에서는 모바일 광고 숨김 */
 .ad-container .ad-mobile { display: none !important; }
 
 @media (max-width: 767px) {
@@ -1073,8 +1174,8 @@ header p,
     }
 
     .container {
-        padding: 15px;
-        padding-top: 70px;  /* 홈 버튼 공간 확보 */
+        padding: 15px 18px;
+        padding-top: 70px;
     }
 
     .ad-container .ad-pc { display: none !important; }
@@ -1089,26 +1190,27 @@ header p,
     align-items: flex-start;
     gap: 20px;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .page-layout .container {
     flex-shrink: 1;
+    min-width: 0;
 }
 
-/* 세로 사이드 배너 */
 .side-ad {
     width: 160px;
     min-height: 600px;
     flex-shrink: 0;
     position: sticky;
     top: 20px;
-    display: none; /* 기본 숨김, 넓은 화면에서만 표시 */
+    display: none;
     justify-content: center;
     align-items: flex-start;
     padding-top: 40px;
 }
 
-/* 화면이 충분히 넓을 때만 양옆 배너 표시 */
 @media (min-width: 1400px) {
     .side-ad {
         display: flex;
