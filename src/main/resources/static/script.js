@@ -154,6 +154,16 @@ function highlightSQL(code) {
     return highlightedCode;
 }
 
+// HTML 속성용 이스케이프 (data-label 등에 사용)
+function escapeHtmlAttr(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
 // 마크다운 텍스트를 HTML로 변환 (완전한 마크다운 지원)
 function parseMarkdownToHtml(content) {
     let html = content;
@@ -187,10 +197,14 @@ function parseMarkdownToHtml(content) {
         // 헤더 파싱
         const headers = headerRow.split('|').map(h => h.trim()).filter(h => h);
 
-        // 데이터 행 파싱
+        // 데이터 행 파싱 - 각 td에 data-label 속성으로 헤더 이름 주입 (모바일 카드형 레이아웃용)
         const dataRowsHtml = dataRows.map(row => {
             const cells = row.split('|').map(c => c.trim()).filter(c => c);
-            return `<tr>${cells.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
+            const tdsHtml = cells.map((cell, i) => {
+                const label = headers[i] !== undefined ? escapeHtmlAttr(headers[i]) : '';
+                return `<td data-label="${label}">${cell}</td>`;
+            }).join('');
+            return `<tr>${tdsHtml}</tr>`;
         }).join('');
 
         return `<div class="table-container">
