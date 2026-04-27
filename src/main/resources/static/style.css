@@ -399,16 +399,20 @@ header p,
     border-radius: 12px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;                     /* 추가: 세로 스크롤바는 막기 */
+    -webkit-overflow-scrolling: touch;      /* 추가: 부드러운 스크롤 */
+    border: 1px solid rgba(168, 216, 255, 0.2);   /* table에서 옮겨오면 깔끔 */
 }
 
 .markdown-table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;             /* 추가: 좁은 표는 컨테이너 꽉 채움 */
     border-collapse: collapse;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(168, 216, 255, 0.05));
     backdrop-filter: blur(10px);
     border: 1px solid rgba(168, 216, 255, 0.2);
     border-radius: 12px;
-    overflow: hidden;
     table-layout: auto;
 }
 
@@ -428,8 +432,7 @@ header p,
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     font-size: clamp(0.75rem, 1.8vw, 0.9rem);
     line-height: 1.5;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    white-space: nowrap;
 }
 
 .markdown-table tr:hover {
@@ -1215,4 +1218,19 @@ header p,
     .side-ad {
         display: flex;
     }
+}
+
+.table-container::-webkit-scrollbar {
+    height: 8px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
