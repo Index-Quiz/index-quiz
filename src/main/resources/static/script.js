@@ -752,7 +752,7 @@ async function nextQuestion() {
 // 최종 결과 표시
 let isSubmittingResult = false;
 
-async function showFinalResult() {
+function showFinalResult() {
     if (isSubmittingResult) return;
     isSubmittingResult = true;
 
@@ -762,24 +762,8 @@ async function showFinalResult() {
     quizContainer.style.opacity = '0';
     quizContainer.style.transform = 'translateX(-100px)';
 
-    let statsData = null;
-    try {
-        const response = await fetch(`/api/user-answers/results`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                questionSetName: quizSet,
-                score: score
-            })
-        });
-        if (response.ok) {
-            statsData = await response.json();
-        }
-    } catch (e) {
-        console.error('Failed to save result:', e);
-    }
+    // 통계 요청을 비동기로 발송 (UI 전환을 차단하지 않음)
+    fetchAndRenderStats();
 
     setTimeout(() => {
         quizContainer.style.display = 'none';
@@ -815,12 +799,31 @@ async function showFinalResult() {
             showSoftMessage(emoji + ' ' + message);
         }, 1500);
 
-        // 점수 분포도 표시
-        if (statsData && statsData.scoreDistribution) {
-            renderScoreStats(statsData);
-        }
-
     }, 300);
+}
+
+// 통계 요청 및 분포 그래프 후속 렌더링
+async function fetchAndRenderStats() {
+    try {
+        const response = await fetch(`/api/user-answers/results`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                questionSetName: quizSet,
+                score: score
+            })
+        });
+        if (response.ok) {
+            const statsData = await response.json();
+            if (statsData && statsData.scoreDistribution) {
+                renderScoreStats(statsData);
+            }
+        }
+    } catch (e) {
+        console.error('Failed to save result:', e);
+    }
 }
 
 // Catmull-Rom → Cubic Bezier 변환
