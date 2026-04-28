@@ -8,9 +8,11 @@ import static org.mockito.BDDMockito.given;
 import com.example.indexquiz.BaseControllerTest;
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetQuestionSetAveragesWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
+import com.example.indexquiz.useranswer.application.port.in.GetQuestionSetAveragesUseCase;
 import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserResultUseCase;
@@ -20,9 +22,11 @@ import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUser
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,6 +42,9 @@ public class UserAnswerControllerTest extends BaseControllerTest {
 
     @MockitoBean
     private GetUserAnswerUseCase getUserAnswerUseCase;
+
+    @MockitoBean
+    private GetQuestionSetAveragesUseCase getQuestionSetAveragesUseCase;
 
 
     @Nested
@@ -97,12 +104,43 @@ public class UserAnswerControllerTest extends BaseControllerTest {
     }
 
     @Nested
+    class GetQuestionSetAverages {
+
+        @Test
+        void 세트별_평균_점수를_조회한다() {
+            // given
+            GetQuestionSetAveragesResponse response = new GetQuestionSetAveragesResponse(
+                    Map.of(QuestionSet.A, 4.2, QuestionSet.B, 2.9)
+            );
+            given(getQuestionSetAveragesUseCase.getQuestionSetAverages()).willReturn(response);
+
+            // when
+            GetQuestionSetAveragesWebResponse webResponse = RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .when().get("/api/user-answers/results/averages")
+                    .then().log().all()
+                    .statusCode(200)
+                    .extract().as(GetQuestionSetAveragesWebResponse.class);
+
+            // then
+            assertAll(
+                    () -> assertThat(webResponse.averages()).containsEntry("A", 4.2),
+                    () -> assertThat(webResponse.averages()).containsEntry("B", 2.9)
+            );
+        }
+    }
+
+    @Nested
     class SaveUserResult {
 
         @Test
         void 사용자의_성적을_저장한다() {
             // given
-            SaveUserResultResponse response = new SaveUserResultResponse(1L, QuestionSet.A, 15);
+            SaveUserResultResponse response = new SaveUserResultResponse(
+                    1L, QuestionSet.A, 5,
+                    List.of(1L, 2L, 3L, 5L, 8L, 10L, 4L, 2L),
+                    3.52, 42.0
+            );
             given(saveUserResultUseCase.saveUserResult(any(SaveUserResultRequest.class))).willReturn(response);
 
             // when

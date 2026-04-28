@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnimations();
     setupBookmarkTabs();
     setupParallaxEffect();
+    loadQuestionSetAverages();
     console.log('Index Quiz 초기화 완료');
 });
 
@@ -111,6 +112,29 @@ function setupBookmarkTabs() {
             content.style.transform = 'translateX(0) perspective(1000px) rotateX(0) rotateY(0)';
         });
     });
+}
+
+// 세트별 평균 점수 로드
+async function loadQuestionSetAverages() {
+    try {
+        const response = await fetch('/api/user-answers/results/averages');
+        if (!response.ok) return;
+        const data = await response.json();
+        const averages = data.averages;
+
+        document.querySelectorAll('.bookmark-tab').forEach(tab => {
+            const setName = tab.dataset.set;
+            if (averages[setName] == null) return;
+
+            const badge = tab.querySelector('.bookmark-badge');
+            const avgDiv = document.createElement('div');
+            avgDiv.className = 'bookmark-avg';
+            avgDiv.innerHTML = `<span class="avg-label">평균</span><span class="avg-value">${averages[setName]}점</span>`;
+            badge.appendChild(avgDiv);
+        });
+    } catch (e) {
+        console.error('평균 점수 로드 실패:', e);
+    }
 }
 
 // 패럴랙스 효과

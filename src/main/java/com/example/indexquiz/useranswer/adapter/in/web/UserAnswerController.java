@@ -2,16 +2,19 @@ package com.example.indexquiz.useranswer.adapter.in.web;
 
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserResultWebRequest;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetQuestionSetAveragesWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.mapper.UserAnswerWebMapper;
+import com.example.indexquiz.useranswer.application.port.in.GetQuestionSetAveragesUseCase;
 import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserResultUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.GetUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserResultRequest;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
@@ -36,7 +39,16 @@ public class UserAnswerController {
 
     private final GetUserAnswerUseCase getUserAnswerUseCase;
 
+    private final GetQuestionSetAveragesUseCase getQuestionSetAveragesUseCase;
+
     private final UserAnswerWebMapper userAnswerWebMapper;
+
+    @GetMapping("/results/averages")
+    public ResponseEntity<GetQuestionSetAveragesWebResponse> getQuestionSetAverages() {
+        GetQuestionSetAveragesResponse response = getQuestionSetAveragesUseCase.getQuestionSetAverages();
+        GetQuestionSetAveragesWebResponse webResponse = userAnswerWebMapper.mapToGetQuestionSetAveragesWebResponse(response);
+        return ResponseEntity.ok(webResponse);
+    }
 
     @GetMapping("/{submitId}")
     public ResponseEntity<GetUserAnswerWebResponse> getUserAnswers(
