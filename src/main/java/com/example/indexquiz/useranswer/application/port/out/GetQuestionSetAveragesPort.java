@@ -1,9 +1,9 @@
 package com.example.indexquiz.useranswer.application.port.out;
 
-import com.example.indexquiz.useranswer.domain.QuestionSetAverage;
-import java.util.List;
+import com.example.indexquiz.question.domain.QuestionSet;
+import java.util.Optional;
 
 public interface GetQuestionSetAveragesPort {
 
-    List<QuestionSetAverage> getAverageScoresByQuestionSet();
+    Optional<Double> getAverageScore(QuestionSet questionSet, int maxScore);
 }

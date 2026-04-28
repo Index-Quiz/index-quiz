@@ -18,6 +18,7 @@ import com.example.indexquiz.useranswer.domain.UserAnswer;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
 import com.example.indexquiz.useranswer.domain.UserResult;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -117,6 +118,34 @@ class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
                     () -> assertThat(userResultEntity.getQuestionSet()).isEqualTo(saveUserResult.getQuestionSet()),
                     () -> assertThat(userResultEntity.getScore()).isEqualTo(saveUserResult.getScore())
             );
+        }
+    }
+
+    @Nested
+    class GetAverageScore {
+
+        @Test
+        void 이상치를_제외한_평균을_반환한다() {
+            // given
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 3));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 5));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 15));
+
+            // when
+            Optional<Double> result = userAnswerPersistenceAdapter.getAverageScore(QuestionSet.A, 7);
+
+            // then
+            assertThat(result).isPresent();
+            assertThat(result.get()).isEqualTo(4.0);
+        }
+
+        @Test
+        void 데이터가_없으면_빈_Optional을_반환한다() {
+            // when
+            Optional<Double> result = userAnswerPersistenceAdapter.getAverageScore(QuestionSet.A, 7);
+
+            // then
+            assertThat(result).isEmpty();
         }
     }
 }
