@@ -329,8 +329,11 @@ header p,
 /* 호버 효과 */
 .bookmark-tab:hover .bookmark-content {
     background: rgba(255, 255, 255, 0.12);
-    transform: translateX(20px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.bookmark-tab[data-set="BEST_DIFFICULT"]:hover .bookmark-content {
+    transform: translateX(20px);
 }
 
 .bookmark-tab[data-set="A"]:hover .bookmark-content {
@@ -1059,5 +1062,415 @@ a.contributor-item {
 @media (min-width: 1400px) {
     .side-ad {
         display: flex;
+    }
+}
+
+/* ========== 카드 내부 슬라이드 액션 버튼 ========== */
+.bookmark-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    z-index: 5;
+    border-radius: 0 12px 12px 0;
+    overflow: hidden;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease;
+}
+
+.bookmark-tab:hover .bookmark-actions {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    color: #ffffff;
+    white-space: nowrap;
+    position: relative;
+}
+
+.action-btn-quiz {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+}
+
+.action-btn-quiz:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.action-divider {
+    width: 1px;
+    align-self: stretch;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.action-btn-learn {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 0 12px 12px 0;
+}
+
+.action-btn-learn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.action-icon {
+    font-size: 1.4rem;
+}
+
+.action-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+/* 호버 시 뱃지 숨김 */
+.bookmark-tab:hover .bookmark-badge {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.bookmark-badge {
+    transition: opacity 0.3s ease 0.2s;
+}
+
+/* BEST_DIFFICULT - 학습자료 없음 */
+.bookmark-tab[data-set="BEST_DIFFICULT"] .bookmark-actions {
+    display: none;
+}
+
+.bookmark-tab[data-set="BEST_DIFFICULT"]:hover .bookmark-badge {
+    opacity: 1;
+}
+
+/* ========== 학습자료 선택 모달 ========== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal {
+    background: linear-gradient(135deg, #0a0a5c 0%, #141480 50%, #1e1ea8 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+    transform: translateY(30px) scale(0.95);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-overlay.active .modal {
+    transform: translateY(0) scale(1);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.modal-set-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(168, 216, 255, 0.12);
+    border: 1px solid rgba(168, 216, 255, 0.25);
+    border-radius: 14px;
+}
+
+.modal-title-group h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+}
+
+.modal-title-group p {
+    font-size: 0.85rem;
+    color: #a8d8ff;
+    margin-top: 2px;
+}
+
+.modal-close {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-radius: 10px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(255, 100, 100, 0.2);
+    transform: scale(1.1);
+}
+
+.modal-body {
+    padding: 20px 28px 28px;
+}
+
+.learn-tab-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.learn-tab-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+.learn-tab-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+    transition: left 0.5s;
+}
+
+.learn-tab-item:hover::after {
+    left: 100%;
+}
+
+.learn-tab-item:hover {
+    background: rgba(168, 216, 255, 0.12);
+    border-color: rgba(168, 216, 255, 0.3);
+    transform: translateX(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.learn-tab-number {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(168, 216, 255, 0.12);
+    border: 1px solid rgba(168, 216, 255, 0.2);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #a8d8ff;
+    flex-shrink: 0;
+}
+
+.learn-tab-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.learn-tab-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+    letter-spacing: -0.3px;
+    color: #ffffff;
+}
+
+.learn-tab-desc {
+    font-size: 0.8rem;
+    color: #b8b8ff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.learn-tab-arrow {
+    font-size: 1.1rem;
+    color: rgba(168, 216, 255, 0.5);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.learn-tab-item:hover .learn-tab-arrow {
+    color: rgba(168, 216, 255, 0.9);
+    transform: translateX(4px);
+}
+
+.modal-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 16px 0;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.8rem;
+}
+
+.modal-divider::before,
+.modal-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer {
+    padding: 0 28px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-quiz-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 12px;
+    border: 2px solid rgba(74, 222, 128, 0.35);
+    background: rgba(74, 222, 128, 0.1);
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.modal-quiz-btn:hover {
+    background: rgba(74, 222, 128, 0.2);
+    border-color: rgba(74, 222, 128, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 222, 128, 0.15);
+}
+
+/* 모달 스크롤바 */
+.modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+}
+
+/* ========== 액션 버튼 반응형 ========== */
+@media (max-width: 768px) {
+    .action-btn {
+        padding: 10px 18px;
+    }
+
+    .action-icon {
+        font-size: 1.2rem;
+    }
+
+    .action-label {
+        font-size: 0.7rem;
+    }
+
+    .modal {
+        max-width: 95%;
+    }
+
+    .modal-header {
+        padding: 20px 20px 16px;
+    }
+
+    .modal-body {
+        padding: 16px 20px 20px;
+    }
+
+    .modal-footer {
+        padding: 0 20px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .action-btn {
+        padding: 8px 14px;
+    }
+
+    .action-icon {
+        font-size: 1.1rem;
+    }
+
+    .action-label {
+        font-size: 0.65rem;
+    }
+
+    .modal-set-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.6rem;
+    }
+
+    .modal-title-group h3 {
+        font-size: 1.1rem;
+    }
+
+    .learn-tab-item {
+        padding: 14px 16px;
+        gap: 12px;
     }
 }

@@ -164,6 +164,16 @@ function escapeHtmlAttr(str) {
         .replace(/>/g, '&gt;');
 }
 
+// 헤더 텍스트 → URL 앵커 ID 변환 (한글 보존, GitHub 스타일)
+function slugify(text) {
+    return text.toLowerCase()
+        .trim()
+        .replace(/[^\w\s가-힣-]/g, '')   // 영숫자/언더스코어/공백/한글/하이픈 외 제거
+        .replace(/\s+/g, '-')             // 공백 → 하이픈
+        .replace(/-+/g, '-')              // 연속 하이픈 → 하나로
+        .replace(/^-|-$/g, '');           // 앞뒤 하이픈 제거
+}
+
 // 마크다운 텍스트를 HTML로 변환 (완전한 마크다운 지원)
 function parseMarkdownToHtml(content) {
     let html = content;
@@ -219,10 +229,13 @@ function parseMarkdownToHtml(content) {
         </div>`;
     });
 
-    // 헤딩 변환 (## 헤딩)
-    html = html.replace(/^### (.*$)/gm, '<h3 class="markdown-h3">$1</h3>');
-    html = html.replace(/^## (.*$)/gm, '<h2 class="markdown-h2">$1</h2>');
-    html = html.replace(/^# (.*$)/gm, '<h1 class="markdown-h1">$1</h1>');
+    // 헤딩 변환 (## 헤딩) - id 자동 부여 (목차 앵커 링크용)
+    html = html.replace(/^### (.*$)/gm, (m, t) =>
+        `<h3 class="markdown-h3" id="${slugify(t)}">${t}</h3>`);
+    html = html.replace(/^## (.*$)/gm, (m, t) =>
+        `<h2 class="markdown-h2" id="${slugify(t)}">${t}</h2>`);
+    html = html.replace(/^# (.*$)/gm, (m, t) =>
+        `<h1 class="markdown-h1" id="${slugify(t)}">${t}</h1>`);
 
     // 구분선 변환 (---)
     html = html.replace(/^---$/gm, '<hr class="markdown-divider">');
@@ -232,8 +245,11 @@ function parseMarkdownToHtml(content) {
         '<div class="image-container"><img src="$2" alt="$1" class="question-image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="this.style.opacity=\'1\';" style="opacity: 0; transition: opacity 0.5s ease; cursor: pointer;"><div class="image-placeholder" style="display: none;">📷 이미지를 불러올 수 없습니다</div></div>'
     );
 
-    // 마크다운 링크 변환 (공백 허용)
+    // 마크다운 링크 변환 (공백 허용, 페이지 내 앵커는 같은 탭에서 부드러운 스크롤)
     html = html.replace(/\[([^\]]+)\]\(\s*([^\)]+)\s*\)/g, (match, text, url) => {
+        if (url.startsWith('#')) {
+            return `<a href="${url}" class="markdown-link anchor-link">${text}</a>`;
+        }
         return `<a href="${url}" class="markdown-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
     });
 
@@ -1244,5 +1260,22 @@ document.addEventListener('keydown', (e) => {
     // Enter 키로 답 제출
     if (e.code === 'Enter' && selectedAnswers.length > 0 && !isAnswered) {
         submitAnswer();
+    }
+});
+
+// 목차 앵커 링크 클릭 시 부드러운 스크롤
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a.anchor-link');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+
+    const id = decodeURIComponent(href.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 선택: URL 해시 갱신 (뒤로가기 지원)
+        history.pushState(null, '', href);
     }
 });
