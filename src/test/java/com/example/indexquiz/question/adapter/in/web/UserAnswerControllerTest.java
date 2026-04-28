@@ -102,7 +102,11 @@ public class UserAnswerControllerTest extends BaseControllerTest {
         @Test
         void 사용자의_성적을_저장한다() {
             // given
-            SaveUserResultResponse response = new SaveUserResultResponse(1L, QuestionSet.A, 15);
+            SaveUserResultResponse response = new SaveUserResultResponse(
+                    1L, QuestionSet.A, 15,
+                    List.of(1L, 2L, 3L, 5L, 8L, 10L, 4L, 2L),
+                    3.52, 42.0
+            );
             given(saveUserResultUseCase.saveUserResult(any(SaveUserResultRequest.class))).willReturn(response);
 
             // when

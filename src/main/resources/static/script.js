@@ -750,23 +750,31 @@ async function nextQuestion() {
 }
 
 // 최종 결과 표시
-function showFinalResult() {
+async function showFinalResult() {
     // ✅ 퀴즈 완료 시 진행 상황 삭제
     QuizStorage.clear();
 
     quizContainer.style.opacity = '0';
     quizContainer.style.transform = 'translateX(-100px)';
 
-    const response = fetch(`/api/user-answers/results`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            questionSetName: quizSet,
-            score: score
-        })
-    });
+    let statsData = null;
+    try {
+        const response = await fetch(`/api/user-answers/results`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                questionSetName: quizSet,
+                score: score
+            })
+        });
+        if (response.ok) {
+            statsData = await response.json();
+        }
+    } catch (e) {
+        console.error('Failed to save result:', e);
+    }
 
     setTimeout(() => {
         quizContainer.style.display = 'none';
@@ -802,7 +810,64 @@ function showFinalResult() {
             showSoftMessage(emoji + ' ' + message);
         }, 1500);
 
+        // 점수 분포도 표시
+        if (statsData && statsData.scoreDistribution) {
+            renderScoreStats(statsData);
+        }
+
     }, 300);
+}
+
+// 점수 분포도 렌더링
+function renderScoreStats(data) {
+    const statsContainer = document.getElementById('scoreStats');
+    const histogram = document.getElementById('histogram');
+    const avgScoreEl = document.getElementById('avgScore');
+    const topPercentEl = document.getElementById('topPercent');
+
+    const distribution = data.scoreDistribution;
+    const maxCount = Math.max(...distribution, 1);
+
+    histogram.innerHTML = '';
+    for (let i = 0; i <= 7; i++) {
+        const barWrapper = document.createElement('div');
+        barWrapper.className = 'bar-wrapper';
+
+        const count = document.createElement('span');
+        count.className = 'bar-count';
+        count.textContent = distribution[i] > 0 ? distribution[i] : '';
+
+        const bar = document.createElement('div');
+        bar.className = 'bar' + (i === data.score ? ' bar-highlight' : '');
+        bar.style.height = '0%';
+
+        const label = document.createElement('span');
+        label.className = 'bar-label';
+        if (i === data.score) {
+            label.textContent = i + '점';
+            label.classList.add('bar-user-label');
+        } else {
+            label.textContent = i;
+        }
+
+        barWrapper.appendChild(count);
+        barWrapper.appendChild(bar);
+        barWrapper.appendChild(label);
+        histogram.appendChild(barWrapper);
+
+        // 바 높이 애니메이션
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                const heightPercent = (distribution[i] / maxCount) * 100;
+                bar.style.height = Math.max(heightPercent, 2) + '%';
+            });
+        });
+    }
+
+    avgScoreEl.textContent = data.averageScore + '점';
+    topPercentEl.textContent = '상위 ' + data.topPercentage + '%';
+
+    statsContainer.style.display = 'block';
 }
 
 // 점수 카운트업 애니메이션
