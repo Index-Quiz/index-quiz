@@ -43,6 +43,13 @@ public class UserAnswerController {
 
     private final UserAnswerWebMapper userAnswerWebMapper;
 
+    @GetMapping("/results/averages")
+    public ResponseEntity<GetQuestionSetAveragesWebResponse> getQuestionSetAverages() {
+        GetQuestionSetAveragesResponse response = getQuestionSetAveragesUseCase.getQuestionSetAverages();
+        GetQuestionSetAveragesWebResponse webResponse = userAnswerWebMapper.mapToGetQuestionSetAveragesWebResponse(response);
+        return ResponseEntity.ok(webResponse);
+    }
+
     @GetMapping("/{submitId}")
     public ResponseEntity<GetUserAnswerWebResponse> getUserAnswers(
             @PathVariable(name = "submitId") String submitId
@@ -60,13 +67,6 @@ public class UserAnswerController {
         SaveUserAnswerResponse saveUserAnswerResponse = saveUserAnswerUseCase.saveUserAnswers(saveUserAnswerRequest);
         SaveUserAnswerWebResponse webResponse = userAnswerWebMapper.mapToSaveUserAnswerWebResponse(
                 saveUserAnswerResponse);
-        return ResponseEntity.ok(webResponse);
-    }
-
-    @GetMapping("/results/averages")
-    public ResponseEntity<GetQuestionSetAveragesWebResponse> getQuestionSetAverages() {
-        GetQuestionSetAveragesResponse response = getQuestionSetAveragesUseCase.getQuestionSetAverages();
-        GetQuestionSetAveragesWebResponse webResponse = userAnswerWebMapper.mapToGetQuestionSetAveragesWebResponse(response);
         return ResponseEntity.ok(webResponse);
     }
 

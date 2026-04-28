@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import com.example.indexquiz.BaseControllerTest;
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetQuestionSetAveragesWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
@@ -21,9 +22,11 @@ import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUser
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -96,6 +99,33 @@ public class UserAnswerControllerTest extends BaseControllerTest {
                     () -> assertThat(getUserAnswerWebResponse.answerOptions()).containsExactlyElementsOf(
                             response.answerOptions()),
                     () -> assertThat(getUserAnswerWebResponse.solution()).isEqualTo(response.solution())
+            );
+        }
+    }
+
+    @Nested
+    class GetQuestionSetAverages {
+
+        @Test
+        void 세트별_평균_점수를_조회한다() {
+            // given
+            GetQuestionSetAveragesResponse response = new GetQuestionSetAveragesResponse(
+                    Map.of(QuestionSet.A, 4.2, QuestionSet.B, 2.9)
+            );
+            given(getQuestionSetAveragesUseCase.getQuestionSetAverages()).willReturn(response);
+
+            // when
+            GetQuestionSetAveragesWebResponse webResponse = RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .when().get("/api/user-answers/results/averages")
+                    .then().log().all()
+                    .statusCode(200)
+                    .extract().as(GetQuestionSetAveragesWebResponse.class);
+
+            // then
+            assertAll(
+                    () -> assertThat(webResponse.averages()).containsEntry("A", 4.2),
+                    () -> assertThat(webResponse.averages()).containsEntry("B", 2.9)
             );
         }
     }
