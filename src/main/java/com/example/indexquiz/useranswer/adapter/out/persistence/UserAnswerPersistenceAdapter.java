@@ -4,12 +4,14 @@ import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapper;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserResultMapper;
 import com.example.indexquiz.question.application.port.out.GetDifficultQuestionPort;
 import com.example.indexquiz.question.domain.QuestionSet;
+import com.example.indexquiz.useranswer.application.port.out.GetQuestionSetAveragesPort;
 import com.example.indexquiz.useranswer.application.port.out.GetScoreDistributionPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
 import com.example.indexquiz.useranswer.application.port.out.GetUserAnswerPort;
 import com.example.indexquiz.question.application.port.out.dto.DifficultQuestionResponses;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
+import com.example.indexquiz.useranswer.domain.QuestionSetAverage;
 import com.example.indexquiz.useranswer.domain.ScoreCount;
 import com.example.indexquiz.useranswer.domain.ScoreCounts;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
@@ -26,7 +28,8 @@ public class UserAnswerPersistenceAdapter implements
         SaveUserResultPort,
         GetUserAnswerPort,
         GetDifficultQuestionPort,
-        GetScoreDistributionPort
+        GetScoreDistributionPort,
+        GetQuestionSetAveragesPort
 {
 
     private final UserAnswerJpaRepository userAnswerJpaRepository;
@@ -73,5 +76,10 @@ public class UserAnswerPersistenceAdapter implements
     public ScoreCounts getScoreCounts(QuestionSet questionSet) {
         List<ScoreCount> scoreCounts = userResultJpaRepository.countByQuestionSetGroupByScore(questionSet);
         return new ScoreCounts(scoreCounts);
+    }
+
+    @Override
+    public List<QuestionSetAverage> getAverageScoresByQuestionSet() {
+        return userResultJpaRepository.findAverageScoresByQuestionSet();
     }
 }

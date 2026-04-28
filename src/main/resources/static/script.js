@@ -818,7 +818,38 @@ async function showFinalResult() {
     }, 300);
 }
 
-// 점수 분포도 렌더링
+// Catmull-Rom → Cubic Bezier 변환
+function catmullRomToBezier(points) {
+    const d = [];
+    for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[Math.max(i - 1, 0)];
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const p3 = points[Math.min(i + 2, points.length - 1)];
+
+        const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+        const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+        const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+        const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+
+        if (i === 0) d.push(`M${p1[0]},${p1[1]}`);
+        d.push(`C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`);
+    }
+    return d.join(' ');
+}
+
+// 곡선 위의 특정 x좌표에서 y값 보간
+function getYOnCurve(points, targetX) {
+    for (let i = 0; i < points.length - 1; i++) {
+        if (targetX >= points[i][0] && targetX <= points[i + 1][0]) {
+            const t = (targetX - points[i][0]) / (points[i + 1][0] - points[i][0]);
+            return points[i][1] + t * (points[i + 1][1] - points[i][1]);
+        }
+    }
+    return points[points.length - 1][1];
+}
+
+// 점수 분포도 렌더링 (SVG 곡선 그래프)
 function renderScoreStats(data) {
     const statsContainer = document.getElementById('scoreStats');
     const histogram = document.getElementById('histogram');
@@ -828,41 +859,78 @@ function renderScoreStats(data) {
     const distribution = data.scoreDistribution;
     const maxCount = Math.max(...distribution, 1);
 
-    histogram.innerHTML = '';
+    // SVG 좌표 설정
+    const W = 280, H = 110;
+    const padL = 20, padR = 20, padT = 15, padB = 25;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+
+    // 데이터 포인트 생성 (0~7점)
+    const points = distribution.map((count, i) => {
+        const x = padL + (i / 7) * chartW;
+        const y = padT + chartH - (count / maxCount) * chartH;
+        return [x, y];
+    });
+
+    const baseline = padT + chartH;
+    const curvePath = catmullRomToBezier(points);
+
+    // 유저 점수의 x좌표와 y좌표
+    const userX = padL + (data.score / 7) * chartW;
+    const userY = getYOnCurve(points, userX);
+
+    // 전체 영역 path (곡선 아래 전체)
+    const fullAreaPath = curvePath + ` L${points[7][0]},${baseline} L${points[0][0]},${baseline} Z`;
+
+    // 상위 영역 path (유저 점수 이상 영역) - clipPath 사용
+    const clipId = 'clip-top-' + Date.now();
+
+    // X축 라벨 생성
+    let labels = '';
     for (let i = 0; i <= 7; i++) {
-        const barWrapper = document.createElement('div');
-        barWrapper.className = 'bar-wrapper';
-
-        const count = document.createElement('span');
-        count.className = 'bar-count';
-        count.textContent = distribution[i] > 0 ? distribution[i] : '';
-
-        const bar = document.createElement('div');
-        bar.className = 'bar' + (i === data.score ? ' bar-highlight' : '');
-        bar.style.height = '0%';
-
-        const label = document.createElement('span');
-        label.className = 'bar-label';
-        if (i === data.score) {
-            label.textContent = i + '점';
-            label.classList.add('bar-user-label');
-        } else {
-            label.textContent = i;
-        }
-
-        barWrapper.appendChild(count);
-        barWrapper.appendChild(bar);
-        barWrapper.appendChild(label);
-        histogram.appendChild(barWrapper);
-
-        // 바 높이 애니메이션
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                const heightPercent = (distribution[i] / maxCount) * 100;
-                bar.style.height = Math.max(heightPercent, 2) + '%';
-            });
-        });
+        const x = padL + (i / 7) * chartW;
+        const isUser = i === data.score;
+        const fill = isUser ? '#4ade80' : 'rgba(255,255,255,0.5)';
+        const weight = isUser ? 'bold' : 'normal';
+        const size = isUser ? '11' : '10';
+        labels += `<text x="${x}" y="${baseline + 16}" text-anchor="middle" fill="${fill}" font-size="${size}" font-weight="${weight}">${i}</text>`;
     }
+
+    // "당신" 라벨
+    const youLabel = `<text x="${userX}" y="${userY - 12}" text-anchor="middle" fill="#4ade80" font-size="10" font-weight="bold">당신</text>`;
+
+    const svg = `
+    <svg viewBox="0 0 ${W} ${H}" class="distribution-chart" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <clipPath id="${clipId}">
+                <rect x="${userX}" y="0" width="${W - userX}" height="${H}" />
+            </clipPath>
+        </defs>
+
+        <!-- 전체 곡선 아래 영역 -->
+        <path d="${fullAreaPath}" fill="rgba(255,255,255,0.07)" />
+
+        <!-- 상위 분포 영역 (유저 점수 이상) -->
+        <path d="${fullAreaPath}" fill="rgba(74,222,128,0.2)" clip-path="url(#${clipId})" />
+
+        <!-- 곡선 -->
+        <path d="${curvePath}" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" />
+
+        <!-- 상위 영역 곡선 강조 -->
+        <path d="${curvePath}" stroke="#4ade80" stroke-width="2" fill="none" clip-path="url(#${clipId})" />
+
+        <!-- 유저 위치 세로선 -->
+        <line x1="${userX}" y1="${padT}" x2="${userX}" y2="${baseline}" stroke="#4ade80" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+
+        <!-- 유저 위치 점 -->
+        <circle cx="${userX}" cy="${userY}" r="4" fill="#4ade80" />
+        <circle cx="${userX}" cy="${userY}" r="7" fill="none" stroke="#4ade80" stroke-width="1" opacity="0.4" />
+
+        ${youLabel}
+        ${labels}
+    </svg>`;
+
+    histogram.innerHTML = svg;
 
     avgScoreEl.textContent = data.averageScore + '점';
     topPercentEl.textContent = '상위 ' + data.topPercentage + '%';

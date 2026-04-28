@@ -11,6 +11,7 @@ import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswe
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
+import com.example.indexquiz.useranswer.application.port.in.GetQuestionSetAveragesUseCase;
 import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserResultUseCase;
@@ -38,6 +39,9 @@ public class UserAnswerControllerTest extends BaseControllerTest {
 
     @MockitoBean
     private GetUserAnswerUseCase getUserAnswerUseCase;
+
+    @MockitoBean
+    private GetQuestionSetAveragesUseCase getQuestionSetAveragesUseCase;
 
 
     @Nested

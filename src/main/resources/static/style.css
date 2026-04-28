@@ -844,55 +844,13 @@ header p,
 }
 
 .histogram {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 8px;
-    height: 120px;
     margin-bottom: 20px;
-    padding: 0 10px;
+    padding: 0;
 }
 
-.bar-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    height: 100%;
-    justify-content: flex-end;
-}
-
-.bar {
+.distribution-chart {
     width: 100%;
-    max-width: 40px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4px 4px 0 0;
-    min-height: 2px;
-    transition: height 0.6s ease-out;
-}
-
-.bar-highlight {
-    background: linear-gradient(to top, #4ade80, #22c55e);
-    box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
-}
-
-.bar-label {
-    font-size: 0.75rem;
-    margin-top: 6px;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.bar-user-label {
-    font-size: 0.65rem;
-    color: #4ade80;
-    font-weight: bold;
-}
-
-.bar-count {
-    font-size: 0.7rem;
-    margin-bottom: 4px;
-    color: rgba(255, 255, 255, 0.6);
-    min-height: 1em;
+    height: auto;
 }
 
 .stats-summary {

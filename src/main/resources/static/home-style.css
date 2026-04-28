@@ -443,6 +443,28 @@ header p,
     transform: scale(1.05);
 }
 
+.bookmark-avg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.avg-label {
+    font-size: 0.7rem;
+    color: rgba(74, 222, 128, 0.7);
+    font-weight: 500;
+}
+
+.avg-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #4ade80;
+}
+
 /* ========== 반응형 ========== */
 @media (max-width: 768px) {
     .page-layout {
@@ -501,6 +523,18 @@ header p,
     .badge-count-wrapper {
         gap: 4px;
         justify-content: flex-start;
+    }
+
+    .bookmark-avg {
+        padding: 3px 10px;
+    }
+
+    .avg-label {
+        font-size: 0.65rem;
+    }
+
+    .avg-value {
+        font-size: 0.75rem;
     }
 }
 
