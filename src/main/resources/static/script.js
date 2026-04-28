@@ -911,8 +911,33 @@ function renderScoreStats(data) {
         labels += `<text x="${x}" y="${baseline + 16}" text-anchor="middle" fill="${fill}" font-size="${size}" font-weight="${weight}">${i}</text>`;
     }
 
-    // "당신" 라벨
-    const youLabel = `<text x="${userX}" y="${userY - 12}" text-anchor="middle" fill="#4ade80" font-size="10" font-weight="bold">당신</text>`;
+    const isPerfect = data.score === maxIndex;
+
+    // "YOU" / "PERFECT!" 라벨
+    const labelY = Math.max(userY - 12, 10);
+    const labelAnchor = isPerfect ? 'end' : 'middle';
+    const labelText = isPerfect ? 'PERFECT!' : 'YOU';
+    const labelSize = isPerfect ? '11' : '10';
+    const youLabel = `<text x="${userX}" y="${labelY}" text-anchor="${labelAnchor}" fill="#4ade80" font-size="${labelSize}" font-weight="bold" class="${isPerfect ? 'perfect-label' : ''}">${labelText}</text>`;
+
+    const chartClipId = 'clip-chart-' + Date.now();
+
+    // 만점 축하 파티클 생성
+    let perfectEffects = '';
+    if (isPerfect) {
+        const sparkles = [];
+        const angles = [0, 45, 90, 135, 180, 225, 270, 315];
+        angles.forEach((angle, idx) => {
+            const rad = angle * Math.PI / 180;
+            const dist = 18;
+            const sx = userX + Math.cos(rad) * dist;
+            const sy = userY + Math.sin(rad) * dist;
+            const size = idx % 2 === 0 ? 1.5 : 1;
+            const delay = idx * 0.15;
+            sparkles.push(`<circle cx="${sx}" cy="${sy}" r="${size}" fill="#fbbf24" class="sparkle" style="animation-delay: ${delay}s" />`);
+        });
+        perfectEffects = sparkles.join('\n            ');
+    }
 
     const svg = `
     <svg viewBox="0 0 ${W} ${H}" class="distribution-chart" xmlns="http://www.w3.org/2000/svg">
@@ -920,26 +945,73 @@ function renderScoreStats(data) {
             <clipPath id="${clipId}">
                 <rect x="${userX}" y="0" width="${W - userX}" height="${H}" />
             </clipPath>
+            <clipPath id="${chartClipId}">
+                <rect x="0" y="0" width="${W}" height="${baseline}" />
+            </clipPath>
+            <style>
+                @keyframes chartPulse {
+                    0%, 100% { opacity: 0.4; r: 7; }
+                    50% { opacity: 0.8; r: 10; }
+                }
+                @keyframes chartGlow {
+                    0%, 100% { opacity: 0.15; }
+                    50% { opacity: 0.3; }
+                }
+                @keyframes chartFlow {
+                    from { stroke-dashoffset: 12; }
+                    to { stroke-dashoffset: 0; }
+                }
+                @keyframes chartDotPulse {
+                    0%, 100% { r: 4; }
+                    50% { r: 5; }
+                }
+                @keyframes sparkleAnim {
+                    0%, 100% { opacity: 0; transform: scale(0.5); }
+                    50% { opacity: 1; transform: scale(1.2); }
+                }
+                @keyframes perfectGlow {
+                    0%, 100% { opacity: 0.3; r: 10; }
+                    50% { opacity: 0.6; r: 16; }
+                }
+                @keyframes perfectLabelGlow {
+                    0%, 100% { fill: #4ade80; }
+                    50% { fill: #fbbf24; }
+                }
+                .chart-ring { animation: chartPulse 2s ease-in-out infinite; }
+                .chart-highlight { animation: chartGlow 3s ease-in-out infinite; }
+                .chart-dot { animation: chartDotPulse 2s ease-in-out infinite; }
+                .chart-dash { animation: chartFlow 1s linear infinite; }
+                .sparkle { animation: sparkleAnim 1.5s ease-in-out infinite; }
+                .perfect-ring { animation: perfectGlow 1.5s ease-in-out infinite; }
+                .perfect-label { animation: perfectLabelGlow 2s ease-in-out infinite; }
+            </style>
         </defs>
 
-        <!-- 전체 곡선 아래 영역 -->
-        <path d="${fullAreaPath}" fill="rgba(255,255,255,0.07)" />
+        <g clip-path="url(#${chartClipId})">
+            <!-- 전체 곡선 아래 영역 -->
+            <path d="${fullAreaPath}" fill="rgba(255,255,255,0.07)" />
 
-        <!-- 상위 분포 영역 (유저 점수 이상) -->
-        <path d="${fullAreaPath}" fill="rgba(74,222,128,0.2)" clip-path="url(#${clipId})" />
+            <!-- 상위 분포 영역 (유저 점수 이상) -->
+            <path d="${fullAreaPath}" class="chart-highlight" fill="rgba(74,222,128,0.2)" clip-path="url(#${clipId})" />
 
-        <!-- 곡선 -->
-        <path d="${curvePath}" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" />
+            <!-- 곡선 -->
+            <path d="${curvePath}" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" />
 
-        <!-- 상위 영역 곡선 강조 -->
-        <path d="${curvePath}" stroke="#4ade80" stroke-width="2" fill="none" clip-path="url(#${clipId})" />
+            <!-- 상위 영역 곡선 강조 -->
+            <path d="${curvePath}" stroke="#4ade80" stroke-width="2" fill="none" clip-path="url(#${clipId})" />
 
-        <!-- 유저 위치 세로선 -->
-        <line x1="${userX}" y1="${padT}" x2="${userX}" y2="${baseline}" stroke="#4ade80" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+            <!-- 유저 위치 세로선 -->
+            <line x1="${userX}" y1="${padT}" x2="${userX}" y2="${baseline}" class="chart-dash" stroke="#4ade80" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+
+        </g>
+
+        <!-- 만점 축하 효과 -->
+        ${isPerfect ? `<circle cx="${userX}" cy="${userY}" r="10" fill="none" stroke="#fbbf24" stroke-width="1" class="perfect-ring" />` : ''}
+        ${perfectEffects}
 
         <!-- 유저 위치 점 -->
-        <circle cx="${userX}" cy="${userY}" r="4" fill="#4ade80" />
-        <circle cx="${userX}" cy="${userY}" r="7" fill="none" stroke="#4ade80" stroke-width="1" opacity="0.4" />
+        <circle cx="${userX}" cy="${userY}" r="4" fill="${isPerfect ? '#fbbf24' : '#4ade80'}" class="chart-dot" />
+        <circle cx="${userX}" cy="${userY}" r="7" fill="none" stroke="${isPerfect ? '#fbbf24' : '#4ade80'}" stroke-width="1" opacity="0.4" class="chart-ring" />
 
         ${youLabel}
         ${labels}

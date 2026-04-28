@@ -4,6 +4,7 @@ import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.application.port.in.GetQuestionSetAveragesUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
 import com.example.indexquiz.useranswer.application.port.out.GetQuestionSetAveragesPort;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,13 +22,11 @@ public class QuestionSetAveragesService implements GetQuestionSetAveragesUseCase
     @Transactional(readOnly = true)
     public GetQuestionSetAveragesResponse getQuestionSetAverages() {
         Map<QuestionSet, Double> averageMap = Arrays.stream(QuestionSet.values())
-                .collect(Collectors.toMap(
-                        questionSet -> questionSet,
-                        questionSet -> getQuestionSetAveragesPort
-                                .getAverageScore(questionSet, questionSet.getQuestionCount())
-                                .map(avg -> Math.round(avg * 10.0) / 10.0)
-                                .orElse(0.0)
-                ));
+                .flatMap(questionSet -> getQuestionSetAveragesPort
+                        .getAverageScore(questionSet, questionSet.getQuestionCount())
+                        .map(avg -> new AbstractMap.SimpleEntry<>(questionSet, Math.round(avg * 10.0) / 10.0))
+                        .stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         return new GetQuestionSetAveragesResponse(averageMap);
     }

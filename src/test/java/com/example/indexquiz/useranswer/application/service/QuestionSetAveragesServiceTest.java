@@ -26,7 +26,7 @@ class QuestionSetAveragesServiceTest extends BaseServiceTest {
     class GetQuestionSetAverages {
 
         @Test
-        void 데이터가_없을_때_0점을_반환한다() {
+        void 데이터가_없을_때_빈_맵을_반환한다() {
             // given
             for (QuestionSet questionSet : QuestionSet.values()) {
                 given(getQuestionSetAveragesPort.getAverageScore(questionSet, questionSet.getQuestionCount()))
@@ -37,10 +37,7 @@ class QuestionSetAveragesServiceTest extends BaseServiceTest {
             GetQuestionSetAveragesResponse response = questionSetAveragesService.getQuestionSetAverages();
 
             // then
-            assertAll(
-                    () -> assertThat(response.averages()).hasSize(QuestionSet.values().length),
-                    () -> assertThat(response.averages().get(QuestionSet.A)).isEqualTo(0.0)
-            );
+            assertThat(response.averages()).isEmpty();
         }
 
         @Test
@@ -58,7 +55,7 @@ class QuestionSetAveragesServiceTest extends BaseServiceTest {
 
             // then
             assertAll(
-                    () -> assertThat(response.averages()).hasSize(QuestionSet.values().length),
+                    () -> assertThat(response.averages()).hasSize(1),
                     () -> assertThat(response.averages().get(QuestionSet.A)).isEqualTo(4.6)
             );
         }
@@ -82,10 +79,31 @@ class QuestionSetAveragesServiceTest extends BaseServiceTest {
 
             // then
             assertAll(
-                    () -> assertThat(response.averages()).hasSize(QuestionSet.values().length),
+                    () -> assertThat(response.averages()).hasSize(3),
                     () -> assertThat(response.averages().get(QuestionSet.A)).isEqualTo(4.6),
                     () -> assertThat(response.averages().get(QuestionSet.B)).isEqualTo(2.9),
                     () -> assertThat(response.averages().get(QuestionSet.C)).isEqualTo(6.2)
+            );
+        }
+
+        @Test
+        void 데이터가_없는_세트는_맵에_포함하지_않는다() {
+            // given
+            for (QuestionSet questionSet : QuestionSet.values()) {
+                given(getQuestionSetAveragesPort.getAverageScore(questionSet, questionSet.getQuestionCount()))
+                        .willReturn(Optional.empty());
+            }
+            given(getQuestionSetAveragesPort.getAverageScore(QuestionSet.A, QuestionSet.A.getQuestionCount()))
+                    .willReturn(Optional.of(5.0));
+
+            // when
+            GetQuestionSetAveragesResponse response = questionSetAveragesService.getQuestionSetAverages();
+
+            // then
+            assertAll(
+                    () -> assertThat(response.averages()).hasSize(1),
+                    () -> assertThat(response.averages()).containsKey(QuestionSet.A),
+                    () -> assertThat(response.averages()).doesNotContainKey(QuestionSet.B)
             );
         }
     }
