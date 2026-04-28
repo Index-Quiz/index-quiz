@@ -51,5 +51,6 @@ class UserResultServiceTest extends BaseServiceTest {
                     () -> assertThat(saveUserResultResponse.topPercentage()).isBetween(0.0, 100.0)
             );
         }
+
     }
 }

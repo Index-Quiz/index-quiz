@@ -30,6 +30,7 @@ public class UserResultService implements SaveUserResultUseCase {
     @Override
     @Transactional
     public SaveUserResultResponse saveUserResult(SaveUserResultRequest request) {
+        request.questionSetName().validateScore(request.score());
         UserResult userResult = new UserResult(request.questionSetName(), request.score());
         UserResult savedUserResult = saveUserResultPort.saveUserResult(userResult);
         sendUserResultMessagePort.sendUserResultMessage(savedUserResult);
