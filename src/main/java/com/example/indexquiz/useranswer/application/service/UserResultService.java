@@ -36,7 +36,8 @@ public class UserResultService implements SaveUserResultUseCase {
         sendUserResultMessagePort.sendUserResultMessage(savedUserResult);
 
         ScoreCounts scoreCounts = getScoreDistributionPort.getScoreCounts(request.questionSetName());
-        ScoreDistribution distribution = scoreCounts.toDistribution(request.score());
+        int maxScore = request.questionSetName().getQuestionCount();
+        ScoreDistribution distribution = scoreCounts.toDistribution(request.score(), maxScore);
 
         return userResultDtoMapper.mapToSaveUserResultResponse(savedUserResult, distribution);
     }

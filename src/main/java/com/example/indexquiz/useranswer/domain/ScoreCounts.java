@@ -9,14 +9,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ScoreCounts {
 
-    private static final int MAX_SCORE = 7;
-
     private final List<ScoreCount> values;
 
-    public ScoreDistribution toDistribution(int userScore) {
-        List<ScoreCount> validCounts = filterValidScores();
+    public ScoreDistribution toDistribution(int userScore, int maxScore) {
+        List<ScoreCount> validCounts = filterValidScores(maxScore);
 
-        List<Long> distribution = buildDistribution(validCounts);
+        List<Long> distribution = buildDistribution(validCounts, maxScore);
         long totalCount = sumTotalCount(validCounts);
         long scoredGreaterOrEqual = sumGreaterOrEqual(validCounts, userScore);
         long totalScoreSum = sumScores(validCounts);
@@ -31,14 +29,14 @@ public class ScoreCounts {
         );
     }
 
-    private List<ScoreCount> filterValidScores() {
+    private List<ScoreCount> filterValidScores(int maxScore) {
         return values.stream()
-                .filter(sc -> sc.score() >= 0 && sc.score() <= MAX_SCORE)
+                .filter(sc -> sc.score() >= 0 && sc.score() <= maxScore)
                 .toList();
     }
 
-    private List<Long> buildDistribution(List<ScoreCount> validCounts) {
-        return IntStream.rangeClosed(0, MAX_SCORE)
+    private List<Long> buildDistribution(List<ScoreCount> validCounts, int maxScore) {
+        return IntStream.rangeClosed(0, maxScore)
                 .mapToLong(score -> validCounts.stream()
                         .filter(sc -> sc.score() == score)
                         .mapToLong(ScoreCount::count)
@@ -70,13 +68,13 @@ public class ScoreCounts {
         if (totalCount == 0) {
             return 0.0;
         }
-        return Double.valueOf(totalScoreSum) / totalCount;
+        return (double) totalScoreSum / totalCount;
     }
 
     private double calculateTopPercentage(long scoredGreaterOrEqual, long totalCount) {
         if (totalCount == 0) {
             return 100.0;
         }
-        return (Double.valueOf(scoredGreaterOrEqual) / totalCount) * 100.0;
+        return ((double) scoredGreaterOrEqual / totalCount) * 100.0;
     }
 }

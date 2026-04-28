@@ -750,7 +750,12 @@ async function nextQuestion() {
 }
 
 // 최종 결과 표시
+let isSubmittingResult = false;
+
 async function showFinalResult() {
+    if (isSubmittingResult) return;
+    isSubmittingResult = true;
+
     // ✅ 퀴즈 완료 시 진행 상황 삭제
     QuizStorage.clear();
 
@@ -851,6 +856,10 @@ function getYOnCurve(points, targetX) {
 
 // 점수 분포도 렌더링 (SVG 곡선 그래프)
 function renderScoreStats(data) {
+    if (!Number.isFinite(data.score) || !Number.isFinite(data.averageScore) || !Number.isFinite(data.topPercentage)) {
+        return;
+    }
+
     const statsContainer = document.getElementById('scoreStats');
     const histogram = document.getElementById('histogram');
     const avgScoreEl = document.getElementById('avgScore');
@@ -858,6 +867,7 @@ function renderScoreStats(data) {
 
     const distribution = data.scoreDistribution;
     const maxCount = Math.max(...distribution, 1);
+    const maxIndex = distribution.length - 1;
 
     // SVG 좌표 설정
     const W = 280, H = 110;
@@ -865,30 +875,32 @@ function renderScoreStats(data) {
     const chartW = W - padL - padR;
     const chartH = H - padT - padB;
 
-    // 데이터 포인트 생성 (0~7점)
+    // 데이터 포인트 생성
     const points = distribution.map((count, i) => {
-        const x = padL + (i / 7) * chartW;
+        const x = padL + (i / maxIndex) * chartW;
         const y = padT + chartH - (count / maxCount) * chartH;
         return [x, y];
     });
 
     const baseline = padT + chartH;
     const curvePath = catmullRomToBezier(points);
+    const lastPoint = points[points.length - 1];
+    const firstPoint = points[0];
 
     // 유저 점수의 x좌표와 y좌표
-    const userX = padL + (data.score / 7) * chartW;
+    const userX = padL + (data.score / maxIndex) * chartW;
     const userY = getYOnCurve(points, userX);
 
     // 전체 영역 path (곡선 아래 전체)
-    const fullAreaPath = curvePath + ` L${points[7][0]},${baseline} L${points[0][0]},${baseline} Z`;
+    const fullAreaPath = curvePath + ` L${lastPoint[0]},${baseline} L${firstPoint[0]},${baseline} Z`;
 
     // 상위 영역 path (유저 점수 이상 영역) - clipPath 사용
     const clipId = 'clip-top-' + Date.now();
 
     // X축 라벨 생성
     let labels = '';
-    for (let i = 0; i <= 7; i++) {
-        const x = padL + (i / 7) * chartW;
+    for (let i = 0; i <= maxIndex; i++) {
+        const x = padL + (i / maxIndex) * chartW;
         const isUser = i === data.score;
         const fill = isUser ? '#4ade80' : 'rgba(255,255,255,0.5)';
         const weight = isUser ? 'bold' : 'normal';
