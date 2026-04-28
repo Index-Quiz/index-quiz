@@ -11,12 +11,12 @@ import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
 import com.example.indexquiz.useranswer.application.port.out.GetUserAnswerPort;
 import com.example.indexquiz.question.application.port.out.dto.DifficultQuestionResponses;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
-import com.example.indexquiz.useranswer.domain.QuestionSetAverage;
 import com.example.indexquiz.useranswer.domain.ScoreCount;
 import com.example.indexquiz.useranswer.domain.ScoreCounts;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
 import com.example.indexquiz.useranswer.domain.UserResult;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -79,7 +79,7 @@ public class UserAnswerPersistenceAdapter implements
     }
 
     @Override
-    public List<QuestionSetAverage> getAverageScoresByQuestionSet() {
-        return userResultJpaRepository.findAverageScoresByQuestionSet();
+    public Optional<Double> getAverageScore(QuestionSet questionSet, int maxScore) {
+        return userResultJpaRepository.findAverageByQuestionSetAndMaxScore(questionSet, maxScore);
     }
 }

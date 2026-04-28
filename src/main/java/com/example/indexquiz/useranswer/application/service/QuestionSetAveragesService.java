@@ -4,8 +4,8 @@ import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.application.port.in.GetQuestionSetAveragesUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
 import com.example.indexquiz.useranswer.application.port.out.GetQuestionSetAveragesPort;
-import com.example.indexquiz.useranswer.domain.QuestionSetAverage;
-import java.util.List;
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,12 @@ public class QuestionSetAveragesService implements GetQuestionSetAveragesUseCase
     @Override
     @Transactional(readOnly = true)
     public GetQuestionSetAveragesResponse getQuestionSetAverages() {
-        List<QuestionSetAverage> averages = getQuestionSetAveragesPort.getAverageScoresByQuestionSet();
-
-        Map<QuestionSet, Double> averageMap = averages.stream()
-                .collect(Collectors.toMap(
-                        QuestionSetAverage::questionSet,
-                        avg -> Math.round(avg.averageScore() * 10.0) / 10.0
-                ));
+        Map<QuestionSet, Double> averageMap = Arrays.stream(QuestionSet.values())
+                .flatMap(questionSet -> getQuestionSetAveragesPort
+                        .getAverageScore(questionSet, questionSet.getQuestionCount())
+                        .map(avg -> new AbstractMap.SimpleEntry<>(questionSet, Math.round(avg * 10.0) / 10.0))
+                        .stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         return new GetQuestionSetAveragesResponse(averageMap);
     }
