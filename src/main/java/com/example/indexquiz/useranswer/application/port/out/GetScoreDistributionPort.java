@@ -1,9 +1,9 @@
 package com.example.indexquiz.useranswer.application.port.out;
 
 import com.example.indexquiz.question.domain.QuestionSet;
-import com.example.indexquiz.useranswer.domain.ScoreDistribution;
+import com.example.indexquiz.useranswer.domain.ScoreCounts;
 
 public interface GetScoreDistributionPort {
 
-    ScoreDistribution getScoreDistribution(QuestionSet questionSet, int userScore);
+    ScoreCounts getScoreCounts(QuestionSet questionSet);
 }

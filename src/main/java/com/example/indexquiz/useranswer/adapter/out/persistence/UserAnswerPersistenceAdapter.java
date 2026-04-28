@@ -10,10 +10,10 @@ import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
 import com.example.indexquiz.useranswer.application.port.out.GetUserAnswerPort;
 import com.example.indexquiz.question.application.port.out.dto.DifficultQuestionResponses;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
-import com.example.indexquiz.useranswer.domain.ScoreDistribution;
+import com.example.indexquiz.useranswer.domain.ScoreCount;
+import com.example.indexquiz.useranswer.domain.ScoreCounts;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
 import com.example.indexquiz.useranswer.domain.UserResult;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -70,34 +70,8 @@ public class UserAnswerPersistenceAdapter implements
     }
 
     @Override
-    public ScoreDistribution getScoreDistribution(QuestionSet questionSet, int userScore) {
-        List<Object[]> rows = userResultJpaRepository.countByQuestionSetGroupByScore(questionSet);
-
-        long[] distribution = new long[8];
-        long totalCount = 0;
-        long scoredGreaterOrEqual = 0;
-        long totalScoreSum = 0;
-
-        for (Object[] row : rows) {
-            int score = (int) row[0];
-            long count = (long) row[1];
-            if (score >= 0 && score <= 7) {
-                distribution[score] = count;
-            }
-            totalCount += count;
-            totalScoreSum += (long) score * count;
-            if (score >= userScore) {
-                scoredGreaterOrEqual += count;
-            }
-        }
-
-        double average = totalCount > 0 ? (double) totalScoreSum / totalCount : 0.0;
-        double topPercentage = totalCount > 0 ? ((double) scoredGreaterOrEqual / totalCount) * 100.0 : 100.0;
-
-        return new ScoreDistribution(
-                Arrays.stream(distribution).boxed().toList(),
-                Math.round(average * 100.0) / 100.0,
-                Math.round(topPercentage * 10.0) / 10.0
-        );
+    public ScoreCounts getScoreCounts(QuestionSet questionSet) {
+        List<ScoreCount> scoreCounts = userResultJpaRepository.countByQuestionSetGroupByScore(questionSet);
+        return new ScoreCounts(scoreCounts);
     }
 }

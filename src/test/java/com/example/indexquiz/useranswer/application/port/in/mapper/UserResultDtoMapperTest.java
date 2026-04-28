@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
 class UserResultDtoMapperTest {
 
@@ -18,7 +19,7 @@ class UserResultDtoMapperTest {
 
     @BeforeEach
     void setUp() {
-        userResultDtoMapper = new UserResultDtoMapper();
+        userResultDtoMapper = Mappers.getMapper(UserResultDtoMapper.class);
     }
 
     @Nested

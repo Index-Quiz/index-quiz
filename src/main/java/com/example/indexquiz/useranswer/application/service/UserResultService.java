@@ -7,6 +7,7 @@ import com.example.indexquiz.useranswer.application.port.in.mapper.UserResultDto
 import com.example.indexquiz.useranswer.application.port.out.GetScoreDistributionPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
 import com.example.indexquiz.useranswer.application.port.out.SendUserResultMessagePort;
+import com.example.indexquiz.useranswer.domain.ScoreCounts;
 import com.example.indexquiz.useranswer.domain.ScoreDistribution;
 import com.example.indexquiz.useranswer.domain.UserResult;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,8 @@ public class UserResultService implements SaveUserResultUseCase {
         UserResult savedUserResult = saveUserResultPort.saveUserResult(userResult);
         sendUserResultMessagePort.sendUserResultMessage(savedUserResult);
 
-        ScoreDistribution distribution = getScoreDistributionPort.getScoreDistribution(
-                request.questionSetName(), request.score()
-        );
+        ScoreCounts scoreCounts = getScoreDistributionPort.getScoreCounts(request.questionSetName());
+        ScoreDistribution distribution = scoreCounts.toDistribution(request.score());
 
         return userResultDtoMapper.mapToSaveUserResultResponse(savedUserResult, distribution);
     }
