@@ -2,8 +2,10 @@ package com.example.indexquiz.common;
 
 import com.example.indexquiz.answer.domain.Answer;
 import com.example.indexquiz.answer.domain.Answers;
+import com.example.indexquiz.learn.domain.LearnMaterial;
 import com.example.indexquiz.question.domain.Question;
 import com.example.indexquiz.question.domain.QuestionOption;
+import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.question.domain.QuestionType;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,5 +31,16 @@ public class DomainFixture {
         return IntStream.range(0, answerOptions.size())
                 .mapToObj(idx -> new Answer((long) (idx + 1), questionId, answerOptions.get(idx)))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), Answers::new));
+    }
+
+    public static LearnMaterial getLearnMaterial(long id, QuestionSet questionSet, int displayOrder) {
+        return new LearnMaterial(
+                id,
+                questionSet,
+                "학습자료 제목" + id,
+                "학습자료 설명" + id,
+                "# 학습자료 내용" + id,
+                displayOrder
+        );
     }
 }
