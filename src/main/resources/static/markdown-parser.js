@@ -51,114 +51,176 @@ function slugify(text) {
         .replace(/^-|-$/g, '');           // 앞뒤 하이픈 제거
 }
 
-// 마크다운 텍스트를 HTML로 변환 (완전한 마크다운 지원)
+// marked.js 커스텀 렌더러 설정
+const renderer = new marked.Renderer();
+
+// 헤딩: 기존 클래스명 + ID 유지
+renderer.heading = function({ tokens, depth }) {
+    const text = this.parser.parseInline(tokens);
+    const rawText = tokens.map(t => t.raw || t.text || '').join('');
+    const id = slugify(rawText);
+    const tag = `h${depth}`;
+    const cls = `markdown-h${depth}`;
+    return `<${tag} class="${cls}" id="${id}">${text}</${tag}>`;
+};
+
+// 단락
+renderer.paragraph = function({ tokens }) {
+    const text = this.parser.parseInline(tokens);
+    // 이미 블록 요소를 포함하면 감싸지 않음
+    if (/^<(div|table|h[1-6]|hr|ul|ol|blockquote|details|pre|img)/i.test(text.trim())) {
+        return text;
+    }
+    return `<p class="markdown-paragraph">${text}</p>`;
+};
+
+// 블록쿼트(인용구)
+renderer.blockquote = function({ tokens }) {
+    const body = this.parser.parse(tokens);
+    return `<blockquote class="markdown-blockquote">${body}</blockquote>`;
+};
+
+// 코드 블록
+renderer.code = function({ text, lang }) {
+    const language = lang || '';
+    const langClass = language ? ` class="language-${language}"` : '';
+    let processedCode = text;
+    if (language.toLowerCase() === 'sql') {
+        processedCode = highlightSQL(processedCode);
+    }
+    return `<div class="code-block">
+        ${language ? `<div class="code-header">${language.toUpperCase()}</div>` : ''}
+        <pre><code${langClass}>${processedCode}</code></pre>
+    </div>`;
+};
+
+// 인라인 코드
+renderer.codespan = function({ text }) {
+    return `<code class="inline-code">${text}</code>`;
+};
+
+// 테이블
+renderer.table = function({ header, rows }) {
+    const headerCells = header.map(cell => {
+        const text = this.parser.parseInline(cell.tokens);
+        return `<th>${text}</th>`;
+    });
+    const headerTexts = header.map(cell => {
+        const text = this.parser.parseInline(cell.tokens);
+        return text;
+    });
+
+    const bodyRows = rows.map(row => {
+        const cells = row.map((cell, i) => {
+            const text = this.parser.parseInline(cell.tokens);
+            const label = headerTexts[i] !== undefined ? escapeHtmlAttr(headerTexts[i]) : '';
+            return `<td data-label="${label}">${text}</td>`;
+        });
+        return `<tr>${cells.join('')}</tr>`;
+    });
+
+    return `<div class="table-container">
+        <table class="markdown-table">
+            <thead><tr>${headerCells.join('')}</tr></thead>
+            <tbody>${bodyRows.join('')}</tbody>
+        </table>
+    </div>`;
+};
+
+// 구분선
+renderer.hr = function() {
+    return '<hr class="markdown-divider">';
+};
+
+// 이미지
+renderer.image = function({ href, title, text }) {
+    return `<div class="image-container"><img src="${href}" alt="${text}" class="question-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" onload="this.style.opacity='1';" style="opacity: 0; transition: opacity 0.5s ease; cursor: pointer;"><div class="image-placeholder" style="display: none;">&#x1f4f7; 이미지를 불러올 수 없습니다</div></div>`;
+};
+
+// 링크
+renderer.link = function({ href, title, tokens }) {
+    const text = this.parser.parseInline(tokens);
+    if (href.startsWith('#')) {
+        return `<a href="${href}" class="markdown-link anchor-link">${text}</a>`;
+    }
+    return `<a href="${href}" class="markdown-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
+};
+
+// 볼드
+renderer.strong = function({ tokens }) {
+    const text = this.parser.parseInline(tokens);
+    return `<strong class="markdown-bold">${text}</strong>`;
+};
+
+// 리스트
+renderer.list = function({ ordered, start, items }) {
+    const tag = ordered ? 'ol' : 'ul';
+    const startAttr = (ordered && start !== 1) ? ` start="${start}"` : '';
+
+    // 체크리스트인지 확인 (하나라도 task 항목이 있으면)
+    const isTaskList = items.some(item => item.task);
+    const cls = isTaskList ? 'markdown-list markdown-checklist' : 'markdown-list';
+
+    const body = items.map(item => this.listitem(item)).join('');
+    return `<${tag} class="${cls}"${startAttr}>${body}</${tag}>`;
+};
+
+// 리스트 아이템
+renderer.listitem = function(item) {
+    let content = '';
+
+    if (item.task) {
+        const checked = item.checked ? 'checked' : '';
+        const checkedClass = item.checked ? ' checked' : '';
+        content = `<label class="markdown-checkbox-label${checkedClass}"><input type="checkbox" class="markdown-checkbox" ${checked}><span class="markdown-checkbox-custom"></span><span class="markdown-checkbox-text">${this.parser.parse(item.tokens, !!this.parser.options.async)}</span></label>`;
+        return `<li class="markdown-list-item markdown-task-item">${content}</li>`;
+    }
+
+    content = this.parser.parse(item.tokens, !!this.parser.options.async);
+    return `<li class="markdown-list-item">${content}</li>`;
+};
+
+// details/summary 지원 (marked의 html 패스스루)
+renderer.html = function({ text }) {
+    // raw HTML 내의 <a> 태그에 markdown-link 클래스 추가
+    let processed = text.replace(/<a\s+href=/g, '<a class="markdown-link" href=');
+    // raw HTML <ul>/<ol>/<li>에 클래스 추가
+    processed = processed.replace(/<ul>/g, '<ul class="markdown-list">');
+    processed = processed.replace(/<ol>/g, '<ol class="markdown-list">');
+    processed = processed.replace(/<li>/g, '<li class="markdown-list-item">');
+    // summary 태그에 클래스 추가
+    processed = processed.replace(/<summary>(.*?)<\/summary>/g,
+        '<summary class="explanation-summary">$1</summary>');
+    return processed;
+};
+
+// marked 옵션 설정
+marked.setOptions({
+    renderer: renderer,
+    breaks: false,
+    gfm: true
+});
+
+// 마크다운 텍스트를 HTML로 변환
 function parseMarkdownToHtml(content) {
-    let html = content;
-
     // XSS 방지: script 태그 제거
-    html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-    html = html.replace(/<script\b[^>]*>/gi, '');
+    let cleaned = content;
+    cleaned = cleaned.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    cleaned = cleaned.replace(/<script\b[^>]*>/gi, '');
 
-    // 코드 블록 변환 (```언어\n코드\n``` 형식) - 먼저 처리하여 다른 변환과 충돌 방지
-    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
-        const lang = language || '';
-        const langClass = lang ? ` class="language-${lang}"` : '';
-
-        // SQL 코드인 경우 하이라이팅 적용
-        let processedCode = code.trim();
-        if (lang.toLowerCase() === 'sql') {
-            processedCode = highlightSQL(processedCode);
-        }
-
-        return `<div class="code-block">
-            ${lang ? `<div class="code-header">${lang.toUpperCase()}</div>` : ''}
-            <pre><code${langClass}>${processedCode}</code></pre>
-        </div>`;
-    });
-
-    // 테이블 변환 (| 헤더 | 헤더 | 형식)
-    html = html.replace(/(\|.*\|\n\|.*\|\n(?:\|.*\|\n?)*)/g, (match) => {
-        const rows = match.trim().split('\n');
-        if (rows.length < 2) return match;
-
-        const headerRow = rows[0];
-        const separatorRow = rows[1];
-        const dataRows = rows.slice(2);
-
-        // 헤더 파싱
-        const headers = headerRow.split('|').map(h => h.trim()).filter(h => h);
-
-        // 데이터 행 파싱 - 각 td에 data-label 속성으로 헤더 이름 주입 (모바일 카드형 레이아웃용)
-        const dataRowsHtml = dataRows.map(row => {
-            const cells = row.split('|').map(c => c.trim()).filter(c => c);
-            const tdsHtml = cells.map((cell, i) => {
-                const label = headers[i] !== undefined ? escapeHtmlAttr(headers[i]) : '';
-                return `<td data-label="${label}">${cell}</td>`;
-            }).join('');
-            return `<tr>${tdsHtml}</tr>`;
-        }).join('');
-
-        return `<div class="table-container">
-            <table class="markdown-table">
-                <thead>
-                    <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
-                </thead>
-                <tbody>
-                    ${dataRowsHtml}
-                </tbody>
-            </table>
-        </div>`;
-    });
-
-    // 헤딩 변환 (## 헤딩) - id 자동 부여 (목차 앵커 링크용)
-    html = html.replace(/^### (.*$)/gm, (m, t) =>
-        `<h3 class="markdown-h3" id="${slugify(t)}">${t}</h3>`);
-    html = html.replace(/^## (.*$)/gm, (m, t) =>
-        `<h2 class="markdown-h2" id="${slugify(t)}">${t}</h2>`);
-    html = html.replace(/^# (.*$)/gm, (m, t) =>
-        `<h1 class="markdown-h1" id="${slugify(t)}">${t}</h1>`);
-
-    // 구분선 변환 (---)
-    html = html.replace(/^---$/gm, '<hr class="markdown-divider">');
-
-    // 이미지 변환 (onclick 제거 - 이벤트 리스너에서 처리)
-    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,
-        '<div class="image-container"><img src="$2" alt="$1" class="question-image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="this.style.opacity=\'1\';" style="opacity: 0; transition: opacity 0.5s ease; cursor: pointer;"><div class="image-placeholder" style="display: none;">📷 이미지를 불러올 수 없습니다</div></div>'
-    );
-
-    // 마크다운 링크 변환 (공백 허용, 페이지 내 앵커는 같은 탭에서 부드러운 스크롤)
-    html = html.replace(/\[([^\]]+)\]\(\s*([^\)]+)\s*\)/g, (match, text, url) => {
-        if (url.startsWith('#')) {
-            return `<a href="${url}" class="markdown-link anchor-link">${text}</a>`;
-        }
-        return `<a href="${url}" class="markdown-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
-    });
-
-    // 인라인 코드 변환 (`코드` 형식)
-    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
-
-    // 볼드 텍스트 변환
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>');
-
-    // details/summary 변환 (마우스 인터랙션 있는 summary 적용)
-    html = html.replace(/<details>\s*<summary>(.*?)<\/summary>/g, (match, summaryText) => {
-        return `<details><summary class="explanation-summary">${summaryText}</summary>`;
-    });
-
-    // 줄바꿈을 단락으로 변환
-    html = html.split('\n\n').map(paragraph => {
-        paragraph = paragraph.trim();
-        if (!paragraph) return '';
-
-        // 이미 HTML 태그로 시작하는 경우 그대로 반환
-        if (paragraph.startsWith('<h') || paragraph.startsWith('<div') ||
-            paragraph.startsWith('<hr') || paragraph.startsWith('<table')) {
-            return paragraph;
-        }
-
-        // 일반 텍스트는 p 태그로 감싸기
-        return `<p class="markdown-paragraph">${paragraph.replace(/\n/g, '<br>')}</p>`;
-    }).join('');
-
-    return html;
+    return marked.parse(cleaned);
 }
+
+// 체크박스 인터랙션: 클릭 시 체크/해제 토글
+document.addEventListener('change', function(e) {
+    if (!e.target.classList.contains('markdown-checkbox')) return;
+
+    const label = e.target.closest('.markdown-checkbox-label');
+    if (!label) return;
+
+    if (e.target.checked) {
+        label.classList.add('checked');
+    } else {
+        label.classList.remove('checked');
+    }
+});
