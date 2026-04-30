@@ -5,6 +5,7 @@ import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialRespo
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaryResponse;
 import com.example.indexquiz.learn.domain.LearnMaterial;
 import org.mapstruct.Mapper;
+
 @Mapper(config = MapperConfiguration.class)
 public interface LearnMaterialDtoMapper {
 
