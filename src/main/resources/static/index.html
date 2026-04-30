@@ -98,6 +98,11 @@
                                 <span class="badge-level">난이도 1</span>
                             </div>
                         </div>
+                        <div class="bookmark-actions">
+                            <a class="action-btn action-btn-quiz" data-action="quiz"><span class="action-icon">📝</span><span class="action-label">퀴즈</span></a>
+                            <div class="action-divider"></div>
+                            <a class="action-btn action-btn-learn" data-action="learn"><span class="action-icon">📖</span><span class="action-label">학습</span></a>
+                        </div>
                     </div>
 
                     <div class="bookmark-tab" data-set="B">
@@ -110,6 +115,11 @@
                             <div class="bookmark-badge">
                                 <span class="badge-level">난이도 2</span>
                             </div>
+                        </div>
+                        <div class="bookmark-actions">
+                            <a class="action-btn action-btn-quiz" data-action="quiz"><span class="action-icon">📝</span><span class="action-label">퀴즈</span></a>
+                            <div class="action-divider"></div>
+                            <a class="action-btn action-btn-learn" data-action="learn"><span class="action-icon">📖</span><span class="action-label">학습</span></a>
                         </div>
                     </div>
 
@@ -124,6 +134,11 @@
                                 <span class="badge-level">난이도 2</span>
                             </div>
                         </div>
+                        <div class="bookmark-actions">
+                            <a class="action-btn action-btn-quiz" data-action="quiz"><span class="action-icon">📝</span><span class="action-label">퀴즈</span></a>
+                            <div class="action-divider"></div>
+                            <a class="action-btn action-btn-learn" data-action="learn"><span class="action-icon">📖</span><span class="action-label">학습</span></a>
+                        </div>
                     </div>
 
                     <div class="bookmark-tab" data-set="D">
@@ -137,6 +152,11 @@
                                 <span class="badge-level">난이도 2.5</span>
                             </div>
                         </div>
+                        <div class="bookmark-actions">
+                            <a class="action-btn action-btn-quiz" data-action="quiz"><span class="action-icon">📝</span><span class="action-label">퀴즈</span></a>
+                            <div class="action-divider"></div>
+                            <a class="action-btn action-btn-learn" data-action="learn"><span class="action-icon">📖</span><span class="action-label">학습</span></a>
+                        </div>
                     </div>
 
                     <div class="bookmark-tab" data-set="E">
@@ -149,6 +169,11 @@
                             <div class="bookmark-badge">
                                 <span class="badge-level">난이도 3</span>
                             </div>
+                        </div>
+                        <div class="bookmark-actions">
+                            <a class="action-btn action-btn-quiz" data-action="quiz"><span class="action-icon">📝</span><span class="action-label">퀴즈</span></a>
+                            <div class="action-divider"></div>
+                            <a class="action-btn action-btn-learn" data-action="learn"><span class="action-icon">📖</span><span class="action-label">학습</span></a>
                         </div>
                     </div>
 
@@ -164,6 +189,11 @@
                                 <span class="badge-level">난이도 4</span>
                             </div>
                         </div>
+                        <div class="bookmark-actions">
+                            <a class="action-btn action-btn-quiz" data-action="quiz"><span class="action-icon">📝</span><span class="action-label">퀴즈</span></a>
+                            <div class="action-divider"></div>
+                            <a class="action-btn action-btn-learn" data-action="learn"><span class="action-icon">📖</span><span class="action-label">학습</span></a>
+                        </div>
                     </div>
 
                     <div class="bookmark-tab special-tab" data-set="G">
@@ -178,6 +208,11 @@
                                 <span class="badge-level">난이도 3.5</span>
                             </div>
                         </div>
+                        <div class="bookmark-actions">
+                            <a class="action-btn action-btn-quiz" data-action="quiz"><span class="action-icon">📝</span><span class="action-label">퀴즈</span></a>
+                            <div class="action-divider"></div>
+                            <a class="action-btn action-btn-learn" data-action="learn"><span class="action-icon">📖</span><span class="action-label">학습</span></a>
+                        </div>
                     </div>
 
                     <div class="bookmark-tab special-tab" data-set="H">
@@ -191,6 +226,11 @@
                             <div class="bookmark-badge">
                                 <span class="badge-level">난이도 5</span>
                             </div>
+                        </div>
+                        <div class="bookmark-actions">
+                            <a class="action-btn action-btn-quiz" data-action="quiz"><span class="action-icon">📝</span><span class="action-label">퀴즈</span></a>
+                            <div class="action-divider"></div>
+                            <a class="action-btn action-btn-learn" data-action="learn"><span class="action-icon">📖</span><span class="action-label">학습</span></a>
                         </div>
                     </div>
 
@@ -279,6 +319,32 @@
             <p>&copy; 2026 Index Quiz. All rights reserved.</p>
             <a href="privacy.html" style="color: #ffffff; text-decoration: none;">개인정보처리방침</a>
         </footer>
+    </div>
+
+    <!-- 학습자료 선택 모달 -->
+    <div class="modal-overlay" id="learnModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <div class="modal-set-icon" id="modalIcon">📖</div>
+                    <div class="modal-title-group">
+                        <h3 id="modalTitle"></h3>
+                        <p id="modalSubtitle"></p>
+                    </div>
+                </div>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="learn-tab-list" id="learnTabList"></div>
+                <div class="modal-divider">또는</div>
+            </div>
+            <div class="modal-footer">
+                <a class="modal-quiz-btn" id="modalQuizBtn">
+                    <span>📝</span>
+                    바로 퀴즈 풀기
+                </a>
+            </div>
+        </div>
     </div>
     <!-- 우측 세로 배너 -->
     <aside class="side-ad side-ad-right">

@@ -1,7 +1,9 @@
 package com.example.indexquiz.common;
 
+import com.example.indexquiz.learn.adapter.out.persistence.LearnMaterialEntity;
 import com.example.indexquiz.question.adapter.out.persistence.QuestionEntity;
 import com.example.indexquiz.question.adapter.out.persistence.QuestionOptionEntity;
+import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.question.domain.QuestionType;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -20,5 +22,16 @@ public class EntityFixture {
         return IntStream.rangeClosed(1, size)
                 .mapToObj(order -> getQuestionOptionEntity(questionId, order))
                 .toList();
+    }
+
+    public static LearnMaterialEntity getLearnMaterialEntity(QuestionSet questionSet, int displayOrder) {
+        return new LearnMaterialEntity(
+                null,
+                questionSet,
+                "학습자료 제목" + displayOrder,
+                "학습자료 설명" + displayOrder,
+                "# 학습자료 내용" + displayOrder,
+                displayOrder
+        );
     }
 }

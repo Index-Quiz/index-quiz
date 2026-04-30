@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initAnimations();
     setupBookmarkTabs();
+    setupLearnModal();
     setupParallaxEffect();
     loadQuestionSetAverages();
     console.log('Index Quiz 초기화 완료');
@@ -47,70 +48,122 @@ function setupBookmarkTabs() {
     const bookmarkTabs = document.querySelectorAll('.bookmark-tab');
 
     bookmarkTabs.forEach(tab => {
-        // 클릭 이벤트
+        const setName = tab.dataset.set;
+        const hasActions = tab.querySelector('.bookmark-actions');
+
+        // 클릭 이벤트 - 액션 버튼이 없는 탭(BEST_DIFFICULT)은 바로 퀴즈 이동
         tab.addEventListener('click', (e) => {
-            const setName = tab.dataset.set;
-            console.log(`${setName}-SET 선택됨`);
-
-            // 클릭 애니메이션
-            const content = tab.querySelector('.bookmark-content');
-            content.style.transform = 'translateX(15px) scale(0.98)';
-
-            setTimeout(() => {
-                window.location.href = `quiz.html?set=${setName}`;
-            }, 200);
+            if (hasActions && (e.target.closest('.action-btn') || e.target.closest('.bookmark-actions'))) {
+                return; // 액션 버튼 클릭은 별도 처리
+            }
+            if (!hasActions) {
+                console.log(`${setName}-SET 선택됨`);
+                const content = tab.querySelector('.bookmark-content');
+                content.style.transform = 'translateX(15px) scale(0.98)';
+                setTimeout(() => {
+                    window.location.href = `quiz.html?set=${setName}`;
+                }, 200);
+            }
         });
+
+        // 액션 버튼 클릭 처리
+        if (hasActions) {
+            const quizBtn = tab.querySelector('.action-btn-quiz');
+            const learnBtn = tab.querySelector('.action-btn-learn');
+
+            quizBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.location.href = `quiz.html?set=${setName}`;
+            });
+
+            learnBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openLearnModal(setName);
+            });
+        }
 
         // 호버 시 아이콘 애니메이션
         tab.addEventListener('mouseenter', () => {
             const icon = tab.querySelector('.bookmark-icon');
             icon.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             icon.style.transform = 'rotate(10deg) scale(1.1)';
-
-            // 뱃지 애니메이션
-            const badges = tab.querySelectorAll('.badge-level, .badge-count');
-            badges.forEach((badge, index) => {
-                setTimeout(() => {
-                    badge.style.transform = 'scale(1.05)';
-                }, index * 50);
-            });
         });
 
         tab.addEventListener('mouseleave', () => {
             const icon = tab.querySelector('.bookmark-icon');
             icon.style.transform = 'rotate(0deg) scale(1)';
-
-            const badges = tab.querySelectorAll('.badge-level, .badge-count');
-            badges.forEach(badge => {
-                badge.style.transform = 'scale(1)';
-            });
         });
 
-        // 마우스 이동에 따른 효과
-        tab.addEventListener('mousemove', (e) => {
-            const rect = tab.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+    });
+}
 
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
+// 세트별 메타데이터 (UI 표시용)
+const setMetadata = {
+    A: { icon: '📚', title: '인덱스 기초 1', subtitle: '#해쉬 인덱스 #B-Tree' },
+    B: { icon: '🎯', title: '인덱스 기초 2', subtitle: '#클러스터링 인덱스 #내부 구조' },
+    C: { icon: '📦', title: '인덱스 활용 1', subtitle: '#레인지 스캔 #Left-Most' },
+    D: { icon: '🧩', title: '인덱스 활용 2', subtitle: '#AND #OR #IN절' },
+    E: { icon: '⚡', title: '인덱스 응용 1', subtitle: '#복합 인덱스 #루스 스캔' },
+    F: { icon: '⏭️', title: '인덱스 응용 2', subtitle: '#커버링 인덱스 #스킵 스캔' },
+    G: { icon: '🔢', title: '인덱스 고급 1', subtitle: '#정렬 #ICP' },
+    H: { icon: '🔀', title: '인덱스 고급 2', subtitle: '#페이지 분할 #함수 인덱스 #인덱스 머지' },
+};
 
-            const rotateX = (y - centerY) / 20;
-            const rotateY = (centerX - x) / 20;
+// 학습자료 모달 열기
+async function openLearnModal(setName) {
+    const meta = setMetadata[setName];
+    if (!meta) return;
 
-            const content = tab.querySelector('.bookmark-content');
-            content.style.transform = `
-                translateX(20px) 
-                perspective(1000px) 
-                rotateX(${rotateX}deg) 
-                rotateY(${rotateY}deg)
-            `;
-        });
+    document.getElementById('modalIcon').textContent = meta.icon;
+    document.getElementById('modalTitle').textContent = meta.title;
+    document.getElementById('modalSubtitle').textContent = meta.subtitle + ' · 학습자료 선택';
+    document.getElementById('modalQuizBtn').href = `quiz.html?set=${setName}`;
 
-        tab.addEventListener('mouseleave', () => {
-            const content = tab.querySelector('.bookmark-content');
-            content.style.transform = 'translateX(0) perspective(1000px) rotateX(0) rotateY(0)';
-        });
+    const tabList = document.getElementById('learnTabList');
+    tabList.innerHTML = '<div class="learn-tab-loading">학습자료 목록을 불러오는 중...</div>';
+
+    const overlay = document.getElementById('learnModal');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    try {
+        const response = await fetch(`/api/learn-materials?set=${setName}`);
+        if (!response.ok) throw new Error('API 호출 실패');
+        const data = await response.json();
+
+        tabList.innerHTML = data.materials.map((m, i) =>
+            `<a class="learn-tab-item" href="learn.html?set=${setName}&id=${m.id}">
+                <div class="learn-tab-number">${i + 1}</div>
+                <div class="learn-tab-info">
+                    <div class="learn-tab-title">${m.title}</div>
+                    <div class="learn-tab-desc">${m.description}</div>
+                </div>
+                <div class="learn-tab-arrow">\u2192</div>
+            </a>`
+        ).join('');
+    } catch (e) {
+        tabList.innerHTML = '<div class="learn-tab-loading">학습자료를 불러올 수 없습니다.</div>';
+        console.error('학습자료 목록 로드 실패:', e);
+    }
+}
+
+// 학습자료 모달 닫기
+function closeLearnModal() {
+    document.getElementById('learnModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// 모달 이벤트 바인딩
+function setupLearnModal() {
+    const overlay = document.getElementById('learnModal');
+    if (!overlay) return;
+
+    document.getElementById('modalCloseBtn').addEventListener('click', closeLearnModal);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeLearnModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeLearnModal();
     });
 }
 
@@ -124,7 +177,7 @@ async function loadQuestionSetAverages() {
 
         document.querySelectorAll('.bookmark-tab').forEach(tab => {
             const setName = tab.dataset.set;
-            if (averages[setName] == null) return;
+            if (averages[setName] == null || setName === 'BEST_DIFFICULT') return;
 
             const badge = tab.querySelector('.bookmark-badge');
             const avgDiv = document.createElement('div');

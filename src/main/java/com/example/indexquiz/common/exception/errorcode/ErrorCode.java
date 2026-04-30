@@ -25,6 +25,8 @@ public enum ErrorCode {
 
     SOLUTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 해설입니다"),
 
+    LEARN_MATERIAL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 학습자료입니다"),
+
     SCORE_OUT_OF_RANGE(HttpStatus.BAD_REQUEST, "점수가 유효 범위를 벗어났습니다."),
 
     // 500
