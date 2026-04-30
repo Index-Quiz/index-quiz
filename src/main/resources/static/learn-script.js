@@ -24,6 +24,7 @@ async function initLearnPage() {
         renderHeader();
         renderContent();
         renderNavigation();
+        renderQuizFloatingBtn();
     } catch (error) {
         console.error('학습자료 로드 실패:', error);
         showError();
@@ -95,6 +96,13 @@ function renderNavigation() {
         nextBtn.removeAttribute('href');
         nextBtn.classList.add('disabled');
     }
+}
+
+function renderQuizFloatingBtn() {
+    const btn = document.getElementById('quizFloatingBtn');
+    if (!btn || !currentSet) return;
+    btn.href = `quiz.html?set=${currentSet}`;
+    btn.style.display = 'flex';
 }
 
 function showError() {

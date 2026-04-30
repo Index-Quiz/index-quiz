@@ -177,7 +177,7 @@ async function loadQuestionSetAverages() {
 
         document.querySelectorAll('.bookmark-tab').forEach(tab => {
             const setName = tab.dataset.set;
-            if (averages[setName] == null) return;
+            if (averages[setName] == null || setName === 'BEST_DIFFICULT') return;
 
             const badge = tab.querySelector('.bookmark-badge');
             const avgDiv = document.createElement('div');

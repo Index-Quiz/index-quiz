@@ -294,3 +294,73 @@
         font-size: 0.85rem;
     }
 }
+
+/* ========== 퀴즈 바로가기 플로팅 버튼 ========== */
+.quiz-floating-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: #020259;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(74, 222, 128, 0.4);
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.quiz-floating-btn:hover {
+    width: 140px;
+    border-radius: 28px;
+    box-shadow: 0 8px 30px rgba(74, 222, 128, 0.6);
+    transform: translateY(-2px);
+}
+
+.quiz-floating-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    transition: margin 0.3s ease;
+}
+
+.quiz-floating-btn:hover .quiz-floating-icon {
+    margin-right: 6px;
+}
+
+.quiz-floating-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 0.3s ease, opacity 0.3s ease;
+}
+
+.quiz-floating-btn:hover .quiz-floating-label {
+    max-width: 80px;
+    opacity: 1;
+}
+
+@media (max-width: 480px) {
+    .quiz-floating-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+    }
+
+    .quiz-floating-btn:hover {
+        width: 130px;
+    }
+
+    .quiz-floating-icon {
+        font-size: 1.2rem;
+    }
+}

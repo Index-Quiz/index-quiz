@@ -723,7 +723,7 @@ function renderScoreStats(data) {
     const avgScoreEl = document.getElementById('avgScore');
     const topPercentEl = document.getElementById('topPercent');
 
-    const distribution = data.scoreDistribution;
+    const distribution = data.scoreDistribution.map(v => v ?? 0);
     const maxCount = Math.max(...distribution, 1);
     const maxIndex = distribution.length - 1;
 
