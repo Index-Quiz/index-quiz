@@ -97,72 +97,54 @@ function setupBookmarkTabs() {
     });
 }
 
-// 세트별 학습자료 목록 (추후 API에서 받아올 데이터)
-const learnMaterials = {
-    A: { icon: '📚', title: '인덱스 기초 1', subtitle: '#해쉬 인덱스 #B-Tree', materials: [
-        { id: 1, title: '인덱스는 왜 필요한가?', desc: '풀 테이블 스캔의 문제점과 인덱스의 역할' },
-        { id: 2, title: '해쉬 인덱스의 구조와 특징', desc: '해쉬 함수 기반 인덱스의 장단점 분석' },
-        { id: 3, title: 'B-Tree 인덱스 완전 정복', desc: '루트, 브랜치, 리프 노드의 역할과 탐색 과정' },
-    ]},
-    B: { icon: '🎯', title: '인덱스 기초 2', subtitle: '#클러스터링 인덱스 #내부 구조', materials: [
-        { id: 4, title: '클러스터링 인덱스란?', desc: 'PK와 데이터 정렬의 관계' },
-        { id: 5, title: '세컨더리 인덱스와 테이블 룩업', desc: '논클러스터링 인덱스의 내부 동작 이해' },
-        { id: 6, title: '클러스터링 vs 논클러스터링 비교', desc: '두 인덱스 타입의 성능 차이와 사용 시나리오' },
-    ]},
-    C: { icon: '📦', title: '인덱스 활용 1', subtitle: '#레인지 스캔 #Left-Most', materials: [
-        { id: 7, title: '인덱스 레인지 스캔', desc: '범위 검색에서 인덱스가 동작하는 방식' },
-        { id: 8, title: 'Left-Most 규칙의 이해', desc: '복합 인덱스에서 왼쪽 컬럼부터 사용해야 하는 이유' },
-    ]},
-    D: { icon: '🧩', title: '인덱스 활용 2', subtitle: '#AND #OR #IN절', materials: [
-        { id: 9, title: 'AND 조건과 인덱스 활용', desc: '복합 인덱스로 AND 조건 최적화하기' },
-        { id: 10, title: 'OR 조건의 인덱스 제약', desc: 'OR 조건이 인덱스 사용을 방해하는 이유' },
-        { id: 11, title: 'IN절의 내부 최적화', desc: 'IN절이 등호 비교로 처리되는 메커니즘' },
-    ]},
-    E: { icon: '⚡', title: '인덱스 응용 1', subtitle: '#복합 인덱스 #루스 스캔', materials: [
-        { id: 12, title: '복합 인덱스 설계 전략', desc: '카디널리티와 컬럼 순서 최적화' },
-        { id: 13, title: '루스 인덱스 스캔', desc: 'GROUP BY 최적화를 위한 루스 스캔 기법' },
-    ]},
-    F: { icon: '⏭️', title: '인덱스 응용 2', subtitle: '#커버링 인덱스 #스킵 스캔', materials: [
-        { id: 14, title: '커버링 인덱스', desc: '테이블 룩업 없이 인덱스만으로 쿼리 처리' },
-        { id: 15, title: '스킵 스캔 최적화', desc: 'MySQL 8.0의 스킵 스캔 동작 조건과 원리' },
-    ]},
-    G: { icon: '🔢', title: '인덱스 고급 1', subtitle: '#정렬 #ICP', materials: [
-        { id: 16, title: 'ORDER BY와 인덱스', desc: '인덱스를 활용한 정렬 최적화' },
-        { id: 17, title: 'Index Condition Pushdown', desc: '스토리지 엔진 레벨 조건 평가로 I/O 절감' },
-    ]},
-    H: { icon: '🔀', title: '인덱스 고급 2', subtitle: '#페이지 분할 #함수 인덱스 #인덱스 머지', materials: [
-        { id: 18, title: '페이지 분할과 쓰기 성능', desc: 'B-Tree 리프 페이지 분할이 발생하는 조건' },
-        { id: 19, title: '함수 기반 인덱스', desc: 'MySQL 8.0 표현식 인덱스 생성과 활용' },
-        { id: 20, title: '인덱스 머지 최적화', desc: '여러 인덱스를 결합하는 최적화 전략' },
-    ]}
+// 세트별 메타데이터 (UI 표시용)
+const setMetadata = {
+    A: { icon: '📚', title: '인덱스 기초 1', subtitle: '#해쉬 인덱스 #B-Tree' },
+    B: { icon: '🎯', title: '인덱스 기초 2', subtitle: '#클러스터링 인덱스 #내부 구조' },
+    C: { icon: '📦', title: '인덱스 활용 1', subtitle: '#레인지 스캔 #Left-Most' },
+    D: { icon: '🧩', title: '인덱스 활용 2', subtitle: '#AND #OR #IN절' },
+    E: { icon: '⚡', title: '인덱스 응용 1', subtitle: '#복합 인덱스 #루스 스캔' },
+    F: { icon: '⏭️', title: '인덱스 응용 2', subtitle: '#커버링 인덱스 #스킵 스캔' },
+    G: { icon: '🔢', title: '인덱스 고급 1', subtitle: '#정렬 #ICP' },
+    H: { icon: '🔀', title: '인덱스 고급 2', subtitle: '#페이지 분할 #함수 인덱스 #인덱스 머지' },
 };
 
 // 학습자료 모달 열기
-function openLearnModal(setName) {
-    const data = learnMaterials[setName];
-    if (!data) return;
+async function openLearnModal(setName) {
+    const meta = setMetadata[setName];
+    if (!meta) return;
 
-    document.getElementById('modalIcon').textContent = data.icon;
-    document.getElementById('modalTitle').textContent = data.title;
-    document.getElementById('modalSubtitle').textContent = data.subtitle + ' · 학습자료 선택';
+    document.getElementById('modalIcon').textContent = meta.icon;
+    document.getElementById('modalTitle').textContent = meta.title;
+    document.getElementById('modalSubtitle').textContent = meta.subtitle + ' · 학습자료 선택';
+    document.getElementById('modalQuizBtn').href = `quiz.html?set=${setName}`;
 
     const tabList = document.getElementById('learnTabList');
-    tabList.innerHTML = data.materials.map((m, i) =>
-        `<a class="learn-tab-item" href="learn.html?set=${setName}&id=${m.id}">
-            <div class="learn-tab-number">${i + 1}</div>
-            <div class="learn-tab-info">
-                <div class="learn-tab-title">${m.title}</div>
-                <div class="learn-tab-desc">${m.desc}</div>
-            </div>
-            <div class="learn-tab-arrow">\u2192</div>
-        </a>`
-    ).join('');
-
-    document.getElementById('modalQuizBtn').href = `quiz.html?set=${setName}`;
+    tabList.innerHTML = '<div class="learn-tab-loading">학습자료 목록을 불러오는 중...</div>';
 
     const overlay = document.getElementById('learnModal');
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    try {
+        const response = await fetch(`/api/learn-materials?set=${setName}`);
+        if (!response.ok) throw new Error('API 호출 실패');
+        const data = await response.json();
+
+        tabList.innerHTML = data.materials.map((m, i) =>
+            `<a class="learn-tab-item" href="learn.html?set=${setName}&id=${m.id}">
+                <div class="learn-tab-number">${i + 1}</div>
+                <div class="learn-tab-info">
+                    <div class="learn-tab-title">${m.title}</div>
+                    <div class="learn-tab-desc">${m.description}</div>
+                </div>
+                <div class="learn-tab-arrow">\u2192</div>
+            </a>`
+        ).join('');
+    } catch (e) {
+        tabList.innerHTML = '<div class="learn-tab-loading">학습자료를 불러올 수 없습니다.</div>';
+        console.error('학습자료 목록 로드 실패:', e);
+    }
 }
 
 // 학습자료 모달 닫기
