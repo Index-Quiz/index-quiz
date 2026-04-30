@@ -1,7 +1,7 @@
 package com.example.indexquiz.learn.application.service;
 
 import com.example.indexquiz.learn.application.port.in.LearnMaterialUseCase;
-import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialListResponse;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaries;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialResponse;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaryResponse;
 import com.example.indexquiz.learn.application.port.in.mapper.LearnMaterialDtoMapper;
@@ -31,9 +31,9 @@ public class LearnMaterialService implements LearnMaterialUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public GetLearnMaterialListResponse getLearnMaterialsBySet(QuestionSet questionSet) {
+    public GetLearnMaterialSummaries getLearnMaterialsBySet(QuestionSet questionSet) {
         return getLearnMaterialPort.getAllByQuestionSet(questionSet).stream()
                 .map(learnMaterialDtoMapper::mapToGetLearnMaterialSummaryResponse)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), GetLearnMaterialListResponse::new));
+                .collect(Collectors.collectingAndThen(Collectors.toList(), GetLearnMaterialSummaries::new));
     }
 }

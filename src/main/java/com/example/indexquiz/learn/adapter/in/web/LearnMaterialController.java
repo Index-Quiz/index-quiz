@@ -1,7 +1,7 @@
 package com.example.indexquiz.learn.adapter.in.web;
 
 import com.example.indexquiz.learn.application.port.in.LearnMaterialUseCase;
-import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialListResponse;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaries;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialResponse;
 import com.example.indexquiz.question.domain.QuestionSet;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class LearnMaterialController {
     }
 
     @GetMapping
-    public GetLearnMaterialListResponse getLearnMaterialsBySet(
+    public GetLearnMaterialSummaries getLearnMaterialsBySet(
             @RequestParam(name = "set") QuestionSet questionSet) {
         return learnMaterialUseCase.getLearnMaterialsBySet(questionSet);
     }

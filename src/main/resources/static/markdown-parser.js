@@ -55,6 +55,10 @@ function slugify(text) {
 function parseMarkdownToHtml(content) {
     let html = content;
 
+    // XSS 방지: script 태그 제거
+    html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    html = html.replace(/<script\b[^>]*>/gi, '');
+
     // 코드 블록 변환 (```언어\n코드\n``` 형식) - 먼저 처리하여 다른 변환과 충돌 방지
     html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
         const lang = language || '';

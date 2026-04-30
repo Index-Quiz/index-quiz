@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.example.indexquiz.BaseServiceTest;
 import com.example.indexquiz.common.DomainFixture;
-import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialListResponse;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaries;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialResponse;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaryResponse;
 import com.example.indexquiz.learn.application.port.in.mapper.LearnMaterialDtoMapper;
@@ -68,7 +68,7 @@ class LearnMaterialServiceTest extends BaseServiceTest {
             given(learnMaterialDtoMapper.mapToGetLearnMaterialSummaryResponse(material2)).willReturn(summary2);
 
             // when
-            GetLearnMaterialListResponse actual = learnMaterialService.getLearnMaterialsBySet(QuestionSet.A);
+            GetLearnMaterialSummaries actual = learnMaterialService.getLearnMaterialsBySet(QuestionSet.A);
 
             // then
             assertAll(
