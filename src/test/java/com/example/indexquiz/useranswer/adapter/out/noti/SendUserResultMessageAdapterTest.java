@@ -21,7 +21,7 @@ class SendUserResultMessageAdapterTest {
 
         @Test
         void 유저_성적을_발송한다() {
-            UserResult userResult = new UserResult(10L, QuestionSet.A, 15);
+            UserResult userResult = new UserResult(10L, QuestionSet.A, 15, null);
             sendUserResultMessageAdapter.sendUserResultMessage(userResult);
         }
     }

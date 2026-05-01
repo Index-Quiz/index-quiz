@@ -25,6 +25,10 @@ public enum ErrorCode {
 
     SOLUTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 해설입니다"),
 
+    LEARN_MATERIAL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 학습자료입니다"),
+
+    SCORE_OUT_OF_RANGE(HttpStatus.BAD_REQUEST, "점수가 유효 범위를 벗어났습니다."),
+
     // 500
     INVALID_USER_ANSWERS(HttpStatus.INTERNAL_SERVER_ERROR, "잘못된 유저 답변 목록입니다"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다. 관리자에게 문의하세요."),

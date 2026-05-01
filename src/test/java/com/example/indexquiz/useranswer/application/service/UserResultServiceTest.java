@@ -29,24 +29,29 @@ class UserResultServiceTest extends BaseServiceTest {
         @Test
         void 사용자의_성적을_저장한다() {
             // given
-            UserResult userResult = new UserResult(QuestionSet.A, 10);
+            UserResult userResult = new UserResult(QuestionSet.A, 5, "test-visitor");
             UserResult savedUserResult = new UserResult(
                     1L,
                     userResult.getQuestionSet(),
-                    userResult.getScore()
+                    userResult.getScore(),
+                    userResult.getVisitorId()
             );
             willReturn(savedUserResult).given(saveUserResultPort).saveUserResult(userResult);
 
             // when
-            SaveUserResultRequest request = new SaveUserResultRequest(userResult.getQuestionSet(), userResult.getScore());
+            SaveUserResultRequest request = new SaveUserResultRequest(userResult.getQuestionSet(), userResult.getScore(), "test-visitor");
             SaveUserResultResponse saveUserResultResponse = userResultService.saveUserResult(request);
 
             // then
             assertAll(
                     () -> assertThat(saveUserResultResponse.id()).isEqualTo(savedUserResult.getId()),
                     () -> assertThat(saveUserResultResponse.score()).isEqualTo(savedUserResult.getScore()),
-                    () -> assertThat(saveUserResultResponse.questionSetName()).isEqualTo(savedUserResult.getQuestionSet())
+                    () -> assertThat(saveUserResultResponse.questionSetName()).isEqualTo(savedUserResult.getQuestionSet()),
+                    () -> assertThat(saveUserResultResponse.scoreDistribution()).hasSize(8),
+                    () -> assertThat(saveUserResultResponse.averageScore()).isGreaterThanOrEqualTo(0),
+                    () -> assertThat(saveUserResultResponse.topPercentage()).isBetween(0.0, 100.0)
             );
         }
+
     }
 }

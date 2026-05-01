@@ -449,6 +449,164 @@ header p,
     color: #FFFF66;
 }
 
+/* ========== 블록쿼트(인용구) 스타일 ========== */
+.markdown-blockquote {
+    background: linear-gradient(135deg, rgba(168, 216, 255, 0.08), rgba(74, 222, 128, 0.04));
+    border-left: 4px solid #4ade80;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin: 18px 0;
+    color: #d1d9e6;
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
+    line-height: 1.7;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(168, 216, 255, 0.1);
+    border-left: 4px solid #4ade80;
+}
+
+.markdown-blockquote p {
+    margin-bottom: 8px;
+    color: #d1d9e6;
+}
+
+.markdown-blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+.markdown-blockquote .markdown-bold {
+    color: #ffffff;
+}
+
+.markdown-blockquote .markdown-blockquote {
+    margin: 12px 0;
+    border-left-color: #a8d8ff;
+    background: rgba(168, 216, 255, 0.06);
+}
+
+/* ========== 리스트 스타일 ========== */
+.markdown-list {
+    margin: 14px 0;
+    padding-left: 1.8em;
+    color: #e8f4fd;
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
+    line-height: 1.7;
+}
+
+/* 중첩 리스트 */
+.markdown-list .markdown-list {
+    margin: 6px 0;
+    padding-left: 1.6em;
+}
+
+.markdown-list-item {
+    margin-bottom: 6px;
+    padding-left: 0.4em;
+}
+
+.markdown-list-item::marker {
+    color: #4ade80;
+}
+
+ol.markdown-list {
+    list-style-type: decimal;
+    padding-left: 2em;
+}
+
+ol.markdown-list .markdown-list-item::marker {
+    color: #a8d8ff;
+    font-weight: 600;
+}
+
+ol.markdown-list .markdown-list-item {
+    padding-left: 0.3em;
+}
+
+/* ========== 체크박스(체크리스트) 스타일 ========== */
+.markdown-checklist {
+    list-style: none;
+    padding-left: 8px;
+}
+
+.markdown-task-item {
+    margin-bottom: 8px;
+    padding-left: 0;
+}
+
+.markdown-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+    user-select: none;
+}
+
+.markdown-checkbox-label:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.markdown-checkbox {
+    display: none;
+}
+
+.markdown-checkbox-custom {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 2px solid rgba(168, 216, 255, 0.4);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 2px;
+    position: relative;
+}
+
+.markdown-checkbox-custom::after {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 10px;
+    border: solid transparent;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.2s ease;
+    margin-top: -2px;
+}
+
+.markdown-checkbox:checked + .markdown-checkbox-custom {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    border-color: #22c55e;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+.markdown-checkbox:checked + .markdown-checkbox-custom::after {
+    border-color: #ffffff;
+    transform: rotate(45deg) scale(1);
+}
+
+.markdown-checkbox-label.checked .markdown-checkbox-text {
+    color: rgba(168, 216, 255, 0.5);
+    text-decoration: line-through;
+    text-decoration-color: rgba(168, 216, 255, 0.3);
+}
+
+.markdown-checkbox-text {
+    flex: 1;
+    color: #e8f4fd;
+    line-height: 1.6;
+    transition: color 0.2s ease;
+}
+
+.markdown-checkbox-text p {
+    margin: 0;
+    display: inline;
+}
+
 /* 이미지 컨테이너 스타일 */
 .image-container {
     text-align: center;
@@ -655,6 +813,27 @@ header p,
     flex-wrap: wrap;
 }
 
+.learn-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(45deg, #3b82f6, #2563eb);
+    color: white;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.learn-link-btn:hover {
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.6);
+    transform: translateY(-2px);
+}
+
 .home-return-btn {
     display: inline-flex;
     align-items: center;
@@ -827,6 +1006,56 @@ header p,
     z-index: 1;
 }
 
+.score-stats {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    animation: fadeIn 0.8s ease-out;
+}
+
+.stats-title {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.histogram {
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.distribution-chart {
+    width: 100%;
+    height: auto;
+}
+
+.stats-summary {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #4ade80;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -938,6 +1167,25 @@ header p,
     .score {
         padding: 25px;
         border-radius: 20px;
+    }
+
+    /* 블록쿼트 모바일 */
+    .markdown-blockquote {
+        padding: 12px 14px;
+        margin: 14px 0;
+        font-size: 0.85rem;
+    }
+
+    /* 리스트 모바일 */
+    .markdown-list {
+        padding-left: 20px;
+    }
+
+    /* 체크박스 모바일 */
+    .markdown-checkbox-custom {
+        width: 18px;
+        height: 18px;
+        min-width: 18px;
     }
 
     /* ===== 테이블: 카드형 레이아웃으로 전환 ===== */
@@ -1195,13 +1443,13 @@ header p,
 
 .side-ad {
     width: 160px;
-    min-height: 600px;
     flex-shrink: 0;
     position: sticky;
     top: 20px;
     display: none;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     padding-top: 40px;
 }
 

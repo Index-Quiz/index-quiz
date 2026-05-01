@@ -4,7 +4,8 @@ import com.example.indexquiz.question.domain.QuestionSet;
 
 public record SaveUserResultRequest(
         QuestionSet questionSetName,
-        int score
+        int score,
+        String visitorId
 ) {
 
 }

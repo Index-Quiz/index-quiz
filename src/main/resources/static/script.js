@@ -121,151 +121,6 @@ async function submitAnswerToAPI(questionId, selectedAnswers) {
     }
 }
 
-// SQL 키워드 하이라이팅 함수
-function highlightSQL(code) {
-    const sqlKeywords = [
-        'SELECT', 'FROM', 'WHERE', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 'ALTER',
-        'TABLE', 'INDEX', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'CONSTRAINT',
-        'AUTO_INCREMENT', 'NOT', 'NULL', 'DEFAULT', 'UNIQUE', 'CHECK',
-        'AND', 'OR', 'IN', 'LIKE', 'BETWEEN', 'ORDER', 'BY', 'GROUP', 'HAVING',
-        'LIMIT', 'OFFSET', 'JOIN', 'LEFT', 'RIGHT', 'INNER', 'OUTER', 'ON',
-        'UNION', 'DISTINCT', 'AS', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END',
-        'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'CONCAT', 'FLOOR', 'RAND',
-        'VARCHAR', 'INT', 'BIGINT', 'DECIMAL', 'DATE', 'DATETIME', 'TIMESTAMP'
-    ];
-
-    let highlightedCode = code;
-
-    // SQL 키워드 하이라이팅
-    sqlKeywords.forEach(keyword => {
-        const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
-        highlightedCode = highlightedCode.replace(regex, `<span class="sql-keyword">${keyword}</span>`);
-    });
-
-    // 문자열 하이라이팅 ('문자열')
-    highlightedCode = highlightedCode.replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>');
-
-    // 숫자 하이라이팅
-    highlightedCode = highlightedCode.replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>');
-
-    // 주석 하이라이팅 (-- 주석)
-    highlightedCode = highlightedCode.replace(/(--.*$)/gm, '<span class="sql-comment">$1</span>');
-
-    return highlightedCode;
-}
-
-// HTML 속성용 이스케이프 (data-label 등에 사용)
-function escapeHtmlAttr(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-}
-
-// 마크다운 텍스트를 HTML로 변환 (완전한 마크다운 지원)
-function parseMarkdownToHtml(content) {
-    let html = content;
-
-    // 코드 블록 변환 (```언어\n코드\n``` 형식) - 먼저 처리하여 다른 변환과 충돌 방지
-    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, language, code) => {
-        const lang = language || '';
-        const langClass = lang ? ` class="language-${lang}"` : '';
-
-        // SQL 코드인 경우 하이라이팅 적용
-        let processedCode = code.trim();
-        if (lang.toLowerCase() === 'sql') {
-            processedCode = highlightSQL(processedCode);
-        }
-
-        return `<div class="code-block">
-            ${lang ? `<div class="code-header">${lang.toUpperCase()}</div>` : ''}
-            <pre><code${langClass}>${processedCode}</code></pre>
-        </div>`;
-    });
-
-    // 테이블 변환 (| 헤더 | 헤더 | 형식)
-    html = html.replace(/(\|.*\|\n\|.*\|\n(?:\|.*\|\n?)*)/g, (match) => {
-        const rows = match.trim().split('\n');
-        if (rows.length < 2) return match;
-
-        const headerRow = rows[0];
-        const separatorRow = rows[1];
-        const dataRows = rows.slice(2);
-
-        // 헤더 파싱
-        const headers = headerRow.split('|').map(h => h.trim()).filter(h => h);
-
-        // 데이터 행 파싱 - 각 td에 data-label 속성으로 헤더 이름 주입 (모바일 카드형 레이아웃용)
-        const dataRowsHtml = dataRows.map(row => {
-            const cells = row.split('|').map(c => c.trim()).filter(c => c);
-            const tdsHtml = cells.map((cell, i) => {
-                const label = headers[i] !== undefined ? escapeHtmlAttr(headers[i]) : '';
-                return `<td data-label="${label}">${cell}</td>`;
-            }).join('');
-            return `<tr>${tdsHtml}</tr>`;
-        }).join('');
-
-        return `<div class="table-container">
-            <table class="markdown-table">
-                <thead>
-                    <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
-                </thead>
-                <tbody>
-                    ${dataRowsHtml}
-                </tbody>
-            </table>
-        </div>`;
-    });
-
-    // 헤딩 변환 (## 헤딩)
-    html = html.replace(/^### (.*$)/gm, '<h3 class="markdown-h3">$1</h3>');
-    html = html.replace(/^## (.*$)/gm, '<h2 class="markdown-h2">$1</h2>');
-    html = html.replace(/^# (.*$)/gm, '<h1 class="markdown-h1">$1</h1>');
-
-    // 구분선 변환 (---)
-    html = html.replace(/^---$/gm, '<hr class="markdown-divider">');
-
-    // 이미지 변환 (onclick 제거 - 이벤트 리스너에서 처리)
-    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,
-        '<div class="image-container"><img src="$2" alt="$1" class="question-image" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';" onload="this.style.opacity=\'1\';" style="opacity: 0; transition: opacity 0.5s ease; cursor: pointer;"><div class="image-placeholder" style="display: none;">📷 이미지를 불러올 수 없습니다</div></div>'
-    );
-
-    // 마크다운 링크 변환 (공백 허용)
-    html = html.replace(/\[([^\]]+)\]\(\s*([^\)]+)\s*\)/g, (match, text, url) => {
-        return `<a href="${url}" class="markdown-link" target="_blank" rel="noopener noreferrer">${text}</a>`;
-    });
-
-    // 인라인 코드 변환 (`코드` 형식)
-    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
-
-    // 볼드 텍스트 변환
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="markdown-bold">$1</strong>');
-
-    // details/summary 변환 (마우스 인터랙션 있는 summary 적용)
-    html = html.replace(/<details>\s*<summary>(.*?)<\/summary>/g, (match, summaryText) => {
-        return `<details><summary class="explanation-summary">${summaryText}</summary>`;
-    });
-
-    // 줄바꿈을 단락으로 변환
-    html = html.split('\n\n').map(paragraph => {
-        paragraph = paragraph.trim();
-        if (!paragraph) return '';
-
-        // 이미 HTML 태그로 시작하는 경우 그대로 반환
-        if (paragraph.startsWith('<h') || paragraph.startsWith('<div') ||
-            paragraph.startsWith('<hr') || paragraph.startsWith('<table')) {
-            return paragraph;
-        }
-
-        // 일반 텍스트는 p 태그로 감싸기
-        return `<p class="markdown-paragraph">${paragraph.replace(/\n/g, '<br>')}</p>`;
-    }).join('');
-
-    return html;
-}
-
 // 퀴즈 상태 변수들
 let quizStartId = 0;
 let currentQuestionIndex = 0;
@@ -428,6 +283,7 @@ async function loadQuestion() {
         setTimeout(() => {
             // 마크다운 콘텐츠를 HTML로 변환하여 표시
             questionText.innerHTML = parseMarkdownToHtml(currentQuestion.content);
+            bindImageEvents(questionText);
             questionText.style.transition = 'all 0.5s ease';
             questionText.style.opacity = '1';
             questionText.style.transform = 'translateY(0)';
@@ -705,6 +561,7 @@ async function submitAnswer() {
 
         if (isLastQuestion) {
             nextBtn.textContent = '결과 보기';
+            submitUserResult();
         } else {
             nextBtn.textContent = '다음 문제';
         }
@@ -750,23 +607,25 @@ async function nextQuestion() {
 }
 
 // 최종 결과 표시
+let isSubmittingResult = false;
+
 function showFinalResult() {
+    if (isSubmittingResult) return;
+    isSubmittingResult = true;
+
     // ✅ 퀴즈 완료 시 진행 상황 삭제
     QuizStorage.clear();
 
     quizContainer.style.opacity = '0';
     quizContainer.style.transform = 'translateX(-100px)';
 
-    const response = fetch(`/api/user-answers/results`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            questionSetName: quizSet,
-            score: score
-        })
-    });
+    // 이미 저장된 통계 데이터로 그래프 렌더링
+    renderSavedStats();
+
+    // 학습자료 버튼 설정 (BEST_DIFFICULT 제외)
+    if (!isBestDifficultMode) {
+        setupLearnButton(quizSet);
+    }
 
     setTimeout(() => {
         quizContainer.style.display = 'none';
@@ -803,6 +662,251 @@ function showFinalResult() {
         }, 1500);
 
     }, 300);
+}
+
+// 결과 저장 (마지막 문제 채점 시 호출)
+let savedStatsData = null;
+
+async function submitUserResult() {
+    try {
+        const response = await fetch(`/api/user-answers/results`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                questionSetName: quizSet,
+                score: score
+            })
+        });
+        if (response.ok) {
+            savedStatsData = await response.json();
+        }
+    } catch (e) {
+        console.error('Failed to save result:', e);
+    }
+}
+
+// 학습자료 버튼 설정
+async function setupLearnButton(setName) {
+    try {
+        const response = await fetch('/api/learn-materials?set=' + setName);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data.materials && data.materials.length > 0) {
+            const learnBtn = document.getElementById('learnBtn');
+            learnBtn.href = 'learn.html?set=' + setName + '&id=' + data.materials[0].id;
+            learnBtn.style.display = '';
+        }
+    } catch (e) {
+        console.error('학습자료 로드 실패:', e);
+    }
+}
+
+// 통계 분포 그래프 렌더링 (결과 보기 화면 진입 시 호출)
+function renderSavedStats() {
+    if (savedStatsData && savedStatsData.scoreDistribution) {
+        renderScoreStats(savedStatsData);
+    }
+}
+
+// Catmull-Rom → Cubic Bezier 변환
+function catmullRomToBezier(points) {
+    const d = [];
+    for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[Math.max(i - 1, 0)];
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const p3 = points[Math.min(i + 2, points.length - 1)];
+
+        const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+        const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+        const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+        const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+
+        if (i === 0) d.push(`M${p1[0]},${p1[1]}`);
+        d.push(`C${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`);
+    }
+    return d.join(' ');
+}
+
+// 곡선 위의 특정 x좌표에서 y값 보간
+function getYOnCurve(points, targetX) {
+    for (let i = 0; i < points.length - 1; i++) {
+        if (targetX >= points[i][0] && targetX <= points[i + 1][0]) {
+            const t = (targetX - points[i][0]) / (points[i + 1][0] - points[i][0]);
+            return points[i][1] + t * (points[i + 1][1] - points[i][1]);
+        }
+    }
+    return points[points.length - 1][1];
+}
+
+// 점수 분포도 렌더링 (SVG 곡선 그래프)
+function renderScoreStats(data) {
+    if (!Number.isFinite(data.score) || !Number.isFinite(data.averageScore) || !Number.isFinite(data.topPercentage)) {
+        return;
+    }
+
+    const statsContainer = document.getElementById('scoreStats');
+    const histogram = document.getElementById('histogram');
+    const avgScoreEl = document.getElementById('avgScore');
+    const topPercentEl = document.getElementById('topPercent');
+
+    const distribution = data.scoreDistribution.map(v => v ?? 0);
+    const maxCount = Math.max(...distribution, 1);
+    const maxIndex = distribution.length - 1;
+
+    // SVG 좌표 설정
+    const W = 280, H = 110;
+    const padL = 20, padR = 20, padT = 15, padB = 25;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+
+    // 데이터 포인트 생성
+    const points = distribution.map((count, i) => {
+        const x = padL + (i / maxIndex) * chartW;
+        const y = padT + chartH - (count / maxCount) * chartH;
+        return [x, y];
+    });
+
+    const baseline = padT + chartH;
+    const curvePath = catmullRomToBezier(points);
+    const lastPoint = points[points.length - 1];
+    const firstPoint = points[0];
+
+    // 유저 점수의 x좌표와 y좌표
+    const userX = padL + (data.score / maxIndex) * chartW;
+    const userY = getYOnCurve(points, userX);
+
+    // 전체 영역 path (곡선 아래 전체)
+    const fullAreaPath = curvePath + ` L${lastPoint[0]},${baseline} L${firstPoint[0]},${baseline} Z`;
+
+    // 상위 영역 path (유저 점수 이상 영역) - clipPath 사용
+    const clipId = 'clip-top-' + Date.now();
+
+    // X축 라벨 생성
+    let labels = '';
+    for (let i = 0; i <= maxIndex; i++) {
+        const x = padL + (i / maxIndex) * chartW;
+        const isUser = i === data.score;
+        const fill = isUser ? '#4ade80' : 'rgba(255,255,255,0.5)';
+        const weight = isUser ? 'bold' : 'normal';
+        const size = isUser ? '11' : '10';
+        labels += `<text x="${x}" y="${baseline + 16}" text-anchor="middle" fill="${fill}" font-size="${size}" font-weight="${weight}">${i}</text>`;
+    }
+
+    const isPerfect = data.score === maxIndex;
+
+    // "YOU" / "PERFECT!" 라벨
+    const labelY = Math.max(userY - 12, 10);
+    const labelAnchor = isPerfect ? 'end' : 'middle';
+    const labelText = isPerfect ? 'PERFECT!' : 'YOU';
+    const labelSize = isPerfect ? '11' : '10';
+    const youLabel = `<text x="${userX}" y="${labelY}" text-anchor="${labelAnchor}" fill="#4ade80" font-size="${labelSize}" font-weight="bold" class="${isPerfect ? 'perfect-label' : ''}">${labelText}</text>`;
+
+    const chartClipId = 'clip-chart-' + Date.now();
+
+    // 만점 축하 파티클 생성
+    let perfectEffects = '';
+    if (isPerfect) {
+        const sparkles = [];
+        const angles = [0, 45, 90, 135, 180, 225, 270, 315];
+        angles.forEach((angle, idx) => {
+            const rad = angle * Math.PI / 180;
+            const dist = 18;
+            const sx = userX + Math.cos(rad) * dist;
+            const sy = userY + Math.sin(rad) * dist;
+            const size = idx % 2 === 0 ? 1.5 : 1;
+            const delay = idx * 0.15;
+            sparkles.push(`<circle cx="${sx}" cy="${sy}" r="${size}" fill="#fbbf24" class="sparkle" style="animation-delay: ${delay}s" />`);
+        });
+        perfectEffects = sparkles.join('\n            ');
+    }
+
+    const svg = `
+    <svg viewBox="0 0 ${W} ${H}" class="distribution-chart" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <clipPath id="${clipId}">
+                <rect x="${userX}" y="0" width="${W - userX}" height="${H}" />
+            </clipPath>
+            <clipPath id="${chartClipId}">
+                <rect x="0" y="0" width="${W}" height="${baseline}" />
+            </clipPath>
+            <style>
+                @keyframes chartPulse {
+                    0%, 100% { opacity: 0.4; r: 7; }
+                    50% { opacity: 0.8; r: 10; }
+                }
+                @keyframes chartGlow {
+                    0%, 100% { opacity: 0.15; }
+                    50% { opacity: 0.3; }
+                }
+                @keyframes chartFlow {
+                    from { stroke-dashoffset: 12; }
+                    to { stroke-dashoffset: 0; }
+                }
+                @keyframes chartDotPulse {
+                    0%, 100% { r: 4; }
+                    50% { r: 5; }
+                }
+                @keyframes sparkleAnim {
+                    0%, 100% { opacity: 0; transform: scale(0.5); }
+                    50% { opacity: 1; transform: scale(1.2); }
+                }
+                @keyframes perfectGlow {
+                    0%, 100% { opacity: 0.3; r: 10; }
+                    50% { opacity: 0.6; r: 16; }
+                }
+                @keyframes perfectLabelGlow {
+                    0%, 100% { fill: #4ade80; }
+                    50% { fill: #fbbf24; }
+                }
+                .chart-ring { animation: chartPulse 2s ease-in-out infinite; }
+                .chart-highlight { animation: chartGlow 3s ease-in-out infinite; }
+                .chart-dot { animation: chartDotPulse 2s ease-in-out infinite; }
+                .chart-dash { animation: chartFlow 1s linear infinite; }
+                .sparkle { animation: sparkleAnim 1.5s ease-in-out infinite; }
+                .perfect-ring { animation: perfectGlow 1.5s ease-in-out infinite; }
+                .perfect-label { animation: perfectLabelGlow 2s ease-in-out infinite; }
+            </style>
+        </defs>
+
+        <g clip-path="url(#${chartClipId})">
+            <!-- 전체 곡선 아래 영역 -->
+            <path d="${fullAreaPath}" fill="rgba(255,255,255,0.07)" />
+
+            <!-- 상위 분포 영역 (유저 점수 이상) -->
+            <path d="${fullAreaPath}" class="chart-highlight" fill="rgba(74,222,128,0.2)" clip-path="url(#${clipId})" />
+
+            <!-- 곡선 -->
+            <path d="${curvePath}" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" />
+
+            <!-- 상위 영역 곡선 강조 -->
+            <path d="${curvePath}" stroke="#4ade80" stroke-width="2" fill="none" clip-path="url(#${clipId})" />
+
+            <!-- 유저 위치 세로선 -->
+            <line x1="${userX}" y1="${padT}" x2="${userX}" y2="${baseline}" class="chart-dash" stroke="#4ade80" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+
+        </g>
+
+        <!-- 만점 축하 효과 -->
+        ${isPerfect ? `<circle cx="${userX}" cy="${userY}" r="10" fill="none" stroke="#fbbf24" stroke-width="1" class="perfect-ring" />` : ''}
+        ${perfectEffects}
+
+        <!-- 유저 위치 점 -->
+        <circle cx="${userX}" cy="${userY}" r="4" fill="${isPerfect ? '#fbbf24' : '#4ade80'}" class="chart-dot" />
+        <circle cx="${userX}" cy="${userY}" r="7" fill="none" stroke="${isPerfect ? '#fbbf24' : '#4ade80'}" stroke-width="1" opacity="0.4" class="chart-ring" />
+
+        ${youLabel}
+        ${labels}
+    </svg>`;
+
+    histogram.innerHTML = svg;
+
+    avgScoreEl.textContent = data.averageScore + '점';
+    topPercentEl.textContent = '상위 ' + data.topPercentage + '%';
+
+    statsContainer.style.display = 'block';
 }
 
 // 점수 카운트업 애니메이션
@@ -864,6 +968,7 @@ function displayExplanationFromAPI(explanationText) {
     const htmlContent = parseMarkdownToHtml(explanationText);
 
     explanationContent.innerHTML = htmlContent;
+    bindImageEvents(explanationContent);
 
     // 이미지 클릭 시 확대 기능
     const images = explanationContent.querySelectorAll('.question-image');
@@ -1024,5 +1129,22 @@ document.addEventListener('keydown', (e) => {
     // Enter 키로 답 제출
     if (e.code === 'Enter' && selectedAnswers.length > 0 && !isAnswered) {
         submitAnswer();
+    }
+});
+
+// 목차 앵커 링크 클릭 시 부드러운 스크롤
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a.anchor-link');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+
+    const id = decodeURIComponent(href.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 선택: URL 해시 갱신 (뒤로가기 지원)
+        history.pushState(null, '', href);
     }
 });

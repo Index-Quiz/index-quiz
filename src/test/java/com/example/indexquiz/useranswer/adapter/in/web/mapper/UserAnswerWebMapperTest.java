@@ -36,11 +36,12 @@ class UserAnswerWebMapperTest {
         void web_dto에서_어플리케이션_dto로_매핑할_수_있다() {
             SaveUserAnswerWebRequest origin = new SaveUserAnswerWebRequest(1L, List.of(1L, 2L));
 
-            SaveUserAnswerRequest target = userAnswerWebMapper.mapToSaveUserAnswerRequest(origin);
+            SaveUserAnswerRequest target = userAnswerWebMapper.mapToSaveUserAnswerRequest(origin, "test-visitor");
 
             assertAll(
                     () -> assertThat(target.questionId()).isEqualTo(origin.questionId()),
-                    () -> assertThat(target.options()).containsExactlyElementsOf(origin.options())
+                    () -> assertThat(target.options()).containsExactlyElementsOf(origin.options()),
+                    () -> assertThat(target.visitorId()).isEqualTo("test-visitor")
             );
         }
     }
@@ -88,11 +89,12 @@ class UserAnswerWebMapperTest {
         void web_dto에서_어플리케이션_dto로_매핑할_수_있다() {
             SaveUserResultWebRequest origin = new SaveUserResultWebRequest(QuestionSet.A.name(), 14);
 
-            SaveUserResultRequest target = userAnswerWebMapper.mapToSaveUserResultRequest(origin);
+            SaveUserResultRequest target = userAnswerWebMapper.mapToSaveUserResultRequest(origin, "test-visitor");
 
             assertAll(
                     () -> assertThat(target.questionSetName().name()).isEqualTo(origin.questionSetName()),
-                    () -> assertThat(target.score()).isEqualTo(origin.score())
+                    () -> assertThat(target.score()).isEqualTo(origin.score()),
+                    () -> assertThat(target.visitorId()).isEqualTo("test-visitor")
             );
         }
     }
@@ -102,14 +104,21 @@ class UserAnswerWebMapperTest {
 
         @Test
         void 어플리케이션_dto에서_web_dto로_매핑할_수_있다() {
-            SaveUserResultResponse origin = new SaveUserResultResponse(1L, QuestionSet.A, 10);
+            SaveUserResultResponse origin = new SaveUserResultResponse(
+                    1L, QuestionSet.A, 10,
+                    List.of(1L, 2L, 3L, 5L, 8L, 10L, 4L, 2L),
+                    3.52, 42.0
+            );
 
             SaveUserResultWebResponse target = userAnswerWebMapper.mapToSaveUserResultWebResponse(origin);
 
             assertAll(
                     () -> assertThat(target.id()).isEqualTo(origin.id()),
                     () -> assertThat(target.questionSetName()).isEqualTo(origin.questionSetName().name()),
-                    () -> assertThat(target.score()).isEqualTo(origin.score())
+                    () -> assertThat(target.score()).isEqualTo(origin.score()),
+                    () -> assertThat(target.scoreDistribution()).isEqualTo(origin.scoreDistribution()),
+                    () -> assertThat(target.averageScore()).isEqualTo(origin.averageScore()),
+                    () -> assertThat(target.topPercentage()).isEqualTo(origin.topPercentage())
             );
         }
     }
