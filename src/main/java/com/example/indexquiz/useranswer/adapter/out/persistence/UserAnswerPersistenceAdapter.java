@@ -14,6 +14,7 @@ import com.example.indexquiz.question.application.port.out.dto.DifficultQuestion
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
 import com.example.indexquiz.useranswer.domain.ScoreCount;
 import com.example.indexquiz.useranswer.domain.ScoreCounts;
+import com.example.indexquiz.useranswer.domain.SetBestScore;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
 import com.example.indexquiz.useranswer.domain.UserResult;
 import com.example.indexquiz.useranswer.domain.VisitorProgress;
@@ -88,6 +89,11 @@ public class UserAnswerPersistenceAdapter implements
 
     @Override
     public VisitorProgress getByVisitorId(String visitorId) {
-        return new VisitorProgress(userResultJpaRepository.findBestScoresByVisitorId(visitorId));
+        List<SetBestScore> visitorBestScores = userResultJpaRepository.findBestScoresByVisitorId(
+                visitorId,
+                QuestionSet.QUESTIONS_PER_SET,
+                List.of(QuestionSet.BEST_DIFFICULT)
+        );
+        return new VisitorProgress(visitorBestScores);
     }
 }

@@ -22,9 +22,14 @@ public interface UserResultJpaRepository extends JpaRepository<UserResultEntity,
             @Param("maxScore") int maxScore);
 
     @Query("SELECT new com.example.indexquiz.useranswer.domain.SetBestScore(ur.questionSet, MAX(ur.score)) "
-         + "FROM UserResultEntity ur "
-         + "WHERE ur.visitorId = :visitorId "
-         + "AND ur.questionSet <> com.example.indexquiz.question.domain.QuestionSet.BEST_DIFFICULT "
-         + "GROUP BY ur.questionSet")
-    List<SetBestScore> findBestScoresByVisitorId(@Param("visitorId") String visitorId);
+            + "FROM UserResultEntity ur "
+            + "WHERE ur.visitorId = :visitorId "
+            + "AND ur.questionSet not in :excluded "
+            + "AND ur.score <= :maxScore "
+            + "GROUP BY ur.questionSet")
+    List<SetBestScore> findBestScoresByVisitorId(
+            @Param("visitorId") String visitorId,
+            @Param("maxScore") int maxScore,
+            @Param("excluded") List<QuestionSet> excluded
+    );
 }
