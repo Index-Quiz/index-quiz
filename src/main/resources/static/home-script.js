@@ -214,12 +214,13 @@ async function loadVisitorProgress() {
             const setName = tab.dataset.set;
             if (data.bestScore[setName] == null) return;
 
-            tab.classList.add('set-completed');
+            const isPerfect = data.bestScore[setName] === 7;
+            tab.classList.add(isPerfect ? 'set-perfect' : 'set-completed');
 
             const badge = tab.querySelector('.bookmark-badge');
             if (badge) {
                 const bestScoreDiv = document.createElement('div');
-                bestScoreDiv.className = 'best-score-badge';
+                bestScoreDiv.className = isPerfect ? 'best-score-badge perfect' : 'best-score-badge';
                 bestScoreDiv.textContent = '최고 ' + data.bestScore[setName] + '/7';
                 badge.appendChild(bestScoreDiv);
             }

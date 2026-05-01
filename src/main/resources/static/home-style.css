@@ -1513,7 +1513,14 @@ a.contributor-item {
     box-shadow: 0 0 12px rgba(74, 222, 128, 0.15);
 }
 
-.bookmark-tab.set-completed .bookmark-badge .best-score-badge {
+/* 만점 퀴즈 탭 */
+.bookmark-tab.set-perfect .bookmark-content {
+    border: 2px solid rgba(250, 204, 21, 0.7);
+    box-shadow: 0 0 14px rgba(250, 204, 21, 0.2);
+}
+
+.bookmark-tab.set-completed .bookmark-badge .best-score-badge,
+.bookmark-tab.set-perfect .bookmark-badge .best-score-badge {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -1524,4 +1531,10 @@ a.contributor-item {
     background: rgba(74, 222, 128, 0.12);
     color: #4ade80;
     border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.bookmark-tab.set-perfect .bookmark-badge .best-score-badge.perfect {
+    background: rgba(250, 204, 21, 0.12);
+    color: #facc15;
+    border: 1px solid rgba(250, 204, 21, 0.3);
 }
