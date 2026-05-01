@@ -1,12 +1,13 @@
 package com.example.indexquiz.useranswer.domain;
 
+import com.example.indexquiz.question.domain.QuestionSet;
 import java.util.List;
 import lombok.Getter;
 
 @Getter
 public class VisitorProgress {
 
-    private static final int TRACKABLE_SET_COUNT = 8;
+    private static final int TRACKABLE_SET_COUNT = QuestionSet.ALL_SETS.size() -1;
 
     private final List<SetBestScore> completedSets;
 

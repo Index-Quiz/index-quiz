@@ -22,8 +22,8 @@ public enum QuestionSet {
     BEST_DIFFICULT(7),
     ;
 
-    private static final List<QuestionSet> ALL_SETS = List.of(values());
-    private static final int QUESTIONS_PER_SET = 7;
+    public static final List<QuestionSet> ALL_SETS = List.of(values());
+    public static final int QUESTIONS_PER_SET = 7;
 
     private final int questionCount;
 
@@ -48,6 +48,4 @@ public enum QuestionSet {
         }
         return Optional.of(questionSet);
     }
-
-
 }
