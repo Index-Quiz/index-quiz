@@ -107,6 +107,6 @@ public class UserAnswerController {
                     GetVisitorProgressWebResponse webResponse = userAnswerWebMapper.mapToGetVisitorProgressWebResponse(response);
                     return ResponseEntity.ok(webResponse);
                 })
-                .orElseGet(() -> ResponseEntity.ok(new GetVisitorProgressWebResponse(List.of(), 0)));
+                .orElseGet(() -> ResponseEntity.ok(GetVisitorProgressWebResponse.noneProgress()));
     }
 }

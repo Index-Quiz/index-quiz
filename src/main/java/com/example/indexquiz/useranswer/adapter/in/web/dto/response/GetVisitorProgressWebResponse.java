@@ -7,4 +7,7 @@ public record GetVisitorProgressWebResponse(
         int progressPercentage
 ) {
 
+    public static GetVisitorProgressWebResponse noneProgress() {
+        return new GetVisitorProgressWebResponse(List.of(), 0);
+    }
 }
