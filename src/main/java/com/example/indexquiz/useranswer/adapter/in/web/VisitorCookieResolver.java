@@ -33,7 +33,7 @@ public class VisitorCookieResolver {
                 .filter(cookie -> COOKIE_NAME.equals(cookie.getName()))
                 .map(Cookie::getValue)
                 .filter(this::isValidUuid)
-                .findFirst();
+                .findAny();
     }
 
     private boolean isValidUuid(String value) {
