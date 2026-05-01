@@ -11,9 +11,11 @@ import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswe
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetQuestionSetAveragesWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetVisitorProgressWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
 import com.example.indexquiz.useranswer.application.port.in.GetQuestionSetAveragesUseCase;
 import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
+import com.example.indexquiz.useranswer.application.port.in.GetVisitorProgressUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserResultUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.GetUserAnswerRequest;
@@ -23,6 +25,7 @@ import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUser
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.GetVisitorProgressResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.List;
@@ -45,6 +48,9 @@ public class UserAnswerControllerTest extends BaseControllerTest {
 
     @MockitoBean
     private GetQuestionSetAveragesUseCase getQuestionSetAveragesUseCase;
+
+    @MockitoBean
+    private GetVisitorProgressUseCase getVisitorProgressUseCase;
 
 
     @Nested
@@ -159,6 +165,52 @@ public class UserAnswerControllerTest extends BaseControllerTest {
                     () -> assertThat(saveUserResultWebResponse.id()).isEqualTo(response.id()),
                     () -> assertThat(saveUserResultWebResponse.score()).isEqualTo(response.score()),
                     () -> assertThat(saveUserResultWebResponse.questionSetName()).isEqualTo(response.questionSetName().name())
+            );
+        }
+    }
+
+    @Nested
+    class GetVisitorProgress {
+
+        @Test
+        void 쿠키가_없으면_빈_진행도를_반환한다() {
+            GetVisitorProgressWebResponse webResponse = RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .when().get("/api/user-answers/progress")
+                    .then().log().all()
+                    .statusCode(200)
+                    .extract().as(GetVisitorProgressWebResponse.class);
+
+            assertAll(
+                    () -> assertThat(webResponse.bestScore()).isEmpty(),
+                    () -> assertThat(webResponse.progressPercentage()).isEqualTo(0)
+            );
+        }
+
+        @Test
+        void 쿠키가_있으면_방문자의_진행도를_반환한다() {
+            // given
+            String visitorId = UUID.randomUUID().toString();
+            GetVisitorProgressResponse response = new GetVisitorProgressResponse(
+                    Map.of(QuestionSet.A, 6, QuestionSet.C, 7),
+                    25
+            );
+            given(getVisitorProgressUseCase.getProgress(visitorId)).willReturn(response);
+
+            // when
+            GetVisitorProgressWebResponse webResponse = RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .cookie("visitor_id", visitorId)
+                    .when().get("/api/user-answers/progress")
+                    .then().log().all()
+                    .statusCode(200)
+                    .extract().as(GetVisitorProgressWebResponse.class);
+
+            // then
+            assertAll(
+                    () -> assertThat(webResponse.bestScore()).containsEntry("A", 6),
+                    () -> assertThat(webResponse.bestScore()).containsEntry("C", 7),
+                    () -> assertThat(webResponse.progressPercentage()).isEqualTo(25)
             );
         }
     }

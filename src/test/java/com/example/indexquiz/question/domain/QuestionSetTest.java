@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import com.example.indexquiz.common.exception.custom.IndexQuizException;
 import com.example.indexquiz.common.exception.errorcode.ErrorCode;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class QuestionSetTest {
@@ -30,6 +32,41 @@ class QuestionSetTest {
                         IndexQuizException ex = (IndexQuizException) exception;
                         assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.SCORE_OUT_OF_RANGE);
                     });
+        }
+    }
+
+    @Nested
+    class FindByQuestionOrder {
+
+        @ParameterizedTest
+        @CsvSource({
+                "1, A", "7, A",
+                "8, B", "14, B",
+                "15, C", "21, C",
+                "22, D", "28, D",
+                "29, E", "35, E",
+                "36, F", "42, F",
+                "43, G", "49, G",
+                "50, H", "56, H"
+        })
+        void 문제_순서로_퀴즈_세트를_찾는다(long questionOrder, String expectedSet) {
+            QuestionSet result = QuestionSet.findByQuestionOrder(questionOrder);
+
+            assertThat(result).isEqualTo(QuestionSet.valueOf(expectedSet));
+        }
+
+        @Test
+        void BEST_DIFFICULT_범위의_문제는_null을_반환한다() {
+            QuestionSet result = QuestionSet.findByQuestionOrder(57);
+
+            assertThat(result).isNull();
+        }
+
+        @Test
+        void 범위를_벗어난_문제는_null을_반환한다() {
+            QuestionSet result = QuestionSet.findByQuestionOrder(100);
+
+            assertThat(result).isNull();
         }
     }
 }
