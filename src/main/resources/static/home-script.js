@@ -199,10 +199,6 @@ async function loadVisitorProgress() {
         const data = await response.json();
 
         const completedCount = Object.keys(data.bestScore).length;
-        if (completedCount === 0) return;
-
-        const wrapper = document.getElementById('progressWrapper');
-        wrapper.style.display = '';
 
         const fill = document.getElementById('progressFill');
         fill.style.width = data.progressPercentage + '%';
