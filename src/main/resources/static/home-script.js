@@ -50,38 +50,18 @@ function setupBookmarkTabs() {
 
     bookmarkTabs.forEach(tab => {
         const setName = tab.dataset.set;
-        const hasActions = tab.querySelector('.bookmark-actions');
 
-        // 클릭 이벤트 - 액션 버튼이 없는 탭(BEST_DIFFICULT)은 바로 퀴즈 이동
-        tab.addEventListener('click', (e) => {
-            if (hasActions && (e.target.closest('.action-btn') || e.target.closest('.bookmark-actions'))) {
-                return; // 액션 버튼 클릭은 별도 처리
-            }
-            if (!hasActions) {
-                console.log(`${setName}-SET 선택됨`);
+        tab.addEventListener('click', () => {
+            if (setName === 'BEST_DIFFICULT') {
                 const content = tab.querySelector('.bookmark-content');
                 content.style.transform = 'translateX(15px) scale(0.98)';
                 setTimeout(() => {
                     window.location.href = `quiz.html?set=${setName}`;
                 }, 200);
+            } else {
+                openLearnModal(setName);
             }
         });
-
-        // 액션 버튼 클릭 처리
-        if (hasActions) {
-            const quizBtn = tab.querySelector('.action-btn-quiz');
-            const learnBtn = tab.querySelector('.action-btn-learn');
-
-            quizBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.location.href = `quiz.html?set=${setName}`;
-            });
-
-            learnBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openLearnModal(setName);
-            });
-        }
 
         // 호버 시 아이콘 애니메이션
         tab.addEventListener('mouseenter', () => {
