@@ -63,6 +63,7 @@ function renderHeader() {
 function renderContent() {
     const contentEl = document.getElementById('learnContent');
     contentEl.innerHTML = parseMarkdownToHtml(currentMaterial.content);
+    bindImageEvents(contentEl);
     contentEl.style.opacity = '0';
     contentEl.style.transform = 'translateY(20px)';
 

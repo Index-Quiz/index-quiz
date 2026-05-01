@@ -8,7 +8,5 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfiguration.class)
 public interface LearnMaterialMapper {
 
-    LearnMaterialEntity mapToLearnMaterialEntity(LearnMaterial learnMaterial);
-
     LearnMaterial mapToLearnMaterial(LearnMaterialEntity learnMaterialEntity);
 }

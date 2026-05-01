@@ -22,26 +22,6 @@ class LearnMaterialMapperTest extends BaseMapperTest {
     }
 
     @Nested
-    class MapToEntity {
-
-        @Test
-        void 도메인에서_엔티티로_매핑할_수_있다() {
-            LearnMaterial learnMaterial = new LearnMaterial(1L, QuestionSet.A, "제목", "설명", "# 내용", 1);
-
-            LearnMaterialEntity entity = learnMaterialMapper.mapToLearnMaterialEntity(learnMaterial);
-
-            assertAll(
-                    () -> assertThat(entity.getId()).isEqualTo(learnMaterial.getId()),
-                    () -> assertThat(entity.getQuestionSet()).isEqualTo(learnMaterial.getQuestionSet()),
-                    () -> assertThat(entity.getTitle()).isEqualTo(learnMaterial.getTitle()),
-                    () -> assertThat(entity.getDescription()).isEqualTo(learnMaterial.getDescription()),
-                    () -> assertThat(entity.getContent()).isEqualTo(learnMaterial.getContent()),
-                    () -> assertThat(entity.getDisplayOrder()).isEqualTo(learnMaterial.getDisplayOrder())
-            );
-        }
-    }
-
-    @Nested
     class MapToDomain {
 
         @Test

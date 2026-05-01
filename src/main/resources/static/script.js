@@ -283,6 +283,7 @@ async function loadQuestion() {
         setTimeout(() => {
             // 마크다운 콘텐츠를 HTML로 변환하여 표시
             questionText.innerHTML = parseMarkdownToHtml(currentQuestion.content);
+            bindImageEvents(questionText);
             questionText.style.transition = 'all 0.5s ease';
             questionText.style.opacity = '1';
             questionText.style.transform = 'translateY(0)';
@@ -967,6 +968,7 @@ function displayExplanationFromAPI(explanationText) {
     const htmlContent = parseMarkdownToHtml(explanationText);
 
     explanationContent.innerHTML = htmlContent;
+    bindImageEvents(explanationContent);
 
     // 이미지 클릭 시 확대 기능
     const images = explanationContent.querySelectorAll('.question-image');
