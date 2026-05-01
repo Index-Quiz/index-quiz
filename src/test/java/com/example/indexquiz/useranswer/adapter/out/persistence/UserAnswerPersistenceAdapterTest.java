@@ -13,7 +13,6 @@ import com.example.indexquiz.question.domain.QuestionWithOptions;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapper;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapperImpl;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserResultMapperImpl;
-import com.example.indexquiz.useranswer.adapter.out.mapper.VisitorQuestionCompletionMapperImpl;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
 import com.example.indexquiz.useranswer.domain.UserAnswer;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
@@ -29,8 +28,7 @@ import org.springframework.context.annotation.Import;
 @Import({
         UserAnswerPersistenceAdapter.class,
         UserAnswerMapperImpl.class,
-        UserResultMapperImpl.class,
-        VisitorQuestionCompletionMapperImpl.class
+        UserResultMapperImpl.class
 })
 class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
 

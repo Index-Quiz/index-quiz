@@ -2,7 +2,6 @@ package com.example.indexquiz.useranswer.adapter.out.persistence;
 
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserAnswerMapper;
 import com.example.indexquiz.useranswer.adapter.out.mapper.UserResultMapper;
-import com.example.indexquiz.useranswer.adapter.out.mapper.VisitorQuestionCompletionMapper;
 import com.example.indexquiz.question.application.port.out.GetDifficultQuestionPort;
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.application.port.out.GetQuestionSetAveragesPort;
@@ -10,7 +9,6 @@ import com.example.indexquiz.useranswer.application.port.out.GetScoreDistributio
 import com.example.indexquiz.useranswer.application.port.out.GetVisitorProgressPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
-import com.example.indexquiz.useranswer.application.port.out.SaveVisitorQuestionCompletionPort;
 import com.example.indexquiz.useranswer.application.port.out.GetUserAnswerPort;
 import com.example.indexquiz.question.application.port.out.dto.DifficultQuestionResponses;
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
@@ -19,13 +17,10 @@ import com.example.indexquiz.useranswer.domain.ScoreCounts;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
 import com.example.indexquiz.useranswer.domain.UserResult;
 import com.example.indexquiz.useranswer.domain.VisitorProgress;
-import com.example.indexquiz.useranswer.domain.VisitorQuestionCompletion;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,7 +32,6 @@ public class UserAnswerPersistenceAdapter implements
         GetDifficultQuestionPort,
         GetScoreDistributionPort,
         GetQuestionSetAveragesPort,
-        SaveVisitorQuestionCompletionPort,
         GetVisitorProgressPort
 {
 
@@ -45,13 +39,9 @@ public class UserAnswerPersistenceAdapter implements
 
     private final UserResultJpaRepository userResultJpaRepository;
 
-    private final VisitorQuestionCompletionJpaRepository visitorQuestionCompletionJpaRepository;
-
     private final UserAnswerMapper userAnswerMapper;
 
     private final UserResultMapper userResultMapper;
-
-    private final VisitorQuestionCompletionMapper visitorQuestionCompletionMapper;
 
     @Override
     public UserAnswers saveUserAnswers(SaveUserAnswersCommand command) {
@@ -97,23 +87,7 @@ public class UserAnswerPersistenceAdapter implements
     }
 
     @Override
-    public void saveIfNotExists(VisitorQuestionCompletion completion) {
-        try {
-            VisitorQuestionCompletionEntity entity = visitorQuestionCompletionMapper.mapToEntity(completion);
-            visitorQuestionCompletionJpaRepository.save(entity);
-        } catch (DataIntegrityViolationException ignored) {
-        }
-    }
-
-    @Override
     public VisitorProgress getByVisitorId(String visitorId) {
-        Map<QuestionSet, Integer> bestScores = userResultJpaRepository
-                .findBestScoresByVisitorId(visitorId)
-                .stream()
-                .collect(Collectors.toMap(
-                        QuestionSetBestScore::getQuestionSet,
-                        QuestionSetBestScore::getBestScore
-                ));
-        return new VisitorProgress(bestScores);
+        return new VisitorProgress(userResultJpaRepository.findBestScoresByVisitorId(visitorId));
     }
 }
