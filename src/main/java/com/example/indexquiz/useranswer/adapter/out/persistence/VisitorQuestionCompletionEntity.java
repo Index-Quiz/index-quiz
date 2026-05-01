@@ -9,7 +9,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,21 +20,28 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "user_result")
+@Table(
+        name = "visitor_question_completion",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"visitor_id", "question_id"}),
+        indexes = @Index(columnList = "visitor_id, question_set")
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class UserResultEntity extends BaseTimeEntity {
+public class VisitorQuestionCompletionEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private QuestionSet questionSet;
-
-    private int score;
-
     @Column(name = "visitor_id")
     private String visitorId;
+
+    @Column(name = "question_id")
+    private long questionId;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_set")
+    private QuestionSet questionSet;
 }

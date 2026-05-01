@@ -144,7 +144,7 @@ public class UserAnswerControllerTest extends BaseControllerTest {
             given(saveUserResultUseCase.saveUserResult(any(SaveUserResultRequest.class))).willReturn(response);
 
             // when
-            SaveUserResultRequest request = new SaveUserResultRequest(response.questionSetName(), response.score());
+            SaveUserResultRequest request = new SaveUserResultRequest(response.questionSetName(), response.score(), null);
 
             SaveUserResultWebResponse saveUserResultWebResponse = RestAssured.given().log().all()
                     .contentType(ContentType.JSON)

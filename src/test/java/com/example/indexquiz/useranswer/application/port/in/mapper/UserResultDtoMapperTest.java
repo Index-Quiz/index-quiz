@@ -27,7 +27,7 @@ class UserResultDtoMapperTest {
 
         @Test
         void 도메인을_saveUserResultResponse_dto로_매핑할_수_있다() {
-            UserResult userResult = new UserResult(1L, QuestionSet.A, 5);
+            UserResult userResult = new UserResult(1L, QuestionSet.A, 5, null);
             ScoreDistribution distribution = new ScoreDistribution(
                     List.of(1L, 2L, 3L, 5L, 8L, 10L, 4L, 2L),
                     3.52,

@@ -6,12 +6,14 @@ import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswe
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserResultWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetQuestionSetAveragesWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetVisitorProgressWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserAnswerRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserResultRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.GetVisitorProgressResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
 import java.util.Map;
@@ -21,11 +23,19 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapperConfiguration.class)
 public interface UserAnswerWebMapper {
 
-    SaveUserAnswerRequest mapToSaveUserAnswerRequest(SaveUserAnswerWebRequest webRequest);
+    default SaveUserAnswerRequest mapToSaveUserAnswerRequest(SaveUserAnswerWebRequest webRequest, String visitorId) {
+        return new SaveUserAnswerRequest(webRequest.questionId(), webRequest.options(), visitorId);
+    }
 
     SaveUserAnswerWebResponse mapToSaveUserAnswerWebResponse(SaveUserAnswerResponse applicationResponse);
 
-    SaveUserResultRequest mapToSaveUserResultRequest(SaveUserResultWebRequest webRequest);
+    default SaveUserResultRequest mapToSaveUserResultRequest(SaveUserResultWebRequest webRequest, String visitorId) {
+        return new SaveUserResultRequest(
+                QuestionSet.valueOf(webRequest.questionSetName()),
+                webRequest.score(),
+                visitorId
+        );
+    }
 
     SaveUserResultWebResponse mapToSaveUserResultWebResponse(SaveUserResultResponse applicationResponse);
 
@@ -38,5 +48,14 @@ public interface UserAnswerWebMapper {
                         Map.Entry::getValue
                 ));
         return new GetQuestionSetAveragesWebResponse(stringKeyMap);
+    }
+
+    default GetVisitorProgressWebResponse mapToGetVisitorProgressWebResponse(GetVisitorProgressResponse response) {
+        Map<String, Integer> stringKeyMap = response.completedSetBestScore().entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().name(),
+                        Map.Entry::getValue
+                ));
+        return new GetVisitorProgressWebResponse(stringKeyMap, response.progressPercentage());
     }
 }

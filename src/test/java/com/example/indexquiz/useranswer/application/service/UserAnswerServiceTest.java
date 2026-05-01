@@ -68,7 +68,7 @@ class UserAnswerServiceTest extends BaseServiceTest {
             willReturn(userAnswers).given(saveUserAnswerPort).saveUserAnswers(any());
 
             // when
-            SaveUserAnswerRequest request = new SaveUserAnswerRequest(question.getId(), List.of(1L, 2L, 3L));
+            SaveUserAnswerRequest request = new SaveUserAnswerRequest(question.getId(), List.of(1L, 2L, 3L), "test-visitor");
             userAnswerService.saveUserAnswers(request);
 
             // then

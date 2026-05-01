@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLearnModal();
     setupParallaxEffect();
     loadQuestionSetAverages();
+    loadVisitorProgress();
     console.log('Index Quiz 초기화 완료');
 });
 
@@ -187,6 +188,44 @@ async function loadQuestionSetAverages() {
         });
     } catch (e) {
         console.error('평균 점수 로드 실패:', e);
+    }
+}
+
+// 학습 진행도 로드
+async function loadVisitorProgress() {
+    try {
+        const response = await fetch('/api/user-answers/progress');
+        if (!response.ok) return;
+        const data = await response.json();
+
+        const completedCount = Object.keys(data.bestScore).length;
+        if (completedCount === 0) return;
+
+        const wrapper = document.getElementById('progressWrapper');
+        wrapper.style.display = '';
+
+        const fill = document.getElementById('progressFill');
+        fill.style.width = data.progressPercentage + '%';
+
+        const label = document.getElementById('progressLabel');
+        label.textContent = completedCount + ' / 8 세트 완료';
+
+        document.querySelectorAll('.bookmark-tab').forEach(tab => {
+            const setName = tab.dataset.set;
+            if (data.bestScore[setName] == null) return;
+
+            tab.classList.add('set-completed');
+
+            const badge = tab.querySelector('.bookmark-badge');
+            if (badge) {
+                const bestScoreDiv = document.createElement('div');
+                bestScoreDiv.className = 'best-score-badge';
+                bestScoreDiv.textContent = '최고 ' + data.bestScore[setName] + '/7';
+                badge.appendChild(bestScoreDiv);
+            }
+        });
+    } catch (e) {
+        console.error('진행도 로드 실패:', e);
     }
 }
 

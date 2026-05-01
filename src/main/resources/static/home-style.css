@@ -1474,3 +1474,54 @@ a.contributor-item {
         gap: 12px;
     }
 }
+
+/* ========== 학습 진행도 프로그레스 바 ========== */
+.progress-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.progress-track {
+    width: 320px;
+    max-width: 80vw;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+/* ========== 완료된 퀴즈 탭 ========== */
+.bookmark-tab.set-completed .bookmark-content {
+    border: 2px solid rgba(74, 222, 128, 0.6);
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.15);
+}
+
+.bookmark-tab.set-completed .bookmark-badge .best-score-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(74, 222, 128, 0.12);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+}

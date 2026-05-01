@@ -25,7 +25,7 @@ class UserResultMapperTest {
 
         @Test
         void 유저_성적_엔티티를_유저_성적_도메인으로_매핑할_수_있다() {
-            UserResultEntity userResultEntity = new UserResultEntity(1L, QuestionSet.A, 10);
+            UserResultEntity userResultEntity = new UserResultEntity(1L, QuestionSet.A, 10, null);
 
             UserResult userResult = userResultMapper.mapToUserResult(userResultEntity);
 
@@ -42,7 +42,7 @@ class UserResultMapperTest {
 
         @Test
         void 유저_성적_도메인을_유저_성적_엔티티로_매핑할_수_있다() {
-            UserResult userResult = new UserResult(QuestionSet.A, 10);
+            UserResult userResult = new UserResult(QuestionSet.A, 10, null);
 
             UserResultEntity userResultEntity = userResultMapper.mapToUserResultEntity(userResult);
 

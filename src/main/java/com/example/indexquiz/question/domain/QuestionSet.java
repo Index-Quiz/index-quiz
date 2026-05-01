@@ -2,6 +2,7 @@ package com.example.indexquiz.question.domain;
 
 import com.example.indexquiz.common.exception.custom.IndexQuizException;
 import com.example.indexquiz.common.exception.errorcode.ErrorCode;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -31,4 +32,20 @@ public enum QuestionSet {
     public boolean isDifficult(QuestionSet questionSet) {
         return BEST_DIFFICULT == questionSet;
     }
+
+    public static QuestionSet findByQuestionOrder(long questionOrder) {
+        int index = Math.toIntExact((questionOrder - 1) / QUESTIONS_PER_SET);
+        if (index < 0 || index >= ALL_SETS.size()) {
+            return null;
+        }
+        QuestionSet questionSet = ALL_SETS.get(index);
+        if (questionSet == BEST_DIFFICULT) {
+            return null;
+        }
+        return questionSet;
+    }
+
+    private static final int QUESTIONS_PER_SET = 7;
+
+    private static final List<QuestionSet> ALL_SETS = List.of(values());
 }

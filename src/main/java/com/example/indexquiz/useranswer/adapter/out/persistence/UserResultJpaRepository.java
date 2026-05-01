@@ -19,4 +19,10 @@ public interface UserResultJpaRepository extends JpaRepository<UserResultEntity,
     Optional<Double> findAverageByQuestionSetAndMaxScore(
             @Param("questionSet") QuestionSet questionSet,
             @Param("maxScore") int maxScore);
+
+    @Query("SELECT ur.questionSet as questionSet, MAX(ur.score) as bestScore "
+         + "FROM UserResultEntity ur "
+         + "WHERE ur.visitorId = :visitorId AND ur.questionSet <> com.example.indexquiz.question.domain.QuestionSet.BEST_DIFFICULT "
+         + "GROUP BY ur.questionSet")
+    List<QuestionSetBestScore> findBestScoresByVisitorId(@Param("visitorId") String visitorId);
 }

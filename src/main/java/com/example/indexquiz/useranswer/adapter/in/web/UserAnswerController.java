@@ -4,11 +4,13 @@ import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswe
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserResultWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetQuestionSetAveragesWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetVisitorProgressWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserResultWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.mapper.UserAnswerWebMapper;
 import com.example.indexquiz.useranswer.application.port.in.GetQuestionSetAveragesUseCase;
 import com.example.indexquiz.useranswer.application.port.in.GetUserAnswerUseCase;
+import com.example.indexquiz.useranswer.application.port.in.GetVisitorProgressUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserAnswerUseCase;
 import com.example.indexquiz.useranswer.application.port.in.SaveUserResultUseCase;
 import com.example.indexquiz.useranswer.application.port.in.dto.request.GetUserAnswerRequest;
@@ -16,9 +18,13 @@ import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUser
 import com.example.indexquiz.useranswer.application.port.in.dto.request.SaveUserResultRequest;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetUserAnswerResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.GetVisitorProgressResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserAnswerResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +47,11 @@ public class UserAnswerController {
 
     private final GetQuestionSetAveragesUseCase getQuestionSetAveragesUseCase;
 
+    private final GetVisitorProgressUseCase getVisitorProgressUseCase;
+
     private final UserAnswerWebMapper userAnswerWebMapper;
+
+    private final VisitorCookieResolver visitorCookieResolver;
 
     @GetMapping("/results/averages")
     public ResponseEntity<GetQuestionSetAveragesWebResponse> getQuestionSetAverages() {
@@ -61,9 +71,12 @@ public class UserAnswerController {
 
     @PostMapping
     public ResponseEntity<SaveUserAnswerWebResponse> saveUserAnswer(
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse,
             @RequestBody SaveUserAnswerWebRequest request
     ) {
-        SaveUserAnswerRequest saveUserAnswerRequest = userAnswerWebMapper.mapToSaveUserAnswerRequest(request);
+        String visitorId = visitorCookieResolver.resolve(httpRequest, httpResponse);
+        SaveUserAnswerRequest saveUserAnswerRequest = userAnswerWebMapper.mapToSaveUserAnswerRequest(request, visitorId);
         SaveUserAnswerResponse saveUserAnswerResponse = saveUserAnswerUseCase.saveUserAnswers(saveUserAnswerRequest);
         SaveUserAnswerWebResponse webResponse = userAnswerWebMapper.mapToSaveUserAnswerWebResponse(
                 saveUserAnswerResponse);
@@ -72,12 +85,28 @@ public class UserAnswerController {
 
     @PostMapping("/results")
     public ResponseEntity<SaveUserResultWebResponse> saveUserAnswerResults(
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse,
             @RequestBody SaveUserResultWebRequest request
     ) {
-        SaveUserResultRequest saveUserResultRequest = userAnswerWebMapper.mapToSaveUserResultRequest(request);
+        String visitorId = visitorCookieResolver.resolve(httpRequest, httpResponse);
+        SaveUserResultRequest saveUserResultRequest = userAnswerWebMapper.mapToSaveUserResultRequest(request, visitorId);
         SaveUserResultResponse saveUserResultResponse = saveUserResultUseCase.saveUserResult(saveUserResultRequest);
         SaveUserResultWebResponse webResponse = userAnswerWebMapper.mapToSaveUserResultWebResponse(saveUserResultResponse);
         return ResponseEntity.created(URI.create("user-answers/" + webResponse.id()))
                 .body(webResponse);
+    }
+
+    @GetMapping("/progress")
+    public ResponseEntity<GetVisitorProgressWebResponse> getVisitorProgress(
+            HttpServletRequest httpRequest
+    ) {
+        return visitorCookieResolver.findExisting(httpRequest)
+                .map(visitorId -> {
+                    GetVisitorProgressResponse response = getVisitorProgressUseCase.getProgress(visitorId);
+                    GetVisitorProgressWebResponse webResponse = userAnswerWebMapper.mapToGetVisitorProgressWebResponse(response);
+                    return ResponseEntity.ok(webResponse);
+                })
+                .orElseGet(() -> ResponseEntity.ok(new GetVisitorProgressWebResponse(Map.of(), 0)));
     }
 }
