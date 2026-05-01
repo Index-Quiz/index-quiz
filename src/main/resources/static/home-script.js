@@ -217,7 +217,7 @@ async function loadVisitorProgress() {
             if (badge) {
                 const bestScoreDiv = document.createElement('div');
                 bestScoreDiv.className = isPerfect ? 'best-score-badge perfect' : 'best-score-badge';
-                bestScoreDiv.textContent = '최고 ' + data.bestScore[setName] + '/7';
+                bestScoreDiv.textContent = isPerfect ? '\u2B50 만점' : '최고 ' + data.bestScore[setName] + '/7';
                 badge.appendChild(bestScoreDiv);
             }
         });
