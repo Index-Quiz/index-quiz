@@ -1,10 +1,9 @@
 package com.example.indexquiz.useranswer.application.port.in.dto.response;
 
-import com.example.indexquiz.question.domain.QuestionSet;
-import java.util.Map;
+import java.util.List;
 
 public record GetQuestionSetAveragesResponse(
-        Map<QuestionSet, Double> averages
+        List<QuestionSetAverage> averages
 ) {
 
 }

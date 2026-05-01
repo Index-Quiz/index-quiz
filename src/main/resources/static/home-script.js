@@ -158,12 +158,15 @@ async function loadQuestionSetAverages() {
 
         document.querySelectorAll('.bookmark-tab').forEach(tab => {
             const setName = tab.dataset.set;
-            if (averages[setName] == null || setName === 'BEST_DIFFICULT') return;
+            if (setName === 'BEST_DIFFICULT') return;
+
+            const entry = averages.find(a => a.questionSetName === setName);
+            if (!entry) return;
 
             const badge = tab.querySelector('.bookmark-badge');
             const avgDiv = document.createElement('div');
             avgDiv.className = 'bookmark-avg';
-            avgDiv.innerHTML = `<span class="avg-label">평균</span><span class="avg-value">${averages[setName]}점</span>`;
+            avgDiv.innerHTML = `<span class="avg-label">평균</span><span class="avg-value">${entry.average}점</span>`;
             badge.appendChild(avgDiv);
         });
     } catch (e) {
@@ -178,26 +181,27 @@ async function loadVisitorProgress() {
         if (!response.ok) return;
         const data = await response.json();
 
-        const completedCount = Object.keys(data.bestScore).length;
+        const completedSets = data.completedSets;
 
         const fill = document.getElementById('progressFill');
         fill.style.width = data.progressPercentage + '%';
 
         const label = document.getElementById('progressLabel');
-        label.textContent = completedCount + ' / 8 세트 완료';
+        label.textContent = completedSets.length + ' / 8 세트 완료';
 
         document.querySelectorAll('.bookmark-tab').forEach(tab => {
             const setName = tab.dataset.set;
-            if (data.bestScore[setName] == null) return;
+            const entry = completedSets.find(s => s.questionSetName === setName);
+            if (!entry) return;
 
-            const isPerfect = data.bestScore[setName] === 7;
+            const isPerfect = entry.bestScore === 7;
             tab.classList.add(isPerfect ? 'set-perfect' : 'set-completed');
 
             const badge = tab.querySelector('.bookmark-badge');
             if (badge) {
                 const bestScoreDiv = document.createElement('div');
                 bestScoreDiv.className = isPerfect ? 'best-score-badge perfect' : 'best-score-badge';
-                bestScoreDiv.textContent = isPerfect ? '\u2B50 만점' : '최고 ' + data.bestScore[setName] + '/7';
+                bestScoreDiv.textContent = isPerfect ? '\u2B50 만점' : '최고 ' + entry.bestScore + '/7';
                 badge.appendChild(bestScoreDiv);
             }
         });

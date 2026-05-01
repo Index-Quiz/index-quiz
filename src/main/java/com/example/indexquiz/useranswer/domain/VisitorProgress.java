@@ -1,8 +1,6 @@
 package com.example.indexquiz.useranswer.domain;
 
-import com.example.indexquiz.question.domain.QuestionSet;
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 import lombok.Getter;
 
 @Getter
@@ -10,17 +8,13 @@ public class VisitorProgress {
 
     private static final int TRACKABLE_SET_COUNT = 8;
 
-    private final Map<QuestionSet, Integer> completedSetBestScore;
+    private final List<SetBestScore> completedSets;
 
-    public VisitorProgress(Map<QuestionSet, Integer> completedSetBestScore) {
-        this.completedSetBestScore = Collections.unmodifiableMap(completedSetBestScore);
-    }
-
-    public int completedCount() {
-        return completedSetBestScore.size();
+    public VisitorProgress(List<SetBestScore> completedSets) {
+        this.completedSets = List.copyOf(completedSets);
     }
 
     public int progressPercentage() {
-        return completedCount() * 100 / TRACKABLE_SET_COUNT;
+        return completedSets.size() * 100 / TRACKABLE_SET_COUNT;
     }
 }

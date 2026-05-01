@@ -8,8 +8,9 @@ import com.example.indexquiz.BaseServiceTest;
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetVisitorProgressResponse;
 import com.example.indexquiz.useranswer.application.port.out.GetVisitorProgressPort;
+import com.example.indexquiz.useranswer.domain.SetBestScore;
 import com.example.indexquiz.useranswer.domain.VisitorProgress;
-import java.util.Map;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,9 @@ class VisitorProgressServiceTest extends BaseServiceTest {
         void 방문자의_학습_진행도를_반환한다() {
             // given
             String visitorId = "test-visitor-id";
-            VisitorProgress progress = new VisitorProgress(Map.of(
-                    QuestionSet.A, 6,
-                    QuestionSet.C, 7
+            VisitorProgress progress = new VisitorProgress(List.of(
+                    new SetBestScore(QuestionSet.A, 6),
+                    new SetBestScore(QuestionSet.C, 7)
             ));
             given(getVisitorProgressPort.getByVisitorId(visitorId)).willReturn(progress);
 
@@ -41,9 +42,10 @@ class VisitorProgressServiceTest extends BaseServiceTest {
 
             // then
             assertAll(
-                    () -> assertThat(response.completedSetBestScore()).hasSize(2),
-                    () -> assertThat(response.completedSetBestScore()).containsEntry(QuestionSet.A, 6),
-                    () -> assertThat(response.completedSetBestScore()).containsEntry(QuestionSet.C, 7),
+                    () -> assertThat(response.completedSets()).containsExactly(
+                            new SetBestScore(QuestionSet.A, 6),
+                            new SetBestScore(QuestionSet.C, 7)
+                    ),
                     () -> assertThat(response.progressPercentage()).isEqualTo(25)
             );
         }
@@ -52,7 +54,7 @@ class VisitorProgressServiceTest extends BaseServiceTest {
         void 완료된_세트가_없으면_빈_결과를_반환한다() {
             // given
             String visitorId = "new-visitor-id";
-            VisitorProgress progress = new VisitorProgress(Map.of());
+            VisitorProgress progress = new VisitorProgress(List.of());
             given(getVisitorProgressPort.getByVisitorId(visitorId)).willReturn(progress);
 
             // when
@@ -60,7 +62,7 @@ class VisitorProgressServiceTest extends BaseServiceTest {
 
             // then
             assertAll(
-                    () -> assertThat(response.completedSetBestScore()).isEmpty(),
+                    () -> assertThat(response.completedSets()).isEmpty(),
                     () -> assertThat(response.progressPercentage()).isEqualTo(0)
             );
         }

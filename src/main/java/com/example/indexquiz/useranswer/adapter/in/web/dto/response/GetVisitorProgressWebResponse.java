@@ -1,9 +1,9 @@
 package com.example.indexquiz.useranswer.adapter.in.web.dto.response;
 
-import java.util.Map;
+import java.util.List;
 
 public record GetVisitorProgressWebResponse(
-        Map<String, Integer> bestScore,
+        List<SetBestScoreWebEntry> completedSets,
         int progressPercentage
 ) {
 

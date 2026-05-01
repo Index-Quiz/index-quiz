@@ -9,6 +9,7 @@ import com.example.indexquiz.BaseControllerTest;
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.request.SaveUserAnswerWebRequest;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetQuestionSetAveragesWebResponse;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.QuestionSetAverageWebEntry;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SaveUserAnswerWebResponse;
 import com.example.indexquiz.useranswer.adapter.in.web.dto.response.GetVisitorProgressWebResponse;
@@ -26,10 +27,12 @@ import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUse
 import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUserResultResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetVisitorProgressResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.QuestionSetAverage;
+import com.example.indexquiz.useranswer.adapter.in.web.dto.response.SetBestScoreWebEntry;
+import com.example.indexquiz.useranswer.domain.SetBestScore;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -116,7 +119,10 @@ public class UserAnswerControllerTest extends BaseControllerTest {
         void 세트별_평균_점수를_조회한다() {
             // given
             GetQuestionSetAveragesResponse response = new GetQuestionSetAveragesResponse(
-                    Map.of(QuestionSet.A, 4.2, QuestionSet.B, 2.9)
+                    List.of(
+                            new QuestionSetAverage(QuestionSet.A, 4.2),
+                            new QuestionSetAverage(QuestionSet.B, 2.9)
+                    )
             );
             given(getQuestionSetAveragesUseCase.getQuestionSetAverages()).willReturn(response);
 
@@ -130,8 +136,10 @@ public class UserAnswerControllerTest extends BaseControllerTest {
 
             // then
             assertAll(
-                    () -> assertThat(webResponse.averages()).containsEntry("A", 4.2),
-                    () -> assertThat(webResponse.averages()).containsEntry("B", 2.9)
+                    () -> assertThat(webResponse.averages()).contains(
+                            new QuestionSetAverageWebEntry("A", 4.2),
+                            new QuestionSetAverageWebEntry("B", 2.9)
+                    )
             );
         }
     }
@@ -182,7 +190,7 @@ public class UserAnswerControllerTest extends BaseControllerTest {
                     .extract().as(GetVisitorProgressWebResponse.class);
 
             assertAll(
-                    () -> assertThat(webResponse.bestScore()).isEmpty(),
+                    () -> assertThat(webResponse.completedSets()).isEmpty(),
                     () -> assertThat(webResponse.progressPercentage()).isEqualTo(0)
             );
         }
@@ -192,7 +200,10 @@ public class UserAnswerControllerTest extends BaseControllerTest {
             // given
             String visitorId = UUID.randomUUID().toString();
             GetVisitorProgressResponse response = new GetVisitorProgressResponse(
-                    Map.of(QuestionSet.A, 6, QuestionSet.C, 7),
+                    List.of(
+                            new SetBestScore(QuestionSet.A, 6),
+                            new SetBestScore(QuestionSet.C, 7)
+                    ),
                     25
             );
             given(getVisitorProgressUseCase.getProgress(visitorId)).willReturn(response);
@@ -208,8 +219,10 @@ public class UserAnswerControllerTest extends BaseControllerTest {
 
             // then
             assertAll(
-                    () -> assertThat(webResponse.bestScore()).containsEntry("A", 6),
-                    () -> assertThat(webResponse.bestScore()).containsEntry("C", 7),
+                    () -> assertThat(webResponse.completedSets()).containsExactly(
+                            new SetBestScoreWebEntry("A", 6),
+                            new SetBestScoreWebEntry("C", 7)
+                    ),
                     () -> assertThat(webResponse.progressPercentage()).isEqualTo(25)
             );
         }

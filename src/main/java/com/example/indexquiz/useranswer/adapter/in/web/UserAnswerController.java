@@ -24,7 +24,7 @@ import com.example.indexquiz.useranswer.application.port.in.dto.response.SaveUse
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
-import java.util.Map;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -107,6 +107,6 @@ public class UserAnswerController {
                     GetVisitorProgressWebResponse webResponse = userAnswerWebMapper.mapToGetVisitorProgressWebResponse(response);
                     return ResponseEntity.ok(webResponse);
                 })
-                .orElseGet(() -> ResponseEntity.ok(new GetVisitorProgressWebResponse(Map.of(), 0)));
+                .orElseGet(() -> ResponseEntity.ok(new GetVisitorProgressWebResponse(List.of(), 0)));
     }
 }

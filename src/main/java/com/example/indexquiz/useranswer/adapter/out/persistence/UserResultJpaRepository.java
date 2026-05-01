@@ -2,6 +2,7 @@ package com.example.indexquiz.useranswer.adapter.out.persistence;
 
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.domain.ScoreCount;
+import com.example.indexquiz.useranswer.domain.SetBestScore;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,9 +21,10 @@ public interface UserResultJpaRepository extends JpaRepository<UserResultEntity,
             @Param("questionSet") QuestionSet questionSet,
             @Param("maxScore") int maxScore);
 
-    @Query("SELECT ur.questionSet as questionSet, MAX(ur.score) as bestScore "
+    @Query("SELECT new com.example.indexquiz.useranswer.domain.SetBestScore(ur.questionSet, MAX(ur.score)) "
          + "FROM UserResultEntity ur "
-         + "WHERE ur.visitorId = :visitorId AND ur.questionSet <> com.example.indexquiz.question.domain.QuestionSet.BEST_DIFFICULT "
+         + "WHERE ur.visitorId = :visitorId "
+         + "AND ur.questionSet <> com.example.indexquiz.question.domain.QuestionSet.BEST_DIFFICULT "
          + "GROUP BY ur.questionSet")
-    List<QuestionSetBestScore> findBestScoresByVisitorId(@Param("visitorId") String visitorId);
+    List<SetBestScore> findBestScoresByVisitorId(@Param("visitorId") String visitorId);
 }
