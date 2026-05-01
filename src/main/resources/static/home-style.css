@@ -1048,13 +1048,13 @@ a.contributor-item {
 /* 세로 사이드 배너 */
 .side-ad {
     width: 160px;
-    min-height: 600px;
     flex-shrink: 0;
     position: sticky;
     top: 20px;
     display: none; /* 기본 숨김, 넓은 화면에서만 표시 */
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     padding-top: 40px;
 }
 
@@ -1063,99 +1063,6 @@ a.contributor-item {
     .side-ad {
         display: flex;
     }
-}
-
-/* ========== 카드 내부 슬라이드 액션 버튼 ========== */
-.bookmark-actions {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    align-items: stretch;
-    gap: 0;
-    z-index: 5;
-    border-radius: 0 12px 12px 0;
-    overflow: hidden;
-    transform: translateX(100%);
-    opacity: 0;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.3s ease;
-}
-
-.bookmark-tab:hover .bookmark-actions {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-.action-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 12px 24px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    text-decoration: none;
-    color: #ffffff;
-    white-space: nowrap;
-    position: relative;
-}
-
-.action-btn-quiz {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-}
-
-.action-btn-quiz:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.action-divider {
-    width: 1px;
-    align-self: stretch;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.action-btn-learn {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(20px);
-    border-radius: 0 12px 12px 0;
-}
-
-.action-btn-learn:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.action-icon {
-    font-size: 1.4rem;
-}
-
-.action-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-}
-
-/* 호버 시 뱃지 숨김 */
-.bookmark-tab:hover .bookmark-badge {
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.bookmark-badge {
-    transition: opacity 0.3s ease 0.2s;
-}
-
-/* BEST_DIFFICULT - 학습자료 없음 */
-.bookmark-tab[data-set="BEST_DIFFICULT"] .bookmark-actions {
-    display: none;
-}
-
-.bookmark-tab[data-set="BEST_DIFFICULT"]:hover .bookmark-badge {
-    opacity: 1;
 }
 
 /* ========== 학습자료 선택 모달 ========== */
@@ -1473,4 +1380,68 @@ a.contributor-item {
         padding: 14px 16px;
         gap: 12px;
     }
+}
+
+/* ========== 학습 진행도 프로그레스 바 ========== */
+.progress-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.progress-track {
+    width: 320px;
+    max-width: 80vw;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+/* ========== 완료된 퀴즈 탭 ========== */
+.bookmark-tab.set-completed .bookmark-content {
+    border: 2px solid rgba(74, 222, 128, 0.6);
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.15);
+}
+
+/* 만점 퀴즈 탭 */
+.bookmark-tab.set-perfect .bookmark-content {
+    border: 2px solid rgba(250, 204, 21, 0.7);
+    box-shadow: 0 0 14px rgba(250, 204, 21, 0.2);
+}
+
+.bookmark-tab.set-completed .bookmark-badge .best-score-badge,
+.bookmark-tab.set-perfect .bookmark-badge .best-score-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(74, 222, 128, 0.12);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.bookmark-tab.set-perfect .bookmark-badge .best-score-badge.perfect {
+    background: rgba(250, 204, 21, 0.12);
+    color: #facc15;
+    border: 1px solid rgba(250, 204, 21, 0.3);
 }

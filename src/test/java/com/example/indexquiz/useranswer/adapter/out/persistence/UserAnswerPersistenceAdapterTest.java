@@ -106,7 +106,7 @@ class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
         @Test
         void 사용자의_성적을_저장할_수_있다() {
             // given
-            UserResult userResult = new UserResult(QuestionSet.A, 10);
+            UserResult userResult = new UserResult(QuestionSet.A, 10, null);
 
             // when
             UserResult saveUserResult = userAnswerPersistenceAdapter.saveUserResult(userResult);
@@ -127,9 +127,9 @@ class UserAnswerPersistenceAdapterTest extends BaseRepositoryTest {
         @Test
         void 이상치를_제외한_평균을_반환한다() {
             // given
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 3));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 5));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 15));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 3, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 5, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 15, null));
 
             // when
             Optional<Double> result = userAnswerPersistenceAdapter.getAverageScore(QuestionSet.A, 7);

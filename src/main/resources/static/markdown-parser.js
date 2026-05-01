@@ -132,9 +132,9 @@ renderer.hr = function() {
     return '<hr class="markdown-divider">';
 };
 
-// 이미지
+// 이미지 (인라인 이벤트 핸들러 제거 — JS 이벤트 리스너로 바인딩)
 renderer.image = function({ href, title, text }) {
-    return `<div class="image-container"><img src="${href}" alt="${text}" class="question-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" onload="this.style.opacity='1';" style="opacity: 0; transition: opacity 0.5s ease; cursor: pointer;"><div class="image-placeholder" style="display: none;">&#x1f4f7; 이미지를 불러올 수 없습니다</div></div>`;
+    return `<div class="image-container"><img src="${href}" alt="${text}" class="question-image" style="opacity: 0; transition: opacity 0.5s ease; cursor: pointer;"><div class="image-placeholder" style="display: none;">&#x1f4f7; 이미지를 불러올 수 없습니다</div></div>`;
 };
 
 // 링크
@@ -201,6 +201,16 @@ marked.setOptions({
     gfm: true
 });
 
+// XSS 새니타이징: 이벤트 핸들러 속성 및 위험 프로토콜 제거
+function sanitizeHtml(html) {
+    let sanitized = html;
+    // 인라인 이벤트 핸들러 속성 제거 (on으로 시작하는 모든 속성)
+    sanitized = sanitized.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+    // javascript: 프로토콜 링크 제거
+    sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
+    return sanitized;
+}
+
 // 마크다운 텍스트를 HTML로 변환
 function parseMarkdownToHtml(content) {
     // XSS 방지: script 태그 제거
@@ -208,7 +218,25 @@ function parseMarkdownToHtml(content) {
     cleaned = cleaned.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
     cleaned = cleaned.replace(/<script\b[^>]*>/gi, '');
 
-    return marked.parse(cleaned);
+    let html = marked.parse(cleaned);
+    html = sanitizeHtml(html);
+    return html;
+}
+
+// 이미지 로드/에러 이벤트 바인딩 (렌더링 후 호출)
+function bindImageEvents(container) {
+    container.querySelectorAll('.question-image').forEach(img => {
+        img.addEventListener('load', function() {
+            this.style.opacity = '1';
+        });
+        img.addEventListener('error', function() {
+            this.style.display = 'none';
+            const placeholder = this.nextElementSibling;
+            if (placeholder) {
+                placeholder.style.display = 'block';
+            }
+        });
+    });
 }
 
 // 체크박스 인터랙션: 클릭 시 체크/해제 토글

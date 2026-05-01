@@ -29,16 +29,17 @@ class UserResultServiceTest extends BaseServiceTest {
         @Test
         void 사용자의_성적을_저장한다() {
             // given
-            UserResult userResult = new UserResult(QuestionSet.A, 5);
+            UserResult userResult = new UserResult(QuestionSet.A, 5, "test-visitor");
             UserResult savedUserResult = new UserResult(
                     1L,
                     userResult.getQuestionSet(),
-                    userResult.getScore()
+                    userResult.getScore(),
+                    userResult.getVisitorId()
             );
             willReturn(savedUserResult).given(saveUserResultPort).saveUserResult(userResult);
 
             // when
-            SaveUserResultRequest request = new SaveUserResultRequest(userResult.getQuestionSet(), userResult.getScore());
+            SaveUserResultRequest request = new SaveUserResultRequest(userResult.getQuestionSet(), userResult.getScore(), "test-visitor");
             SaveUserResultResponse saveUserResultResponse = userResultService.saveUserResult(request);
 
             // then

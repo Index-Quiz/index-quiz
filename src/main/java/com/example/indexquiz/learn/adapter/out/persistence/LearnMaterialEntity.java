@@ -9,8 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,22 +25,17 @@ public class LearnMaterialEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "question_set")
     private QuestionSet questionSet;
 
-    @NotBlank
     private String title;
 
-    @NotBlank
     private String description;
 
-    @NotBlank
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @NotNull
     @Column(name = "display_order")
     private int displayOrder;
 }

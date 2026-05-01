@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLearnModal();
     setupParallaxEffect();
     loadQuestionSetAverages();
+    loadVisitorProgress();
     console.log('Index Quiz 초기화 완료');
 });
 
@@ -49,38 +50,18 @@ function setupBookmarkTabs() {
 
     bookmarkTabs.forEach(tab => {
         const setName = tab.dataset.set;
-        const hasActions = tab.querySelector('.bookmark-actions');
 
-        // 클릭 이벤트 - 액션 버튼이 없는 탭(BEST_DIFFICULT)은 바로 퀴즈 이동
-        tab.addEventListener('click', (e) => {
-            if (hasActions && (e.target.closest('.action-btn') || e.target.closest('.bookmark-actions'))) {
-                return; // 액션 버튼 클릭은 별도 처리
-            }
-            if (!hasActions) {
-                console.log(`${setName}-SET 선택됨`);
+        tab.addEventListener('click', () => {
+            if (setName === 'BEST_DIFFICULT') {
                 const content = tab.querySelector('.bookmark-content');
                 content.style.transform = 'translateX(15px) scale(0.98)';
                 setTimeout(() => {
                     window.location.href = `quiz.html?set=${setName}`;
                 }, 200);
+            } else {
+                openLearnModal(setName);
             }
         });
-
-        // 액션 버튼 클릭 처리
-        if (hasActions) {
-            const quizBtn = tab.querySelector('.action-btn-quiz');
-            const learnBtn = tab.querySelector('.action-btn-learn');
-
-            quizBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.location.href = `quiz.html?set=${setName}`;
-            });
-
-            learnBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openLearnModal(setName);
-            });
-        }
 
         // 호버 시 아이콘 애니메이션
         tab.addEventListener('mouseenter', () => {
@@ -177,16 +158,55 @@ async function loadQuestionSetAverages() {
 
         document.querySelectorAll('.bookmark-tab').forEach(tab => {
             const setName = tab.dataset.set;
-            if (averages[setName] == null || setName === 'BEST_DIFFICULT') return;
+            if (setName === 'BEST_DIFFICULT') return;
+
+            const entry = averages.find(a => a.questionSetName === setName);
+            if (!entry) return;
 
             const badge = tab.querySelector('.bookmark-badge');
             const avgDiv = document.createElement('div');
             avgDiv.className = 'bookmark-avg';
-            avgDiv.innerHTML = `<span class="avg-label">평균</span><span class="avg-value">${averages[setName]}점</span>`;
+            avgDiv.innerHTML = `<span class="avg-label">평균</span><span class="avg-value">${entry.average}점</span>`;
             badge.appendChild(avgDiv);
         });
     } catch (e) {
         console.error('평균 점수 로드 실패:', e);
+    }
+}
+
+// 학습 진행도 로드
+async function loadVisitorProgress() {
+    try {
+        const response = await fetch('/api/user-answers/progress');
+        if (!response.ok) return;
+        const data = await response.json();
+
+        const completedSets = data.completedSets;
+
+        const fill = document.getElementById('progressFill');
+        fill.style.width = data.progressPercentage + '%';
+
+        const label = document.getElementById('progressLabel');
+        label.textContent = completedSets.length + ' / 8 세트 완료';
+
+        document.querySelectorAll('.bookmark-tab').forEach(tab => {
+            const setName = tab.dataset.set;
+            const entry = completedSets.find(s => s.questionSetName === setName);
+            if (!entry) return;
+
+            const isPerfect = entry.bestScore === 7;
+            tab.classList.add(isPerfect ? 'set-perfect' : 'set-completed');
+
+            const badge = tab.querySelector('.bookmark-badge');
+            if (badge) {
+                const bestScoreDiv = document.createElement('div');
+                bestScoreDiv.className = isPerfect ? 'best-score-badge perfect' : 'best-score-badge';
+                bestScoreDiv.textContent = isPerfect ? '\u2B50 만점' : '최고 ' + entry.bestScore + '/7';
+                badge.appendChild(bestScoreDiv);
+            }
+        });
+    } catch (e) {
+        console.error('진행도 로드 실패:', e);
     }
 }
 

@@ -36,11 +36,12 @@ class UserAnswerWebMapperTest {
         void web_dto에서_어플리케이션_dto로_매핑할_수_있다() {
             SaveUserAnswerWebRequest origin = new SaveUserAnswerWebRequest(1L, List.of(1L, 2L));
 
-            SaveUserAnswerRequest target = userAnswerWebMapper.mapToSaveUserAnswerRequest(origin);
+            SaveUserAnswerRequest target = userAnswerWebMapper.mapToSaveUserAnswerRequest(origin, "test-visitor");
 
             assertAll(
                     () -> assertThat(target.questionId()).isEqualTo(origin.questionId()),
-                    () -> assertThat(target.options()).containsExactlyElementsOf(origin.options())
+                    () -> assertThat(target.options()).containsExactlyElementsOf(origin.options()),
+                    () -> assertThat(target.visitorId()).isEqualTo("test-visitor")
             );
         }
     }
@@ -88,11 +89,12 @@ class UserAnswerWebMapperTest {
         void web_dto에서_어플리케이션_dto로_매핑할_수_있다() {
             SaveUserResultWebRequest origin = new SaveUserResultWebRequest(QuestionSet.A.name(), 14);
 
-            SaveUserResultRequest target = userAnswerWebMapper.mapToSaveUserResultRequest(origin);
+            SaveUserResultRequest target = userAnswerWebMapper.mapToSaveUserResultRequest(origin, "test-visitor");
 
             assertAll(
                     () -> assertThat(target.questionSetName().name()).isEqualTo(origin.questionSetName()),
-                    () -> assertThat(target.score()).isEqualTo(origin.score())
+                    () -> assertThat(target.score()).isEqualTo(origin.score()),
+                    () -> assertThat(target.visitorId()).isEqualTo("test-visitor")
             );
         }
     }

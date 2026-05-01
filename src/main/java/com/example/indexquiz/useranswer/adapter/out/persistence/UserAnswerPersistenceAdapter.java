@@ -6,6 +6,7 @@ import com.example.indexquiz.question.application.port.out.GetDifficultQuestionP
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.application.port.out.GetQuestionSetAveragesPort;
 import com.example.indexquiz.useranswer.application.port.out.GetScoreDistributionPort;
+import com.example.indexquiz.useranswer.application.port.out.GetVisitorProgressPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserAnswerPort;
 import com.example.indexquiz.useranswer.application.port.out.SaveUserResultPort;
 import com.example.indexquiz.useranswer.application.port.out.GetUserAnswerPort;
@@ -13,8 +14,10 @@ import com.example.indexquiz.question.application.port.out.dto.DifficultQuestion
 import com.example.indexquiz.useranswer.application.port.out.dto.SaveUserAnswersCommand;
 import com.example.indexquiz.useranswer.domain.ScoreCount;
 import com.example.indexquiz.useranswer.domain.ScoreCounts;
+import com.example.indexquiz.useranswer.domain.SetBestScore;
 import com.example.indexquiz.useranswer.domain.UserAnswers;
 import com.example.indexquiz.useranswer.domain.UserResult;
+import com.example.indexquiz.useranswer.domain.VisitorProgress;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +32,8 @@ public class UserAnswerPersistenceAdapter implements
         GetUserAnswerPort,
         GetDifficultQuestionPort,
         GetScoreDistributionPort,
-        GetQuestionSetAveragesPort
+        GetQuestionSetAveragesPort,
+        GetVisitorProgressPort
 {
 
     private final UserAnswerJpaRepository userAnswerJpaRepository;
@@ -81,5 +85,15 @@ public class UserAnswerPersistenceAdapter implements
     @Override
     public Optional<Double> getAverageScore(QuestionSet questionSet, int maxScore) {
         return userResultJpaRepository.findAverageByQuestionSetAndMaxScore(questionSet, maxScore);
+    }
+
+    @Override
+    public VisitorProgress getByVisitorId(String visitorId) {
+        List<SetBestScore> visitorBestScores = userResultJpaRepository.findBestScoresByVisitorId(
+                visitorId,
+                QuestionSet.QUESTIONS_PER_SET,
+                List.of(QuestionSet.BEST_DIFFICULT)
+        );
+        return new VisitorProgress(visitorBestScores);
     }
 }

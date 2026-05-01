@@ -813,6 +813,27 @@ ol.markdown-list .markdown-list-item {
     flex-wrap: wrap;
 }
 
+.learn-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(45deg, #3b82f6, #2563eb);
+    color: white;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.learn-link-btn:hover {
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.6);
+    transform: translateY(-2px);
+}
+
 .home-return-btn {
     display: inline-flex;
     align-items: center;
@@ -1422,13 +1443,13 @@ ol.markdown-list .markdown-list-item {
 
 .side-ad {
     width: 160px;
-    min-height: 600px;
     flex-shrink: 0;
     position: sticky;
     top: 20px;
     display: none;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     padding-top: 40px;
 }
 

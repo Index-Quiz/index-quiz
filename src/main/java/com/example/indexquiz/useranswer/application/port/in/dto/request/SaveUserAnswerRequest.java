@@ -4,7 +4,8 @@ import java.util.List;
 
 public record SaveUserAnswerRequest(
         long questionId,
-        List<Long> options
+        List<Long> options,
+        String visitorId
 ) {
 
 }

@@ -13,14 +13,17 @@ public class UserResult {
 
     private final int score;
 
+    private final String visitorId;
+
     @Default
-    public UserResult(Long id, QuestionSet questionSet, int score) {
+    public UserResult(Long id, QuestionSet questionSet, int score, String visitorId) {
         this.id = id;
         this.questionSet = questionSet;
         this.score = score;
+        this.visitorId = visitorId;
     }
 
-    public UserResult(QuestionSet questionSet, int score) {
-        this(null, questionSet, score);
+    public UserResult(QuestionSet questionSet, int score, String visitorId) {
+        this(null, questionSet, score, visitorId);
     }
 }

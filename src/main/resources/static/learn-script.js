@@ -25,6 +25,7 @@ async function initLearnPage() {
         renderContent();
         renderNavigation();
         renderQuizFloatingBtn();
+        revealPage();
     } catch (error) {
         console.error('학습자료 로드 실패:', error);
         showError();
@@ -48,6 +49,7 @@ async function fetchLearnMaterialsBySet(set) {
 }
 
 function renderHeader() {
+    const header = document.getElementById('learnHeader');
     const badge = document.getElementById('learnSetBadge');
     const title = document.getElementById('learnTitle');
     const description = document.getElementById('learnDescription');
@@ -58,19 +60,17 @@ function renderHeader() {
     badge.textContent = `${currentSet} 세트 · ${orderLabel}`;
     title.textContent = currentMaterial.title;
     description.textContent = currentMaterial.description;
+
+    header.style.opacity = '0';
+    header.style.transform = 'translateY(-10px)';
 }
 
 function renderContent() {
     const contentEl = document.getElementById('learnContent');
     contentEl.innerHTML = parseMarkdownToHtml(currentMaterial.content);
+    bindImageEvents(contentEl);
     contentEl.style.opacity = '0';
     contentEl.style.transform = 'translateY(20px)';
-
-    requestAnimationFrame(() => {
-        contentEl.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-        contentEl.style.opacity = '1';
-        contentEl.style.transform = 'translateY(0)';
-    });
 }
 
 function renderNavigation() {
@@ -114,6 +114,33 @@ function initScrollAttention(btn) {
         } else {
             btn.classList.remove('quiz-floating-attention');
         }
+    });
+}
+
+function revealPage() {
+    const header = document.getElementById('learnHeader');
+    const contentEl = document.getElementById('learnContent');
+    const nav = document.getElementById('learnNav');
+
+    nav.style.opacity = '0';
+    nav.style.transform = 'translateY(10px)';
+
+    requestAnimationFrame(() => {
+        header.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        header.style.opacity = '1';
+        header.style.transform = 'translateY(0)';
+
+        setTimeout(() => {
+            contentEl.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            contentEl.style.opacity = '1';
+            contentEl.style.transform = 'translateY(0)';
+        }, 150);
+
+        setTimeout(() => {
+            nav.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            nav.style.opacity = '1';
+            nav.style.transform = 'translateY(0)';
+        }, 350);
     });
 }
 

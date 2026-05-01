@@ -1,9 +1,9 @@
 package com.example.indexquiz.useranswer.adapter.in.web.dto.response;
 
-import java.util.Map;
+import java.util.List;
 
 public record GetQuestionSetAveragesWebResponse(
-        Map<String, Double> averages
+        List<QuestionSetAverageWebEntry> averages
 ) {
 
 }

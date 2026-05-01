@@ -283,6 +283,7 @@ async function loadQuestion() {
         setTimeout(() => {
             // 마크다운 콘텐츠를 HTML로 변환하여 표시
             questionText.innerHTML = parseMarkdownToHtml(currentQuestion.content);
+            bindImageEvents(questionText);
             questionText.style.transition = 'all 0.5s ease';
             questionText.style.opacity = '1';
             questionText.style.transform = 'translateY(0)';
@@ -560,6 +561,7 @@ async function submitAnswer() {
 
         if (isLastQuestion) {
             nextBtn.textContent = '결과 보기';
+            submitUserResult();
         } else {
             nextBtn.textContent = '다음 문제';
         }
@@ -617,8 +619,13 @@ function showFinalResult() {
     quizContainer.style.opacity = '0';
     quizContainer.style.transform = 'translateX(-100px)';
 
-    // 통계 요청을 비동기로 발송 (UI 전환을 차단하지 않음)
-    fetchAndRenderStats();
+    // 이미 저장된 통계 데이터로 그래프 렌더링
+    renderSavedStats();
+
+    // 학습자료 버튼 설정 (BEST_DIFFICULT 제외)
+    if (!isBestDifficultMode) {
+        setupLearnButton(quizSet);
+    }
 
     setTimeout(() => {
         quizContainer.style.display = 'none';
@@ -657,8 +664,10 @@ function showFinalResult() {
     }, 300);
 }
 
-// 통계 요청 및 분포 그래프 후속 렌더링
-async function fetchAndRenderStats() {
+// 결과 저장 (마지막 문제 채점 시 호출)
+let savedStatsData = null;
+
+async function submitUserResult() {
     try {
         const response = await fetch(`/api/user-answers/results`, {
             method: 'POST',
@@ -671,13 +680,33 @@ async function fetchAndRenderStats() {
             })
         });
         if (response.ok) {
-            const statsData = await response.json();
-            if (statsData && statsData.scoreDistribution) {
-                renderScoreStats(statsData);
-            }
+            savedStatsData = await response.json();
         }
     } catch (e) {
         console.error('Failed to save result:', e);
+    }
+}
+
+// 학습자료 버튼 설정
+async function setupLearnButton(setName) {
+    try {
+        const response = await fetch('/api/learn-materials?set=' + setName);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data.materials && data.materials.length > 0) {
+            const learnBtn = document.getElementById('learnBtn');
+            learnBtn.href = 'learn.html?set=' + setName + '&id=' + data.materials[0].id;
+            learnBtn.style.display = '';
+        }
+    } catch (e) {
+        console.error('학습자료 로드 실패:', e);
+    }
+}
+
+// 통계 분포 그래프 렌더링 (결과 보기 화면 진입 시 호출)
+function renderSavedStats() {
+    if (savedStatsData && savedStatsData.scoreDistribution) {
+        renderScoreStats(savedStatsData);
     }
 }
 
@@ -939,6 +968,7 @@ function displayExplanationFromAPI(explanationText) {
     const htmlContent = parseMarkdownToHtml(explanationText);
 
     explanationContent.innerHTML = htmlContent;
+    bindImageEvents(explanationContent);
 
     // 이미지 클릭 시 확대 기능
     const images = explanationContent.querySelectorAll('.question-image');

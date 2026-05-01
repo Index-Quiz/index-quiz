@@ -32,4 +32,7 @@ public class UserResultEntity extends BaseTimeEntity {
     private QuestionSet questionSet;
 
     private int score;
+
+    @Column(name = "visitor_id")
+    private String visitorId;
 }

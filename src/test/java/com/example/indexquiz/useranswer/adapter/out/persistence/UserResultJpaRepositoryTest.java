@@ -30,9 +30,9 @@ class UserResultJpaRepositoryTest extends BaseRepositoryTest {
         @Test
         void 유효_점수만으로_평균을_계산한다() {
             // given
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 3));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 5));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 7));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 3, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 5, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 7, null));
 
             // when
             Optional<Double> result = userResultJpaRepository
@@ -46,9 +46,9 @@ class UserResultJpaRepositoryTest extends BaseRepositoryTest {
         @Test
         void maxScore를_초과하는_이상치는_평균에서_제외한다() {
             // given
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 3));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 5));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 15));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 3, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 5, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 15, null));
 
             // when
             Optional<Double> result = userResultJpaRepository
@@ -62,9 +62,9 @@ class UserResultJpaRepositoryTest extends BaseRepositoryTest {
         @Test
         void 다른_문제세트의_데이터는_포함하지_않는다() {
             // given
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 4));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 6));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.B, 2));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 4, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 6, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.B, 2, null));
 
             // when
             Optional<Double> result = userResultJpaRepository
@@ -78,8 +78,8 @@ class UserResultJpaRepositoryTest extends BaseRepositoryTest {
         @Test
         void 모든_점수가_이상치이면_빈_Optional을_반환한다() {
             // given
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 10));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 15));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 10, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 15, null));
 
             // when
             Optional<Double> result = userResultJpaRepository
@@ -92,8 +92,8 @@ class UserResultJpaRepositoryTest extends BaseRepositoryTest {
         @Test
         void 점수_0은_유효한_점수로_포함한다() {
             // given
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 0));
-            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 4));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 0, null));
+            userResultJpaRepository.save(new UserResultEntity(null, QuestionSet.A, 4, null));
 
             // when
             Optional<Double> result = userResultJpaRepository

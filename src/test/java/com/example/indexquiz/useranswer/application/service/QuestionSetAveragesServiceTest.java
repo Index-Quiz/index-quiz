@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import com.example.indexquiz.BaseServiceTest;
 import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.useranswer.application.port.in.dto.response.GetQuestionSetAveragesResponse;
+import com.example.indexquiz.useranswer.application.port.in.dto.response.QuestionSetAverage;
 import com.example.indexquiz.useranswer.application.port.out.GetQuestionSetAveragesPort;
 import java.util.Optional;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +27,7 @@ class QuestionSetAveragesServiceTest extends BaseServiceTest {
     class GetQuestionSetAverages {
 
         @Test
-        void 데이터가_없을_때_빈_맵을_반환한다() {
+        void 데이터가_없을_때_빈_리스트를_반환한다() {
             // given
             for (QuestionSet questionSet : QuestionSet.values()) {
                 given(getQuestionSetAveragesPort.getAverageScore(questionSet, questionSet.getQuestionCount()))
@@ -56,7 +57,8 @@ class QuestionSetAveragesServiceTest extends BaseServiceTest {
             // then
             assertAll(
                     () -> assertThat(response.averages()).hasSize(1),
-                    () -> assertThat(response.averages().get(QuestionSet.A)).isEqualTo(4.6)
+                    () -> assertThat(response.averages().get(0))
+                            .isEqualTo(new QuestionSetAverage(QuestionSet.A, 4.6))
             );
         }
 
@@ -80,14 +82,16 @@ class QuestionSetAveragesServiceTest extends BaseServiceTest {
             // then
             assertAll(
                     () -> assertThat(response.averages()).hasSize(3),
-                    () -> assertThat(response.averages().get(QuestionSet.A)).isEqualTo(4.6),
-                    () -> assertThat(response.averages().get(QuestionSet.B)).isEqualTo(2.9),
-                    () -> assertThat(response.averages().get(QuestionSet.C)).isEqualTo(6.2)
+                    () -> assertThat(response.averages()).contains(
+                            new QuestionSetAverage(QuestionSet.A, 4.6),
+                            new QuestionSetAverage(QuestionSet.B, 2.9),
+                            new QuestionSetAverage(QuestionSet.C, 6.2)
+                    )
             );
         }
 
         @Test
-        void 데이터가_없는_세트는_맵에_포함하지_않는다() {
+        void 데이터가_없는_세트는_리스트에_포함하지_않는다() {
             // given
             for (QuestionSet questionSet : QuestionSet.values()) {
                 given(getQuestionSetAveragesPort.getAverageScore(questionSet, questionSet.getQuestionCount()))
@@ -102,8 +106,8 @@ class QuestionSetAveragesServiceTest extends BaseServiceTest {
             // then
             assertAll(
                     () -> assertThat(response.averages()).hasSize(1),
-                    () -> assertThat(response.averages()).containsKey(QuestionSet.A),
-                    () -> assertThat(response.averages()).doesNotContainKey(QuestionSet.B)
+                    () -> assertThat(response.averages().get(0).questionSet()).isEqualTo(QuestionSet.A),
+                    () -> assertThat(response.averages()).noneMatch(avg -> avg.questionSet() == QuestionSet.B)
             );
         }
     }
