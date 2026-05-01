@@ -50,23 +50,18 @@ class QuestionSetTest {
                 "50, H", "56, H"
         })
         void 문제_순서로_퀴즈_세트를_찾는다(long questionOrder, String expectedSet) {
-            QuestionSet result = QuestionSet.findByQuestionOrder(questionOrder);
-
-            assertThat(result).isEqualTo(QuestionSet.valueOf(expectedSet));
+            assertThat(QuestionSet.findByQuestionOrder(questionOrder))
+                    .hasValue(QuestionSet.valueOf(expectedSet));
         }
 
         @Test
-        void BEST_DIFFICULT_범위의_문제는_null을_반환한다() {
-            QuestionSet result = QuestionSet.findByQuestionOrder(57);
-
-            assertThat(result).isNull();
+        void BEST_DIFFICULT_범위의_문제는_빈_Optional을_반환한다() {
+            assertThat(QuestionSet.findByQuestionOrder(57)).isEmpty();
         }
 
         @Test
-        void 범위를_벗어난_문제는_null을_반환한다() {
-            QuestionSet result = QuestionSet.findByQuestionOrder(100);
-
-            assertThat(result).isNull();
+        void 범위를_벗어난_문제는_빈_Optional을_반환한다() {
+            assertThat(QuestionSet.findByQuestionOrder(100)).isEmpty();
         }
     }
 }
