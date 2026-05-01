@@ -103,6 +103,18 @@ function renderQuizFloatingBtn() {
     if (!btn || !currentSet) return;
     btn.href = `quiz.html?set=${currentSet}`;
     btn.style.display = 'flex';
+    initScrollAttention(btn);
+}
+
+function initScrollAttention(btn) {
+    window.addEventListener('scroll', () => {
+        const scrollRatio = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+        if (scrollRatio >= 0.7) {
+            btn.classList.add('quiz-floating-attention');
+        } else {
+            btn.classList.remove('quiz-floating-attention');
+        }
+    });
 }
 
 function showError() {
