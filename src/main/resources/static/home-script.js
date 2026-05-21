@@ -1,10 +1,10 @@
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    // ✅ 저장된 진행 상황이 있으면 quiz.html로 리다이렉션
+    // ✅ 저장된 진행 상황이 있으면 /quiz로 리다이렉션
     const savedProgress = localStorage.getItem('quizProgress');
     if (savedProgress) {
         const data = JSON.parse(savedProgress);
-        window.location.href = `quiz.html?set=${data.quizSet}`;
+        window.location.href = `/quiz?set=${data.quizSet}`;
         return; // 나머지 초기화 중단
     }
     initAnimations();
@@ -56,7 +56,7 @@ function setupBookmarkTabs() {
                 const content = tab.querySelector('.bookmark-content');
                 content.style.transform = 'translateX(15px) scale(0.98)';
                 setTimeout(() => {
-                    window.location.href = `quiz.html?set=${setName}`;
+                    window.location.href = `/quiz?set=${setName}`;
                 }, 200);
             } else {
                 openLearnModal(setName);
@@ -98,7 +98,7 @@ async function openLearnModal(setName) {
     document.getElementById('modalIcon').textContent = meta.icon;
     document.getElementById('modalTitle').textContent = meta.title;
     document.getElementById('modalSubtitle').textContent = meta.subtitle + ' · 학습자료 선택';
-    document.getElementById('modalQuizBtn').href = `quiz.html?set=${setName}`;
+    document.getElementById('modalQuizBtn').href = `/quiz?set=${setName}`;
 
     const tabList = document.getElementById('learnTabList');
     tabList.innerHTML = '<div class="learn-tab-loading">학습자료 목록을 불러오는 중...</div>';
@@ -113,7 +113,7 @@ async function openLearnModal(setName) {
         const data = await response.json();
 
         tabList.innerHTML = data.materials.map((m, i) =>
-            `<a class="learn-tab-item" href="learn.html?set=${setName}&id=${m.id}">
+            `<a class="learn-tab-item" href="/learn?set=${setName}&id=${m.id}">
                 <div class="learn-tab-number">${i + 1}</div>
                 <div class="learn-tab-info">
                     <div class="learn-tab-title">${m.title}</div>

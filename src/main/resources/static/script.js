@@ -25,7 +25,7 @@ const QuizStorage = {
 };
 // 저장할 데이터 구조: { quizSet, currentQuestionIndex, total, score }
 
-// quiz.html의 홈 버튼에 이벤트 리스너 추가
+// 퀴즈 페이지의 홈 버튼에 이벤트 리스너 추가
 document.querySelector('.home-btn').addEventListener('click', (e) => {
     e.preventDefault();
 
@@ -35,10 +35,10 @@ document.querySelector('.home-btn').addEventListener('click', (e) => {
         const confirmed = confirm('풀던 기록이 모두 삭제됩니다. 홈으로 이동하시겠습니까?');
         if (confirmed) {
             QuizStorage.clear();
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }
     } else {
-        window.location.href = 'index.html';
+        window.location.href = '/';
     }
 });
 
@@ -200,7 +200,7 @@ async function initQuiz() {
             } catch (error) {
                 console.error('BEST_DIFFICULT 문제를 불러오는 데 실패했습니다:', error);
                 alert('문제를 불러오는 데 실패했습니다. 홈으로 돌아갑니다.');
-                window.location.href = 'index.html';
+                window.location.href = '/';
                 return;
             }
         } else {
@@ -232,7 +232,7 @@ async function initQuiz() {
             } catch (error) {
                 console.error('BEST_DIFFICULT 문제를 불러오는 데 실패했습니다:', error);
                 alert('문제를 불러오는 데 실패했습니다. 홈으로 돌아갑니다.');
-                window.location.href = 'index.html';
+                window.location.href = '/';
                 return;
             }
         } else {
@@ -695,7 +695,7 @@ async function setupLearnButton(setName) {
         const data = await response.json();
         if (data.materials && data.materials.length > 0) {
             const learnBtn = document.getElementById('learnBtn');
-            learnBtn.href = 'learn.html?set=' + setName + '&id=' + data.materials[0].id;
+            learnBtn.href = '/learn?set=' + setName + '&id=' + data.materials[0].id;
             learnBtn.style.display = '';
         }
     } catch (e) {

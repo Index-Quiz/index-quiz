@@ -13,6 +13,8 @@ import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.question.domain.QuestionWithOptions;
 import com.example.indexquiz.question.application.port.out.dto.DifficultQuestionResponses;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,18 @@ public class QuestionService implements QuestionUseCase, RefreshDifficultQuestio
             throw new IndexQuizException(ErrorCode.QUESTION_SET_BAD_REQUEST);
         }
         return getDifficultQuestion();
+    }
+
+    @Override
+    public GetQuestionResponses getQuestionsBySet(QuestionSet questionSet) {
+        if (questionSet.isDifficult(questionSet)) {
+            return getAllQuestions(questionSet);
+        }
+
+        int startOrder = questionSet.ordinal() * QuestionSet.QUESTIONS_PER_SET + 1;
+        return IntStream.range(0, QuestionSet.QUESTIONS_PER_SET)
+                .mapToObj(i -> getQuestion(startOrder + i))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), GetQuestionResponses::new));
     }
 
     @Override

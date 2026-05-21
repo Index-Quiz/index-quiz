@@ -9,4 +9,6 @@ public interface QuestionUseCase {
     GetQuestionResponse getQuestion(long questionOrder);
 
     GetQuestionResponses getAllQuestions(QuestionSet type);
+
+    GetQuestionResponses getQuestionsBySet(QuestionSet questionSet);
 }
