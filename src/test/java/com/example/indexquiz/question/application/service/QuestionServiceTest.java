@@ -70,6 +70,59 @@ class QuestionServiceTest extends BaseServiceTest {
     }
 
     @Nested
+    class GetQuestionsBySet {
+
+        @Test
+        void 일반_세트의_모든_질문을_조회한다() {
+            // given
+            Question question1 = DomainFixture.getQuestion(1);
+            Question question2 = DomainFixture.getQuestion(2);
+            List<QuestionOption> options1 = DomainFixture.getQuestionOptions(question1.getId(), 3);
+            List<QuestionOption> options2 = DomainFixture.getQuestionOptions(question2.getId(), 3);
+            QuestionWithOptions qwo1 = new QuestionWithOptions(question1, options1);
+            QuestionWithOptions qwo2 = new QuestionWithOptions(question2, options2);
+            GetQuestionResponse response1 = new GetQuestionResponse(1L, QuestionType.SINGLE_CHOICE, "질문 내용1",
+                    List.of(new GetQuestionOptionResponse(1L, "선택지 내용1")));
+            GetQuestionResponse response2 = new GetQuestionResponse(2L, QuestionType.SINGLE_CHOICE, "질문 내용2",
+                    List.of(new GetQuestionOptionResponse(2L, "선택지 내용2")));
+
+            given(getQuestionPort.getQuestionWithOptionsByOrder(1L)).willReturn(qwo1);
+            given(getQuestionPort.getQuestionWithOptionsByOrder(2L)).willReturn(qwo2);
+            given(questionWithOptionsMapper.mapToGetQuestionResponse(qwo1)).willReturn(response1);
+            given(questionWithOptionsMapper.mapToGetQuestionResponse(qwo2)).willReturn(response2);
+
+            // when
+            GetQuestionResponses actual = questionService.getQuestionsBySet(QuestionSet.A);
+
+            // then
+            assertThat(actual.questions()).hasSize(QuestionSet.QUESTIONS_PER_SET);
+            assertThat(actual.questions().get(0)).isEqualTo(response1);
+        }
+
+        @Test
+        void 어려운_문제_세트는_기존_조회_로직을_위임한다() {
+            // given
+            Question question = DomainFixture.getQuestion(1);
+            List<QuestionOption> options = DomainFixture.getQuestionOptions(question.getId(), 3);
+            List<QuestionWithOptions> questionWithOptions = List.of(new QuestionWithOptions(question, options));
+            GetQuestionResponses response = new GetQuestionResponses(List.of(
+                    new GetQuestionResponse(1L, QuestionType.SINGLE_CHOICE, "질문 내용1",
+                            List.of(new GetQuestionOptionResponse(1L, "선택지 내용1")))));
+            DifficultQuestionResponses mockDifficultQuestionResponses = new DifficultQuestionResponses(List.of(question.getId()));
+
+            given(getDifficultQuestionPort.findDifficultQuestions(anyLong())).willReturn(mockDifficultQuestionResponses);
+            given(getQuestionPort.getAllQuestionWithOptions(anyList())).willReturn(questionWithOptions);
+            given(questionWithOptionsMapper.mapToGetQuestionResponses(questionWithOptions)).willReturn(response);
+
+            // when
+            GetQuestionResponses actual = questionService.getQuestionsBySet(QuestionSet.BEST_DIFFICULT);
+
+            // then
+            assertThat(actual).isEqualTo(response);
+        }
+    }
+
+    @Nested
     class GetAllQuestion {
 
         @Test

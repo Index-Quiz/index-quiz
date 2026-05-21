@@ -4,11 +4,13 @@ import com.example.indexquiz.learn.application.port.in.LearnMaterialUseCase;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaries;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialResponse;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaryResponse;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnPageResponse;
 import com.example.indexquiz.learn.application.port.in.mapper.LearnMaterialDtoMapper;
 import com.example.indexquiz.learn.application.port.out.GetLearnMaterialPort;
 import com.example.indexquiz.learn.domain.LearnMaterial;
 import com.example.indexquiz.question.domain.QuestionSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,24 @@ public class LearnMaterialService implements LearnMaterialUseCase {
         return getLearnMaterialPort.getAllByQuestionSet(questionSet).stream()
                 .map(learnMaterialDtoMapper::mapToGetLearnMaterialSummaryResponse)
                 .collect(Collectors.collectingAndThen(Collectors.toList(), GetLearnMaterialSummaries::new));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GetLearnPageResponse getLearnPageData(QuestionSet questionSet, Optional<Long> id) {
+        GetLearnMaterialSummaries summaries = getLearnMaterialsBySet(questionSet);
+
+        Optional<GetLearnMaterialResponse> material = resolveLearnMaterial(summaries, id);
+
+        return new GetLearnPageResponse(summaries.materials(), material);
+    }
+
+    private Optional<GetLearnMaterialResponse> resolveLearnMaterial(
+            GetLearnMaterialSummaries summaries, Optional<Long> id) {
+        return id
+                .or(() -> summaries.materials().stream()
+                        .findAny()
+                        .map(GetLearnMaterialSummaryResponse::id))
+                .map(this::getLearnMaterial);
     }
 }

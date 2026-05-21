@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1875212521362490"
+            crossorigin="anonymous"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PVP7YB17ET"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-PVP7YB17ET');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" th:if="${material != null}" th:content="'MySQL 인덱스 학습자료 - ' + ${material.title()} + '. ' + ${material.description()}" content="MySQL 인덱스 학습자료 - 인덱스 핵심 개념을 체계적으로 학습하세요.">
+    <meta name="description" th:unless="${material != null}" content="MySQL 인덱스 학습자료 - B-Tree, 복합 인덱스, 커버링 인덱스 등 인덱스 핵심 개념을 체계적으로 학습하세요.">
+    <meta property="og:type" content="article">
+    <meta property="og:title" th:if="${material != null}" th:content="'Index Quiz - ' + ${material.title()}" content="Index Quiz - MySQL 인덱스 학습자료">
+    <meta property="og:title" th:unless="${material != null}" content="Index Quiz - MySQL 인덱스 학습자료">
+    <meta property="og:description" th:if="${material != null}" th:content="${material.description()}" content="MySQL 인덱스 핵심 개념을 체계적으로 학습하세요.">
+    <meta property="og:description" th:unless="${material != null}" content="MySQL 인덱스 핵심 개념을 체계적으로 학습하세요. B-Tree, 복합 인덱스, 커버링 인덱스 등 실무 지식을 다룹니다.">
+    <meta property="og:url" th:content="'https://index-quiz.com/learn?set=' + ${questionSet} + (${material != null} ? '&amp;id=' + ${material.id()} : '')" content="https://index-quiz.com/learn">
+    <meta property="og:image" content="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
+    <meta property="og:site_name" content="Index Quiz">
+    <meta property="og:locale" content="ko_KR">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" th:if="${material != null}" th:content="'Index Quiz - ' + ${material.title()}" content="Index Quiz - MySQL 인덱스 학습자료">
+    <meta name="twitter:title" th:unless="${material != null}" content="Index Quiz - MySQL 인덱스 학습자료">
+    <meta name="twitter:description" content="MySQL 인덱스 핵심 개념을 체계적으로 학습하세요.">
+    <link rel="canonical" th:href="'https://index-quiz.com/learn?set=' + ${questionSet} + (${material != null} ? '&amp;id=' + ${material.id()} : '')" href="https://index-quiz.com/learn">
+    <title th:if="${material != null}" th:text="'Index Quiz - ' + ${material.title()}">Index Quiz - 학습</title>
+    <title th:unless="${material != null}">Index Quiz - 학습</title>
+    <link rel="icon" type="image/png"
+          href="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="learn-style.css">
+</head>
+<body>
+
+<div class="page-layout">
+
+    <!-- 좌측 세로 배너 -->
+    <aside class="side-ad side-ad-left">
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-9BZPqNA3dY8ZyMWn"
+             data-ad-width="160"
+             data-ad-height="600"></ins>
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-bSMUplcNPxLJN76G"
+             data-ad-width="160"
+             data-ad-height="600"></ins>
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-U4Jimb574B0515Wc"
+             data-ad-width="160"
+             data-ad-height="600"></ins>
+    </aside>
+
+    <div class="learn-container">
+        <!-- 홈으로 돌아가기 버튼 -->
+        <div class="learn-top-bar">
+            <a href="/" class="learn-home-btn">
+                <span class="home-icon">🏠</span>
+                <span>홈으로</span>
+            </a>
+        </div>
+
+        <!-- 학습자료 헤더 -->
+        <div class="learn-header" id="learnHeader">
+            <div class="learn-set-badge" id="learnSetBadge" th:if="${material != null}" th:text="${questionSet} + ' 세트'"></div>
+            <div class="learn-set-badge" id="learnSetBadge" th:unless="${material != null}"></div>
+            <h1 class="learn-title" id="learnTitle" th:if="${material != null}" th:text="${material.title()}">학습자료를 불러오는 중...</h1>
+            <h1 class="learn-title" id="learnTitle" th:unless="${material != null}">학습자료를 불러오는 중...</h1>
+            <p class="learn-description" id="learnDescription" th:if="${material != null}" th:text="${material.description()}"></p>
+            <p class="learn-description" id="learnDescription" th:unless="${material != null}"></p>
+        </div>
+
+        <!-- 학습 콘텐츠 영역 -->
+        <div class="learn-content" id="learnContent">
+            <div class="learn-loading">
+                <div class="learn-spinner"></div>
+                <span>학습자료를 불러오는 중...</span>
+            </div>
+        </div>
+
+        <!-- SSR: 크롤러가 읽을 수 있는 정적 학습 콘텐츠 (JS 로딩 시 숨겨짐) -->
+        <div id="ssrLearnContent" th:if="${material != null}">
+            <article>
+                <h2 th:text="${material.title()}">학습자료 제목</h2>
+                <p th:text="${material.description()}">학습자료 설명</p>
+                <div th:text="${material.content()}">학습자료 본문 내용</div>
+            </article>
+            <nav th:if="${materialsList != null and !materialsList.isEmpty()}">
+                <h3>이 세트의 학습자료 목록</h3>
+                <ul>
+                    <li th:each="m : ${materialsList}">
+                        <a th:href="'/learn?set=' + ${questionSet} + '&amp;id=' + ${m.id()}" th:text="${m.title()}">자료 제목</a>
+                        <span th:text="' - ' + ${m.description()}"> - 설명</span>
+                    </li>
+                </ul>
+            </nav>
+            <p><a th:href="'/quiz?set=' + ${questionSet}">이 세트 퀴즈 풀기</a> | <a href="/">홈으로 돌아가기</a></p>
+        </div>
+        <div id="ssrLearnContent" th:unless="${material != null}">
+            <noscript>
+                <div class="seo-links">
+                    <h2>MySQL 인덱스 학습자료</h2>
+                    <p>MySQL 인덱스의 핵심 개념을 체계적으로 학습할 수 있는 자료입니다.</p>
+                    <ul>
+                        <li><a href="/learn?set=A">인덱스 기초 1 - 해쉬 인덱스, B-Tree</a></li>
+                        <li><a href="/learn?set=B">인덱스 기초 2 - 클러스터링 인덱스, 내부 구조</a></li>
+                        <li><a href="/learn?set=C">인덱스 활용 1 - 레인지 스캔, Left-Most</a></li>
+                        <li><a href="/learn?set=D">인덱스 활용 2 - AND, OR, IN절</a></li>
+                        <li><a href="/learn?set=E">인덱스 응용 1 - 복합 인덱스, 루스 스캔</a></li>
+                        <li><a href="/learn?set=F">인덱스 응용 2 - 커버링 인덱스, 스킵 스캔</a></li>
+                        <li><a href="/learn?set=G">인덱스 고급 1 - 정렬, ICP</a></li>
+                        <li><a href="/learn?set=H">인덱스 고급 2 - 페이지 분할, 함수 인덱스, 인덱스 머지</a></li>
+                    </ul>
+                    <p><a href="/">홈으로 돌아가기</a></p>
+                </div>
+            </noscript>
+        </div>
+
+        <!-- 퀴즈 바로가기 플로팅 버튼 -->
+        <a class="quiz-floating-btn" id="quizFloatingBtn" style="display: none;">
+            <span class="quiz-floating-icon">📝</span>
+            <span class="quiz-floating-label">퀴즈 풀기</span>
+        </a>
+
+        <!-- 하단 네비게이션 -->
+        <div class="learn-nav" id="learnNav">
+            <a class="learn-nav-btn learn-nav-prev" id="prevBtn">
+                <span class="nav-arrow">←</span>
+                <span class="nav-label">이전 자료</span>
+            </a>
+            <a class="learn-nav-btn learn-nav-list" id="listBtn" href="/">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">목록으로</span>
+            </a>
+            <a class="learn-nav-btn learn-nav-next" id="nextBtn">
+                <span class="nav-label">다음 자료</span>
+                <span class="nav-arrow">→</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 우측 세로 배너 -->
+    <aside class="side-ad side-ad-right">
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-ASH32CKGGQU02Dq1"
+             data-ad-width="160"
+             data-ad-height="600"></ins>
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-Z30A837UZGYDPYEC"
+             data-ad-width="160"
+             data-ad-height="600"></ins>
+        <ins class="kakao_ad_area" style="display:none;"
+             data-ad-unit="DAN-086w8yz7cOcSRFhb"
+             data-ad-width="160"
+             data-ad-height="600"></ins>
+    </aside>
+</div>
+
+<script>
+    // JS가 로드되면 SSR 콘텐츠를 숨기고 인터랙티브 학습 UI를 표시
+    (function() {
+        var ssrContent = document.getElementById('ssrLearnContent');
+        if (ssrContent) ssrContent.style.display = 'none';
+    })();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="markdown-parser.js"></script>
+<script src="learn-script.js"></script>
+<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+</body>
+</html>

@@ -82,7 +82,7 @@ function renderNavigation() {
     const nextMaterial = currentIndex < materialsList.length - 1 ? materialsList[currentIndex + 1] : null;
 
     if (prevMaterial) {
-        prevBtn.href = `learn.html?set=${currentSet}&id=${prevMaterial.id}`;
+        prevBtn.href = `/learn?set=${currentSet}&id=${prevMaterial.id}`;
         prevBtn.classList.remove('disabled');
     } else {
         prevBtn.removeAttribute('href');
@@ -90,7 +90,7 @@ function renderNavigation() {
     }
 
     if (nextMaterial) {
-        nextBtn.href = `learn.html?set=${currentSet}&id=${nextMaterial.id}`;
+        nextBtn.href = `/learn?set=${currentSet}&id=${nextMaterial.id}`;
         nextBtn.classList.remove('disabled');
     } else {
         nextBtn.removeAttribute('href');
@@ -101,7 +101,7 @@ function renderNavigation() {
 function renderQuizFloatingBtn() {
     const btn = document.getElementById('quizFloatingBtn');
     if (!btn || !currentSet) return;
-    btn.href = `quiz.html?set=${currentSet}`;
+    btn.href = `/quiz?set=${currentSet}`;
     btn.style.display = 'flex';
     initScrollAttention(btn);
 }
@@ -149,7 +149,7 @@ function showError() {
     contentEl.innerHTML = `
         <div class="learn-error">
             <p>학습자료를 불러올 수 없습니다.</p>
-            <a href="index.html" class="learn-error-btn">홈으로 돌아가기</a>
+            <a href="/" class="learn-error-btn">홈으로 돌아가기</a>
         </div>
     `;
 }
