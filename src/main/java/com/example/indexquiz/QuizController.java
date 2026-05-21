@@ -1,8 +1,7 @@
 package com.example.indexquiz;
 
 import com.example.indexquiz.learn.application.port.in.LearnMaterialUseCase;
-import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialResponse;
-import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaries;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnPageResponse;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponses;
 import com.example.indexquiz.common.web.RedirectUrlBuilder;
@@ -57,17 +56,10 @@ public class QuizController {
 
         try {
             QuestionSet questionSet = QuestionSet.valueOf(set);
-            GetLearnMaterialSummaries summaries = learnMaterialUseCase.getLearnMaterialsBySet(questionSet);
-            model.addAttribute("materialsList", summaries.materials());
-
-            if (id != null) {
-                GetLearnMaterialResponse material = learnMaterialUseCase.getLearnMaterial(id);
-                model.addAttribute("material", material);
-            } else if (!summaries.materials().isEmpty()) {
-                long firstId = summaries.materials().get(0).id();
-                GetLearnMaterialResponse material = learnMaterialUseCase.getLearnMaterial(firstId);
-                model.addAttribute("material", material);
-            }
+            GetLearnPageResponse pageData = learnMaterialUseCase.getLearnPageData(
+                    questionSet, Optional.ofNullable(id));
+            model.addAttribute("materialsList", pageData.summaries());
+            pageData.material().ifPresent(material -> model.addAttribute("material", material));
         } catch (Exception e) {
             log.warn("SSR 학습자료 로딩 실패 (set={}, id={}): {}", set, id, e.getMessage());
         }

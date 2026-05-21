@@ -1,10 +1,15 @@
 package com.example.indexquiz.adapter.in.web;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.example.indexquiz.BaseControllerTest;
 import com.example.indexquiz.learn.application.port.in.LearnMaterialUseCase;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialResponse;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaryResponse;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnPageResponse;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
 import com.example.indexquiz.question.application.port.in.RefreshDifficultQuestionCacheUseCase;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionOptionResponse;
@@ -14,6 +19,7 @@ import com.example.indexquiz.question.domain.QuestionSet;
 import com.example.indexquiz.question.domain.QuestionType;
 import io.restassured.RestAssured;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -70,6 +76,51 @@ class QuizViewControllerTest extends BaseControllerTest {
 
             // then
             then(questionUseCase).should().getQuestionsBySet(QuestionSet.BEST_DIFFICULT);
+        }
+    }
+
+    @Nested
+    class Learn {
+
+        @Test
+        void 학습자료_페이지를_정상_렌더링한다() {
+            // given
+            GetLearnPageResponse pageData = new GetLearnPageResponse(
+                    List.of(new GetLearnMaterialSummaryResponse(1L, "학습자료 제목", "학습자료 설명", 1)),
+                    Optional.of(new GetLearnMaterialResponse(1L, "A", "학습자료 제목", "학습자료 설명", "# 내용", 1))
+            );
+            given(learnMaterialUseCase.getLearnPageData(eq(QuestionSet.A), any())).willReturn(pageData);
+
+            // when
+            RestAssured.given().log().all()
+                    .queryParam("set", "A")
+                    .queryParam("id", 1)
+                    .when().get("/learn")
+                    .then().log().all()
+                    .statusCode(200);
+
+            // then
+            then(learnMaterialUseCase).should().getLearnPageData(eq(QuestionSet.A), any());
+        }
+
+        @Test
+        void id_없이_학습자료_페이지를_정상_렌더링한다() {
+            // given
+            GetLearnPageResponse pageData = new GetLearnPageResponse(
+                    List.of(new GetLearnMaterialSummaryResponse(1L, "학습자료 제목", "학습자료 설명", 1)),
+                    Optional.of(new GetLearnMaterialResponse(1L, "A", "학습자료 제목", "학습자료 설명", "# 내용", 1))
+            );
+            given(learnMaterialUseCase.getLearnPageData(eq(QuestionSet.A), any())).willReturn(pageData);
+
+            // when
+            RestAssured.given().log().all()
+                    .queryParam("set", "A")
+                    .when().get("/learn")
+                    .then().log().all()
+                    .statusCode(200);
+
+            // then
+            then(learnMaterialUseCase).should().getLearnPageData(eq(QuestionSet.A), any());
         }
     }
 }
