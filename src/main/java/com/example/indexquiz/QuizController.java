@@ -4,7 +4,7 @@ import com.example.indexquiz.learn.application.port.in.LearnMaterialUseCase;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialResponse;
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaries;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
-import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
+import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponses;
 import com.example.indexquiz.question.domain.QuestionSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +34,9 @@ public class QuizController {
 
         try {
             QuestionSet questionSet = QuestionSet.valueOf(set);
-            List<GetQuestionResponse> questions = loadQuestions(questionSet);
-            model.addAttribute("questions", questions);
-            model.addAttribute("quizData", questions);
+            GetQuestionResponses responses = questionUseCase.getQuestionsBySet(questionSet);
+            model.addAttribute("questions", responses.questions());
+            model.addAttribute("quizData", responses.questions());
         } catch (Exception e) {
             log.warn("SSR 문제 로딩 실패 (set={}): {}", set, e.getMessage());
             model.addAttribute("questions", List.of());
@@ -101,18 +101,5 @@ public class QuizController {
             redirect.append("?").append(String.join("&", params));
         }
         return redirect.toString();
-    }
-
-    private List<GetQuestionResponse> loadQuestions(QuestionSet questionSet) {
-        if (questionSet == QuestionSet.BEST_DIFFICULT) {
-            return questionUseCase.getAllQuestions(questionSet).questions();
-        }
-
-        int startOrder = questionSet.ordinal() * QuestionSet.QUESTIONS_PER_SET + 1;
-        List<GetQuestionResponse> questions = new ArrayList<>();
-        for (int i = 0; i < QuestionSet.QUESTIONS_PER_SET; i++) {
-            questions.add(questionUseCase.getQuestion(startOrder + i));
-        }
-        return questions;
     }
 }
