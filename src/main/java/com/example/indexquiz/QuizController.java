@@ -1,0 +1,118 @@
+package com.example.indexquiz;
+
+import com.example.indexquiz.learn.application.port.in.LearnMaterialUseCase;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialResponse;
+import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaries;
+import com.example.indexquiz.question.application.port.in.QuestionUseCase;
+import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponse;
+import com.example.indexquiz.question.domain.QuestionSet;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Slf4j
+@Controller
+@RequiredArgsConstructor
+public class QuizController {
+
+    private final QuestionUseCase questionUseCase;
+    private final LearnMaterialUseCase learnMaterialUseCase;
+
+    @GetMapping("/")
+    public String index() {
+        return "forward:/index.html";
+    }
+
+    @GetMapping("/quiz")
+    public String quiz(@RequestParam(value = "set", defaultValue = "A") String set, Model model) {
+        model.addAttribute("questionSet", set);
+
+        try {
+            QuestionSet questionSet = QuestionSet.valueOf(set);
+            List<GetQuestionResponse> questions = loadQuestions(questionSet);
+            model.addAttribute("questions", questions);
+            model.addAttribute("quizData", questions);
+        } catch (Exception e) {
+            log.warn("SSR 문제 로딩 실패 (set={}): {}", set, e.getMessage());
+            model.addAttribute("questions", List.of());
+            model.addAttribute("quizData", List.of());
+        }
+
+        return "quiz";
+    }
+
+    @GetMapping("/learn")
+    public String learn(
+            @RequestParam(value = "set", defaultValue = "A") String set,
+            @RequestParam(value = "id", required = false) Long id,
+            Model model
+    ) {
+        model.addAttribute("questionSet", set);
+
+        try {
+            QuestionSet questionSet = QuestionSet.valueOf(set);
+            GetLearnMaterialSummaries summaries = learnMaterialUseCase.getLearnMaterialsBySet(questionSet);
+            model.addAttribute("materialsList", summaries.materials());
+
+            if (id != null) {
+                GetLearnMaterialResponse material = learnMaterialUseCase.getLearnMaterial(id);
+                model.addAttribute("material", material);
+            } else if (!summaries.materials().isEmpty()) {
+                long firstId = summaries.materials().get(0).id();
+                GetLearnMaterialResponse material = learnMaterialUseCase.getLearnMaterial(firstId);
+                model.addAttribute("material", material);
+            }
+        } catch (Exception e) {
+            log.warn("SSR 학습자료 로딩 실패 (set={}, id={}): {}", set, id, e.getMessage());
+        }
+
+        return "learn";
+    }
+
+    @GetMapping("/privacy")
+    public String privacy() {
+        return "forward:/privacy.html";
+    }
+
+    @GetMapping("/quiz.html")
+    public String quizHtmlRedirect(@RequestParam(value = "set", required = false) String set) {
+        return "redirect:/quiz" + (set != null ? "?set=" + set : "");
+    }
+
+    @GetMapping("/learn.html")
+    public String learnHtmlRedirect(
+            @RequestParam(value = "set", required = false) String set,
+            @RequestParam(value = "id", required = false) Long id
+    ) {
+        StringBuilder redirect = new StringBuilder("redirect:/learn");
+        List<String> params = new ArrayList<>();
+        if (set != null) {
+            params.add("set=" + set);
+        }
+        if (id != null) {
+            params.add("id=" + id);
+        }
+        if (!params.isEmpty()) {
+            redirect.append("?").append(String.join("&", params));
+        }
+        return redirect.toString();
+    }
+
+    private List<GetQuestionResponse> loadQuestions(QuestionSet questionSet) {
+        if (questionSet == QuestionSet.BEST_DIFFICULT) {
+            return questionUseCase.getAllQuestions(questionSet).questions();
+        }
+
+        int startOrder = questionSet.ordinal() * QuestionSet.QUESTIONS_PER_SET + 1;
+        List<GetQuestionResponse> questions = new ArrayList<>();
+        for (int i = 0; i < QuestionSet.QUESTIONS_PER_SET; i++) {
+            questions.add(questionUseCase.getQuestion(startOrder + i));
+        }
+        return questions;
+    }
+}

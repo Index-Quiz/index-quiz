@@ -15,19 +15,19 @@
     <meta charset="UTF-8">
     <meta name="naver-site-verification" content="a17c55cd81ff8e7b42414992e4e9679ee691df4e" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MySQL 인덱스 퀴즈 - 7개 문제를 풀고 해설과 함께 인덱스 개념을 학습하세요. B-Tree, 복합 인덱스, 커버링 인덱스 등 실무 지식을 테스트합니다.">
+    <meta name="description" th:content="'MySQL 인덱스 퀴즈 세트 ' + ${questionSet} + ' - 7개 문제를 풀고 해설과 함께 인덱스 개념을 학습하세요.'" content="MySQL 인덱스 퀴즈 - 7개 문제를 풀고 해설과 함께 인덱스 개념을 학습하세요.">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Index Quiz - MySQL 인덱스 퀴즈">
+    <meta property="og:title" th:content="'Index Quiz - 세트 ' + ${questionSet} + ' MySQL 인덱스 퀴즈'" content="Index Quiz - MySQL 인덱스 퀴즈">
     <meta property="og:description" content="7개 문제를 풀고 해설과 함께 인덱스 개념을 학습하세요. 실무에 필요한 MySQL 인덱스 지식을 테스트합니다.">
-    <meta property="og:url" content="https://index-quiz.com/quiz">
+    <meta property="og:url" th:content="'https://index-quiz.com/quiz?set=' + ${questionSet}" content="https://index-quiz.com/quiz">
     <meta property="og:image" content="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
     <meta property="og:site_name" content="Index Quiz">
     <meta property="og:locale" content="ko_KR">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Index Quiz - MySQL 인덱스 퀴즈">
+    <meta name="twitter:title" th:content="'Index Quiz - 세트 ' + ${questionSet} + ' MySQL 인덱스 퀴즈'" content="Index Quiz - MySQL 인덱스 퀴즈">
     <meta name="twitter:description" content="7개 문제를 풀고 해설과 함께 인덱스 개념을 학습하세요.">
-    <link rel="canonical" href="https://index-quiz.com/quiz">
-    <title>DB 인덱스 퀴즈</title>
+    <link rel="canonical" th:href="'https://index-quiz.com/quiz?set=' + ${questionSet}" href="https://index-quiz.com/quiz">
+    <title th:text="'Index Quiz - 세트 ' + ${questionSet} + ' 퀴즈'">DB 인덱스 퀴즈</title>
     <link rel="icon" type="image/png"
           href="https://quiz-solution-images.s3.ap-northeast-2.amazonaws.com/index-quiz-logo.png">
     <link rel="stylesheet" href="home-style.css">
@@ -76,7 +76,7 @@
     <div class="container">
         <!-- 홈으로 돌아가기 버튼 -->
         <div class="home-button-container">
-            <a href="index.html" class="home-btn">
+            <a href="/" class="home-btn">
                 <span class="home-icon">🏠</span>
                 <span>홈으로</span>
             </a>
@@ -124,6 +124,19 @@
             </div>
         </div>
 
+        <!-- SSR: 크롤러가 읽을 수 있는 정적 퀴즈 콘텐츠 (JS 로딩 시 숨겨짐) -->
+        <div id="ssrQuizContent" th:if="${questions != null and !questions.isEmpty()}">
+            <h2 th:text="'MySQL 인덱스 퀴즈 - 세트 ' + ${questionSet}">MySQL 인덱스 퀴즈</h2>
+            <p th:text="'총 ' + ${#lists.size(questions)} + '개 문제로 구성된 MySQL 인덱스 학습 퀴즈입니다.'">퀴즈 설명</p>
+            <div th:each="question, iter : ${questions}">
+                <h3 th:text="'문제 ' + ${iter.count} + '. ' + ${question.content()}">문제</h3>
+                <ul>
+                    <li th:each="option : ${question.options()}" th:text="${option.content()}">선택지</li>
+                </ul>
+            </div>
+            <p><a href="/">다른 퀴즈 세트 보기</a></p>
+        </div>
+
         <!-- 카카오 광고 -->
         <div class="ad-container">
             <ins class="kakao_ad_area ad-pc" style="display:none;"
@@ -160,7 +173,7 @@
             <div class="final-buttons">
                 <button class="restart-btn" onclick="restartQuiz()">다시 시작</button>
                 <a id="learnBtn" class="learn-link-btn" style="display: none;">학습자료 보기</a>
-                <a href="index.html" class="home-return-btn">홈으로 돌아가기</a>
+                <a href="/" class="home-return-btn">홈으로 돌아가기</a>
             </div>
         </div>
     </div>
@@ -192,6 +205,13 @@
 
     // 개발자 도구에서 데이터 소스 확인 가능
     console.log('퀴즈 데이터 소스:', serverQuizData ? '서버에서 전달받음' : '기본 예시 데이터 사용');
+</script>
+<script>
+    // JS가 로드되면 SSR 콘텐츠를 숨기고 인터랙티브 퀴즈를 표시
+    (function() {
+        var ssrContent = document.getElementById('ssrQuizContent');
+        if (ssrContent) ssrContent.style.display = 'none';
+    })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="markdown-parser.js"></script>
