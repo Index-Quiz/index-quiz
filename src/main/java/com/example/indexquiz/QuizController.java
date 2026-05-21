@@ -5,9 +5,10 @@ import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialRespo
 import com.example.indexquiz.learn.application.port.in.dto.GetLearnMaterialSummaries;
 import com.example.indexquiz.question.application.port.in.QuestionUseCase;
 import com.example.indexquiz.question.application.port.in.dto.GetQuestionResponses;
+import com.example.indexquiz.common.web.RedirectUrlBuilder;
 import com.example.indexquiz.question.domain.QuestionSet;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -89,17 +90,9 @@ public class QuizController {
             @RequestParam(value = "set", required = false) String set,
             @RequestParam(value = "id", required = false) Long id
     ) {
-        StringBuilder redirect = new StringBuilder("redirect:/learn");
-        List<String> params = new ArrayList<>();
-        if (set != null) {
-            params.add("set=" + set);
-        }
-        if (id != null) {
-            params.add("id=" + id);
-        }
-        if (!params.isEmpty()) {
-            redirect.append("?").append(String.join("&", params));
-        }
-        return redirect.toString();
+        return new RedirectUrlBuilder("/learn")
+                .addParam("set", Optional.ofNullable(set))
+                .addParam("id", Optional.ofNullable(id).map(String::valueOf))
+                .build();
     }
 }
